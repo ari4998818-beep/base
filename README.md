@@ -12,14 +12,18 @@ speaks with the same voice.
 | `styles.css` | The design system. Every color/font/size/spacing value lives here as a CSS variable (`:root`). **Change a token once, it updates everywhere.** |
 | `main.js` | Light interactivity (testimonial carousel, contact-form feedback, tabs). No frameworks, no build step. |
 
-## Design system at a glance
+## Design system at a glance (v2 — "Trust")
 
-- **Headings:** Fraunces (serif) — *all* of them, consistently.
-- **Body / UI:** Nunito Sans.
-- **Signature line only:** Dancing Script ("Quality housing isn't a privilege…").
-- **Accent:** one blue `#2563EB`. Dark surfaces: ink `#0B1120`.
-- **Spacing rhythm:** 96px sections on mobile → 144px on desktop.
-- **Radii:** 8 (UI) · 16 (cards) · 24 (feature) · pill.
+A restrained, institutional system: navy-led, quiet on accent, solid in structure.
+
+- **Headings:** Source Serif 4 (transitional serif, weights 500–600) — all of them.
+- **Body / UI:** Libre Franklin (neutral grotesque).
+- **Signature line:** Source Serif *italic*, small and quiet — no script font.
+- **Accent:** deep steel `#2E4D6B`, used on ~10% of the page. Navy `#16273F` leads; primary buttons are navy, not bright blue. Dark surfaces: ink `#0A1628`.
+- **Spacing rhythm:** 80px sections on mobile → 128px on desktop.
+- **Radii:** 4 (buttons/inputs/tags) · 8 (cards) · 12 (feature). No pills (avatars only).
+- **Elevation:** hairline 1px borders over near-invisible shadows — no glow.
+- **Stats:** real figures (units, years, states), never adjectives.
 
 ## Run it locally
 
