@@ -1,0 +1,130 @@
+.root {
+  position: relative;
+}
+
+.stage {
+  position: relative;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--green-deep);
+  display: grid;
+  place-items: center;
+}
+
+.headline {
+  position: absolute;
+  top: clamp(70px, 12vh, 130px);
+  inset-inline: var(--pad-x);
+  z-index: 3;
+  font-size: var(--text-big);
+  color: var(--cream);
+  text-shadow: 0 3px 0 rgba(12, 19, 50, 0.15);
+}
+
+/* giant translucent color word behind the roll */
+.names {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.colorName {
+  position: absolute;
+  font-size: clamp(6rem, 26vw, 22rem);
+  color: rgba(255, 255, 255, 0.14);
+  transform: translateY(6%);
+}
+
+/* ---------------- rolls ---------------- */
+.rolls {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+.rollSlot {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  will-change: transform, opacity;
+}
+
+.rollSlot img {
+  height: min(62vh, 560px);
+  width: auto;
+  filter: drop-shadow(0 34px 44px rgba(0, 0, 0, 0.35));
+}
+
+/* TEMPORARY roll silhouette for the missing variants */
+.silhouette {
+  position: relative;
+  height: min(62vh, 560px);
+  aspect-ratio: 2 / 3; /* matches the real roll photo card */
+  border-radius: clamp(16px, 2vw, 28px);
+  background-color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 34px 44px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.silhouetteBlue {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 30px,
+      rgba(47, 111, 192, 0.65) 30px,
+      rgba(47, 111, 192, 0.65) 34px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 30px,
+      rgba(47, 111, 192, 0.3) 30px,
+      rgba(47, 111, 192, 0.3) 33px
+    );
+}
+
+.silhouetteRed {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 30px,
+      rgba(214, 58, 44, 0.6) 30px,
+      rgba(214, 58, 44, 0.6) 34px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 30px,
+      rgba(214, 58, 44, 0.28) 30px,
+      rgba(214, 58, 44, 0.28) 33px
+    );
+}
+
+/* elliptical top to read as a cylinder */
+.silTop {
+  position: absolute;
+  top: -3%;
+  left: -2%;
+  right: -2%;
+  height: 9%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: inset 0 -6px 14px rgba(12, 19, 50, 0.12);
+}
+
+@media (max-width: 720px) {
+  .rollSlot img,
+  .silhouette {
+    height: min(48vh, 420px);
+  }
+
+  .headline {
+    top: clamp(90px, 14vh, 140px);
+  }
+}

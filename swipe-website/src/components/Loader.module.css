@@ -1,0 +1,37 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--pink);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.logo {
+  width: min(46vw, 340px);
+  clip-path: inset(0 100% 0 0);
+  filter: drop-shadow(0 6px 0 rgba(12, 19, 50, 0.18));
+}
+
+.cloth {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 46vmin;
+  height: 60vmin;
+  margin: -30vmin 0 0 -23vmin;
+  border-radius: 24px 60px 28px 52px / 40px 30px 56px 32px;
+  box-shadow: 0 20px 60px rgba(12, 19, 50, 0.35);
+}
+
+.edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -34px;
+  height: 36px;
+  background-image: radial-gradient(circle at 50% 0, var(--pink) 26px, transparent 27px);
+  background-size: 72px 36px;
+  background-repeat: repeat-x;
+}

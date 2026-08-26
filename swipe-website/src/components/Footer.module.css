@@ -1,0 +1,68 @@
+.root {
+  background: var(--ink);
+  color: var(--cream);
+  padding: clamp(56px, 7vw, 90px) var(--pad-x) 30px;
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 70px);
+  padding-bottom: clamp(36px, 5vw, 60px);
+  border-bottom: 3px dashed rgba(247, 241, 227, 0.16);
+}
+
+.logo {
+  height: 54px;
+  width: auto;
+}
+
+.statement {
+  margin-top: 16px;
+  max-width: 30ch;
+  font-weight: 700;
+  color: rgba(247, 241, 227, 0.75);
+}
+
+.nav {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.nav a,
+.meta a {
+  color: var(--cream);
+  text-decoration: none;
+  font-weight: 800;
+  width: fit-content;
+}
+
+.nav a:hover,
+.meta a:hover {
+  color: var(--pink-soft);
+}
+
+.meta {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.soon {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: rgba(247, 241, 227, 0.45);
+}
+
+.legal {
+  padding-top: 22px;
+  font-size: 0.85rem;
+  color: rgba(247, 241, 227, 0.5);
+}
+
+@media (max-width: 720px) {
+  .inner {
+    grid-template-columns: 1fr;
+  }
+}
