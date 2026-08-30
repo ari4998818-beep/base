@@ -9,7 +9,6 @@
 <meta name="theme-color" content="#4C1423">
 <link rel="canonical" href="/">
 
-<!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Chloe Jewelers — The Perfect Piece, Personally Selected">
 <meta property="og:description" content="An exceptional selection of fine jewelry through a private, personalized appointment.">
@@ -19,14 +18,12 @@
 <link rel="icon" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/chloe-logo.png">
 
-<!-- Fonts: Bodoni Moda (editorial headings) + Manrope (body/UI) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400;1,6..96,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="styles.css">
 
-<!-- SEO: structured data (business is by appointment; no address disclosed) -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -42,22 +39,18 @@
 </head>
 <body id="top">
 
-<a class="skip" href="#appointment">Skip to booking an appointment</a>
-<div class="cursor-dot" aria-hidden="true"></div>
+<a class="skip" href="#appointment">Skip to appointment</a>
 
 <!-- ===================== NAV ===================== -->
 <header class="nav" id="nav">
-  <div class="wrap nav-inner">
+  <div class="nav-inner">
     <a class="brand" href="#top" aria-label="Chloe Jewelers — home">
       <img src="assets/chloe-logo.png" alt="Chloe Jewelers" width="1202" height="750">
     </a>
-
     <nav class="nav-links" aria-label="Primary">
       <a href="#collection">Collection</a>
-      <a href="#experience">The Chloe Experience</a>
       <a href="#appointment">Appointment</a>
     </nav>
-
     <div class="nav-right">
       <a class="btn btn-primary nav-cta" href="#appointment" data-appt-cta>Schedule an Appointment</a>
       <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
@@ -68,251 +61,149 @@
   </div>
 </header>
 
-<!-- ===================== MOBILE MENU ===================== -->
 <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
   <a class="m-link" href="#collection">Collection</a>
-  <a class="m-link" href="#experience">The Chloe Experience</a>
   <a class="m-link" href="#appointment">Appointment</a>
-  <a class="btn btn-primary btn-block" href="#appointment" data-appt-cta>Schedule an Appointment</a>
-  <p class="m-foot">By appointment only · Daytime and evening appointments available<br>
+  <a class="btn btn-primary" href="#appointment" data-appt-cta>Schedule an Appointment</a>
+  <p class="m-foot">By appointment only · daytime and evening appointments available<br>
     <a href="tel:+18455380053">845-538-0053</a></p>
 </div>
 
 <main>
 
-  <!-- ===================== HERO ===================== -->
-  <section class="hero" aria-label="Introduction">
-    <div class="wrap hero-grid">
-      <div class="hero-copy">
+  <!-- ===================== HERO / DISPLAY CASE ===================== -->
+  <section class="hero" aria-label="Chloe Jewelers">
+    <div class="case">
+      <!-- architectural lines -->
+      <span class="ln ln-top"></span>
+      <span class="ln ln-bottom"></span>
+      <span class="ln ln-left"></span>
+      <span class="ln ln-right"></span>
+      <span class="ln ln-vert"></span>
+      <span class="ln ln-horz"></span>
+
+      <!-- logo compartment -->
+      <div class="cell cell-logo">
+        <img class="hero-logo" src="assets/chloe-logo.png" alt="Chloe Jewelers" width="1202" height="750">
+      </div>
+
+      <!-- headline compartment -->
+      <div class="cell cell-text">
         <p class="eyebrow">Private jewelry appointments</p>
-        <h1 class="display" data-hero-title>
-          <span class="line"><span>The perfect piece,</span></span>
-          <span class="line"><span class="serif-italic">personally</span></span>
-          <span class="line"><span>selected.</span></span>
-        </h1>
-        <p class="lead hero-lead">Discover an exceptional selection of fine jewelry through a private, personalized appointment.</p>
-        <p class="hero-note">Daytime and evening appointments available.</p>
+        <h1 class="hero-title">The perfect piece,<br><span class="serif-italic">personally</span> selected.</h1>
+        <p class="hero-copy">Discover an exceptional selection of fine jewelry through a private, personalized appointment.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary btn-lg" href="#appointment" data-appt-cta>Schedule an Appointment</a>
-          <a class="btn btn-ghost btn-lg" href="#experience">Discover Chloe</a>
+          <a class="btn btn-primary" href="#appointment" data-appt-cta>Schedule an Appointment</a>
+          <a class="btn btn-ghost" href="#collection">Discover Chloe</a>
+        </div>
+        <p class="hero-note">Daytime and evening appointments available.</p>
+      </div>
+
+      <!-- necklace compartment -->
+      <div class="cell cell-photo" data-parallax>
+        <img src="assets/hero-necklace.jpg"
+             alt="A gold diamond necklace and matching ring displayed on a soft cream setting embossed with the Chloe Jewelers name"
+             width="1104" height="1280" fetchpriority="high"
+             onerror="this.style.display='none'">
+      </div>
+
+      <!-- floating specimen: the ring, crossing between compartments -->
+      <div class="inset" data-parallax-soft aria-hidden="true">
+        <div class="inset-frame">
+          <img src="assets/gold-ring.jpg" alt="" width="1333" height="1720" loading="lazy" onerror="this.style.display='none'">
         </div>
       </div>
 
-      <div class="hero-media" data-parallax>
-        <div class="hero-frame" data-tilt>
-          <img src="assets/hero-necklace.jpg"
-               alt="A gold diamond necklace and matching ring displayed on a soft cream setting embossed with the Chloe Jewelers name"
-               width="1104" height="1288" loading="eager" fetchpriority="high"
-               onerror="this.closest('.hero-frame').classList.add('img-missing')">
-          <!-- restrained light-catches over a few of the necklace diamonds -->
-          <span class="sparkle s1" style="left:22%; top:41%"></span>
-          <span class="sparkle s2" style="left:79%; top:29%"></span>
-          <span class="sparkle s3" style="left:46%; top:56%"></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- chain-line motif guiding the eye into the next section -->
-    <a class="scroll-chain" href="#values" aria-label="Scroll to explore">
-      <span class="cl-label">Explore</span>
-      <svg width="14" height="54" viewBox="0 0 14 54" fill="none" stroke="currentColor" aria-hidden="true">
-        <line class="cl-draw" x1="7" y1="2" x2="7" y2="40" stroke-width="1"/>
-        <circle cx="7" cy="6" r="2" fill="currentColor" stroke="none" opacity=".5"/>
-        <circle cx="7" cy="22" r="2" fill="currentColor" stroke="none" opacity=".5"/>
-        <path class="cl-bead" d="M3 40l4 5 4-5" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- chain line connecting the compartments -->
+      <svg class="chain" viewBox="0 0 320 240" fill="none" aria-hidden="true">
+        <path d="M14 26 C150 44 118 176 158 150 C210 116 250 176 306 206"/>
+        <circle cx="14" cy="26" r="2.4"/>
+        <circle cx="158" cy="150" r="2.4"/>
+        <circle cx="306" cy="206" r="2.4"/>
       </svg>
-    </a>
-  </section>
 
-  <!-- ===================== BRAND VALUES ===================== -->
-  <section class="section values" id="values" aria-label="Our values">
-    <div class="wrap wrap--narrow">
-      <p class="eyebrow">Selection · Quality · Personal Service</p>
-      <div class="values-words">
-        <span class="values-word" data-value>Selection<span class="dot">.</span></span>
-        <span class="values-word" data-value>Quality<span class="dot">.</span></span>
-        <span class="values-word" data-value>Personal Service<span class="dot">.</span></span>
-      </div>
-      <p class="values-sub" data-value-sub>A thoughtfully curated selection, exceptional quality, and the personal guidance to help you find what feels entirely your own.</p>
+      <!-- a few light-catches -->
+      <span class="sparkle s1" style="left:60%; top:33%"></span>
+      <span class="sparkle s2" style="left:83%; top:45%"></span>
+      <span class="sparkle s3" style="left:70%; top:60%"></span>
     </div>
   </section>
 
-  <!-- ===================== JEWELRY SHOWCASE ===================== -->
-  <section class="section" id="collection" aria-label="Curated jewelry">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <p class="eyebrow">The Collection</p>
-        <h2 class="h2">A quiet, considered selection.</h2>
-        <p class="lead">A glimpse of the fine jewelry you might discover in an appointment — thoughtfully chosen, never mass-market.</p>
+  <!-- ===================== VALUES ===================== -->
+  <section class="values" aria-label="Selection, quality, personal service">
+    <div class="values-inner">
+      <div class="value" data-value><span class="v-num">i</span><span class="v-word">Selection</span></div>
+      <div class="value" data-value><span class="v-num">ii</span><span class="v-word">Quality</span></div>
+      <div class="value" data-value><span class="v-num">iii</span><span class="v-word">Personal Service</span></div>
+    </div>
+    <p class="values-sub reveal">A thoughtfully curated selection, exceptional quality, and the personal guidance to help you find what feels entirely your own.</p>
+  </section>
+
+  <!-- ===================== SHOWCASE ===================== -->
+  <section class="showcase" id="collection" aria-label="The collection">
+    <div class="wrap showcase-grid">
+      <div class="showcase-copy">
+        <p class="eyebrow reveal">The Collection</p>
+        <h2 class="reveal d1">A closer look.</h2>
+        <p class="reveal d2">A glimpse of the fine jewelry you might discover in a private appointment — chosen with care, shown by hand.</p>
+        <p class="showcase-statement reveal d3">Thoughtfully crafted with high-quality lab-grown diamonds.</p>
       </div>
-
-      <div class="showcase-grid">
-        <figure class="piece piece-a reveal">
-          <div class="piece-frame">
-            <img src="assets/hero-necklace.jpg"
-                 alt="Delicate gold diamond necklace with a matching pear-cut ring"
-                 width="1104" height="1288" loading="lazy"
-                 onerror="this.closest('.piece-frame').classList.add('img-missing')">
-          </div>
-          <figcaption class="piece-cap"><span class="num">01</span><span class="name">Signature Necklaces</span></figcaption>
-        </figure>
-
-        <figure class="piece piece-b reveal d1">
-          <div class="piece-frame">
-            <img src="assets/silver-set.jpg"
-                 alt="A white-gold diamond necklace and floral diamond earrings presented beside a Chloe Jewelers box"
-                 width="852" height="1120" loading="lazy"
-                 onerror="this.closest('.piece-frame').classList.add('img-missing')">
-          </div>
-          <figcaption class="piece-cap"><span class="num">02</span><span class="name">Refined Essentials</span></figcaption>
-        </figure>
-
-        <figure class="piece piece-c reveal d2">
-          <div class="piece-frame">
+      <div class="showcase-stage reveal d1">
+        <div class="frame frame-main">
+          <img src="assets/silver-set.jpg"
+               alt="A white-gold diamond necklace and floral diamond earrings presented beside a Chloe Jewelers box"
+               width="853" height="1000" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="frame-inset">
+          <div class="frame">
             <img src="assets/gold-ring.jpg"
                  alt="A woven gold band ring resting on a Chloe Jewelers presentation box"
-                 width="1333" height="980" loading="lazy"
-                 onerror="this.closest('.piece-frame').classList.add('img-missing')">
+                 width="1333" height="1720" loading="lazy" onerror="this.style.display='none'">
           </div>
-          <figcaption class="piece-cap"><span class="num">03</span><span class="name">Pieces for Every Occasion</span></figcaption>
-        </figure>
-      </div>
-
-      <p class="showcase-note reveal">Thoughtfully crafted with high-quality lab-grown diamonds.</p>
-    </div>
-  </section>
-
-  <!-- ===================== THE CHLOE EXPERIENCE ===================== -->
-  <section class="section section--cream" id="experience" aria-label="The Chloe experience">
-    <div class="wrap exp-grid">
-      <div class="exp-copy">
-        <p class="eyebrow reveal">The Chloe Experience</p>
-        <h2 class="h2 reveal d1">Jewelry feels different when it&rsquo;s personal.</h2>
-        <p class="reveal d2">At Chloe Jewelers, every appointment is centered around you. Explore a thoughtfully selected collection, receive personal guidance, and take the time to find the piece that feels just right.</p>
-
-        <ul class="exp-points reveal d2">
-          <li class="exp-point"><span class="idx">i</span><span class="txt">A thoughtfully curated selection</span></li>
-          <li class="exp-point"><span class="idx">ii</span><span class="txt">Personal, one-on-one guidance</span></li>
-          <li class="exp-point"><span class="idx">iii</span><span class="txt">Convenient daytime and evening appointments</span></li>
-        </ul>
-
-        <p class="exp-note reveal d3">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="2.5"/></svg>
-          Location details are provided when your appointment is confirmed.
-        </p>
-      </div>
-
-      <div class="exp-visual reveal d1">
-        <div class="piece-frame">
-          <img src="assets/gold-ring.jpg"
-               alt="A woven gold ring photographed on a Chloe Jewelers box, lit softly"
-               width="1333" height="1620" loading="lazy"
-               onerror="this.closest('.piece-frame').classList.add('img-missing')">
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===================== APPOINTMENT / SCHEDULER ===================== -->
-  <section class="section appt" id="appointment" aria-label="Schedule an appointment">
+  <!-- ===================== APPOINTMENT + CONTACT ===================== -->
+  <section class="appt" id="appointment" aria-label="Schedule an appointment">
     <div class="wrap">
       <div class="appt-head reveal">
-        <p class="eyebrow">Schedule an appointment</p>
-        <h2 class="h2">Your time. Your style.<br>Your perfect piece.</h2>
+        <p class="eyebrow">Appointments</p>
+        <h2>Your time. Your style.<br>Your perfect piece.</h2>
         <p>Reserve a private appointment and enjoy personalized guidance in finding the right piece.</p>
-        <div class="appt-type">
-          <span>Private Jewelry Appointment</span>
-          <span class="dot" aria-hidden="true"></span>
-          <span class="dur">45 minutes</span>
-        </div>
       </div>
 
-      <div class="scheduler reveal d1">
-        <div class="scheduler-top">
-          <div class="st-left">
-            <img class="st-logo" src="assets/chloe-logo.png" alt="Chloe Jewelers">
-            <span class="st-div" aria-hidden="true"></span>
-            <span class="st-meta"><strong>Private Jewelry Appointment</strong> · 45 min · one-on-one</span>
-          </div>
-          <span class="st-avail"><span class="pip" aria-hidden="true"></span>Booking open</span>
-        </div>
+      <div class="appt-panel reveal d1">
+        <!-- Cal.com inline embed mounts here once configured (see main.js CONFIG.calLink) -->
+        <div id="cal-inline"></div>
 
-        <div class="scheduler-body">
-          <!-- Cal.com inline embed mounts here once configured (see main.js CONFIG.calLink) -->
-          <div id="cal-inline" hidden></div>
-
-          <!-- Polished preview / setup state shown until the real Cal.com link is added -->
-          <div class="cal-preview" id="cal-preview">
-            <div class="cp-intro">
-              <span class="cp-note">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                Live availability
-              </span>
-              <h3>Choose a time that suits you.</h3>
-              <p>Pick a day and time and we&rsquo;ll confirm your private appointment by email, synced to your calendar. To reserve, we&rsquo;ll ask for a few details:</p>
-              <ul class="cp-fields">
-                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>Your name</li>
-                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.4 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg>Phone number</li>
-                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg>Email address</li>
-                <li class="opt"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>What are you looking for? <em>(optional)</em></span></li>
-              </ul>
-            </div>
-
-            <div class="cp-cal" aria-hidden="true">
-              <div class="cp-cal-head">
-                <span class="m">This week</span>
-                <span class="nav-dots"><i></i><i></i></span>
-              </div>
-              <div class="cp-grid">
-                <span class="dow">M</span><span class="dow">T</span><span class="dow">W</span><span class="dow">T</span><span class="dow">F</span><span class="dow">S</span><span class="dow">S</span>
-                <span class="d mut">28</span><span class="d mut">29</span><span class="d">30</span><span class="d on">1</span><span class="d">2</span><span class="d">3</span><span class="d mut">4</span>
-                <span class="d">5</span><span class="d">6</span><span class="d sel">7</span><span class="d">8</span><span class="d">9</span><span class="d mut">10</span><span class="d mut">11</span>
-                <span class="d">12</span><span class="d">13</span><span class="d">14</span><span class="d">15</span><span class="d">16</span><span class="d mut">17</span><span class="d mut">18</span>
-              </div>
-              <div class="cp-slots">
-                <span class="slot">11:00</span>
-                <span class="slot">1:30</span>
-                <span class="slot eve">6:00</span>
-                <span class="slot eve">7:15</span>
-              </div>
-            </div>
-
-            <p class="setup-hint" id="setup-hint">
-              <strong>Setup:</strong> This is a live preview. To go live, open <code>main.js</code> and set
-              <code>CONFIG.calLink</code> to your Cal.com event path (e.g. <code>"chloe-jewelers/private-appointment"</code>).
-              The real Cal.com scheduler — with live availability, Google Calendar sync, confirmations, rescheduling and cancellation — then replaces this preview automatically.
-            </p>
+        <!-- Refined state shown until the real Cal.com link is configured -->
+        <div class="appt-cta" id="appt-cta">
+          <p class="ac-name">Private Jewelry Appointment</p>
+          <p class="ac-soon">Online scheduling coming shortly</p>
+          <div class="appt-actions">
+            <a class="btn btn-light" href="tel:+18455380053">Call 845-538-0053</a>
+            <a class="btn btn-ghost btn-ghost--light" href="mailto:chloejewelers@gmail.com">Email Chloe</a>
           </div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ===================== CONTACT ===================== -->
-  <section class="section contact" id="contact" aria-label="Contact">
-    <div class="wrap contact-grid">
-      <div class="contact-final">
-        <p class="eyebrow reveal">Let&rsquo;s begin</p>
-        <h2 class="h2 reveal d1">Let&rsquo;s find your perfect piece.</h2>
-        <a class="btn btn-primary btn-lg reveal d2" href="#appointment" data-appt-cta>Schedule Your Appointment</a>
-      </div>
-
-      <div class="contact-details reveal d1">
-        <div class="cd-row">
-          <span class="cd-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.4 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg></span>
-          <div><div class="cd-k">Call or text</div><a class="cd-v" href="tel:+18455380053">845-538-0053</a></div>
+      <div class="contact">
+        <div class="contact-grid reveal">
+          <div class="contact-item">
+            <div class="ci-k">Call</div>
+            <a class="ci-v" href="tel:+18455380053">845-538-0053</a>
+          </div>
+          <div class="contact-item">
+            <div class="ci-k">Email</div>
+            <a class="ci-v" href="mailto:chloejewelers@gmail.com">chloejewelers@gmail.com</a>
+          </div>
         </div>
-        <div class="cd-row">
-          <span class="cd-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg></span>
-          <div><div class="cd-k">Email</div><a class="cd-v" href="mailto:chloejewelers@gmail.com">chloejewelers@gmail.com</a></div>
-        </div>
-        <div class="cd-row">
-          <span class="cd-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></span>
-          <div><div class="cd-k">Instagram</div><a class="cd-v" data-instagram href="#" aria-label="Chloe Jewelers on Instagram">Follow Chloe Jewelers</a></div>
-        </div>
-        <div class="cd-tags">
-          <span class="cd-tag">By appointment only</span>
-          <span class="cd-tag">Daytime &amp; evening appointments available</span>
+        <div class="contact-tags reveal d1">
+          <span class="contact-tag">By appointment only</span>
+          <span class="contact-tag">Daytime and evening appointments available</span>
+          <span class="contact-tag">Location details provided upon confirmation</span>
         </div>
       </div>
     </div>
@@ -320,37 +211,12 @@
 
 </main>
 
-<!-- ===================== FOOTER ===================== -->
 <footer class="footer">
-  <div class="wrap">
-    <div class="footer-top">
-      <div class="footer-brand">
-        <img src="assets/chloe-logo-ivory.png" alt="Chloe Jewelers">
-        <p>An exceptional selection of fine jewelry, discovered through a private, personalized appointment.</p>
-      </div>
-      <div class="footer-nav">
-        <div class="footer-col">
-          <h4>Explore</h4>
-          <a href="#collection">Collection</a>
-          <a href="#experience">The Chloe Experience</a>
-          <a href="#appointment">Appointment</a>
-        </div>
-        <div class="footer-col">
-          <h4>Contact</h4>
-          <a href="tel:+18455380053">845-538-0053</a>
-          <a href="mailto:chloejewelers@gmail.com">chloejewelers@gmail.com</a>
-          <p>By appointment only</p>
-          <div class="footer-social">
-            <a data-instagram href="#" aria-label="Chloe Jewelers on Instagram">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© <span id="year">2026</span> Chloe Jewelers. All rights reserved.</span>
-      <span class="fb-note">Thoughtfully crafted with high-quality lab-grown diamonds.</span>
+  <div class="footer-inner">
+    <img src="assets/chloe-logo-ivory.png" alt="Chloe Jewelers">
+    <div class="footer-meta">
+      <span>© <span id="year">2026</span> Chloe Jewelers</span>
+      <span>By appointment only</span>
     </div>
   </div>
 </footer>

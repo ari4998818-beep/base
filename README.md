@@ -1,8 +1,17 @@
 # Chloe Jewelers — Website
 
-A polished, responsive one-page site for **Chloe Jewelers**, an appointment-based
-fine-jewelry business. Editorial, warm, and quietly luxurious — built around the
-burgundy CHLOE logo. Not an e-commerce store: no prices, cart, or product catalog.
+A short, highly art-directed one-page site for **Chloe Jewelers**, an
+appointment-based fine-jewelry business. Built around a single visual concept —
+a **modern jewelry display case**: fine burgundy architectural lines, warm ivory
+space, the burgundy CHLOE logo, and editorial photography, presented as one
+continuous designed experience. Not an e-commerce store: no prices, cart, or
+product catalog.
+
+**Four compact sections:** (1) the art-directed display-case hero, (2) Selection ·
+Quality · Personal Service, (3) one editorial jewelry showcase, (4) appointment +
+contact. On load, the burgundy lines draw the case, the logo appears, the jewelry
+settles in, and a few diamonds catch the light — slow and restrained, and disabled
+under `prefers-reduced-motion`.
 
 ## What's here
 
@@ -38,8 +47,9 @@ To use different images later, replace the files (or edit the `src` paths in
 
 ## 2) Connect the real Cal.com scheduler
 
-The appointment section shows a polished **preview** until you add a real booking
-link. In `main.js`, set:
+The appointment section shows a refined **“Online scheduling coming shortly”**
+state (with call/email actions) until you add a real booking link — no fake
+calendar, availability, or dates are shown. In `main.js`, set:
 
 ```js
 const CONFIG = {
@@ -48,7 +58,7 @@ const CONFIG = {
 };
 ```
 
-Once set, the live Cal.com inline embed replaces the preview automatically —
+Once set, the live Cal.com inline embed replaces that state automatically —
 handling live availability, Google Calendar sync, confirmations, rescheduling and
 cancellation. Configure the booking questions **(name, phone, email, and the
 optional “What are you looking for?”)** on the Cal.com event type itself. The embed
