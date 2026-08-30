@@ -1,45 +1,85 @@
-# Bright Sky Management — Website
+# Chloe Jewelers — Website
 
-A clean, consistent rebuild of the Bright Sky Management homepage, applying a
-single unified design system (color, type, spacing, components) so every section
-speaks with the same voice.
+A polished, responsive one-page site for **Chloe Jewelers**, an appointment-based
+fine-jewelry business. Editorial, warm, and quietly luxurious — built around the
+burgundy CHLOE logo. Not an e-commerce store: no prices, cart, or product catalog.
 
 ## What's here
 
 | File | Purpose |
 |------|---------|
-| `index.html` | The full homepage — nav, hero, communities, about, impact, testimonials, contact, footer. |
-| `styles.css` | The design system. Every color/font/size/spacing value lives here as a CSS variable (`:root`). **Change a token once, it updates everywhere.** |
-| `main.js` | Light interactivity (testimonial carousel, contact-form feedback, tabs). No frameworks, no build step. |
-
-## Design system at a glance (v2 — "Trust")
-
-A restrained, institutional system: navy-led, quiet on accent, solid in structure.
-
-- **Headings:** Source Serif 4 (transitional serif, weights 500–600) — all of them.
-- **Body / UI:** Libre Franklin (neutral grotesque).
-- **Signature line:** Source Serif *italic*, small and quiet — no script font.
-- **Accent:** deep steel `#2E4D6B`, used on ~10% of the page. Navy `#16273F` leads; primary buttons are navy, not bright blue. Dark surfaces: ink `#0A1628`.
-- **Spacing rhythm:** 80px sections on mobile → 128px on desktop.
-- **Radii:** 4 (buttons/inputs/tags) · 8 (cards) · 12 (feature). No pills (avatars only).
-- **Elevation:** hairline 1px borders over near-invisible shadows — no glow.
-- **Stats:** real figures (units, years, states), never adjectives.
+| `index.html` | The full one-page site — nav, hero, brand values, collection, the Chloe experience, appointment scheduler, contact, footer. Semantic HTML with SEO metadata. |
+| `styles.css` | The design system. Every color, font, and spacing value lives as a CSS variable in `:root`. **Change a token once, it updates everywhere.** |
+| `main.js` | Interactions (scroll reveals, hero parallax + light-catches, mobile menu, custom cursor, Cal.com embed). No frameworks, no build step. The **CONFIG** block at the top holds everything you routinely change. |
+| `assets/` | Brand logo (rendered from the supplied `.ai`), favicon, and the jewelry photographs. |
 
 ## Run it locally
 
-It's a static site — just open `index.html` in a browser, or:
+Static site — just open `index.html`, or:
 
 ```bash
 python3 -m http.server 8000   # then visit http://localhost:8000
 ```
 
+## 1) Add the jewelry photographs
+
+The layout reserves three correctly-proportioned image slots. Drop your photos
+into `assets/` using these exact names (until then, an on-brand placeholder shows
+in each slot — no broken images, no layout shift):
+
+| File | Where it appears | Suggested crop |
+|------|------------------|----------------|
+| `assets/hero-necklace.jpg` | Hero + Collection “Signature Necklaces” | portrait ~1104 × 1288 |
+| `assets/silver-set.jpg` | Collection “Refined Essentials” | portrait ~852 × 1120 |
+| `assets/gold-ring.jpg` | Collection “Pieces for Every Occasion” + Experience | portrait ~1333 × 1620 |
+
+To use different images later, replace the files (or edit the `src` paths in
+`index.html`). Keep roughly the same aspect ratios to preserve the crops.
+
+## 2) Connect the real Cal.com scheduler
+
+The appointment section shows a polished **preview** until you add a real booking
+link. In `main.js`, set:
+
+```js
+const CONFIG = {
+  calLink: "chloe-jewelers/private-appointment",  // your Cal.com "username/event-slug"
+  ...
+};
+```
+
+Once set, the live Cal.com inline embed replaces the preview automatically —
+handling live availability, Google Calendar sync, confirmations, rescheduling and
+cancellation. Configure the booking questions **(name, phone, email, and the
+optional “What are you looking for?”)** on the Cal.com event type itself. The embed
+is themed to the Chloe palette via `Cal("ui", …)`.
+
+> No live Cal.com username is invented in this code — you supply the real one.
+
+## 3) Business details & Instagram
+
+Phone, email, and the Instagram URL also live in `main.js` → `CONFIG`. The
+Instagram link stays visible but does not navigate anywhere until you set
+`CONFIG.instagram` to a real profile URL (no handle is invented).
+
+- **Phone:** 845-538-0053 (click-to-call `tel:` link — not WhatsApp)
+- **Email:** chloejewelers@gmail.com
+- By appointment only · daytime and evening appointments available
+- No street address is displayed anywhere on the site.
+
+## Brand & accessibility notes
+
+- **Logo:** the supplied burgundy CHLOE logo is used intact (rendered from the
+  `.ai` file to `assets/chloe-logo.png`, plus an ivory version for dark
+  backgrounds). It is never recreated with a font.
+- **Type:** Bodoni Moda for editorial headings, Manrope for body/UI/labels
+  (Google Fonts).
+- **Palette:** burgundy `#4C1423`, champagne `#C59D71`, ivory `#F7F4F4`,
+  cream `#F1E9E1`, charcoal `#272223`.
+- Keyboard accessible with visible focus states, strong contrast, semantic
+  landmarks, and full `prefers-reduced-motion` support (animations, parallax, and
+  the custom cursor all disable).
+
 ## Deploy
 
-Any static host works (Netlify, Vercel, GitHub Pages). `netlify.toml` is included
-so Netlify serves the repo root with no build step.
-
-## Swapping the photos
-
-Hero, community, and feature images load from Unsplash. To use your own photos,
-drop them in an `assets/` folder and update the `src` attributes in `index.html`.
-If an image fails to load, a brand-colored gradient shows in its place.
+Any static host works. `netlify.toml` serves the repo root with no build step.
