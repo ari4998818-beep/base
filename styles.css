@@ -255,7 +255,7 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.06; let
 .hero-media { position: relative; z-index: 2; }
 .hero-frame {
   position: relative;
-  aspect-ratio: 1104 / 1288;
+  aspect-ratio: 1104 / 1280;
   border-radius: 2px;
   overflow: hidden;
   background: linear-gradient(150deg, var(--beige-tint), var(--cream));
@@ -348,7 +348,7 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.06; let
 .piece { position: relative; }
 .piece-a { grid-column: 1 / 7; }
 .piece-b { grid-column: 8 / 13; margin-bottom: clamp(40px, 7vw, 96px); }
-.piece-c { grid-column: 3 / 10; margin-top: clamp(20px, 4vw, 56px); }
+.piece-c { grid-column: 4 / 10; margin-top: clamp(20px, 4vw, 56px); }
 
 .piece-frame {
   position: relative; overflow: hidden; border-radius: 2px;
@@ -357,9 +357,9 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.06; let
 }
 .piece-frame img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s var(--ease-out); }
 .piece:hover .piece-frame img { transform: scale(1.045); }
-.piece-a .piece-frame { aspect-ratio: 1104 / 1288; }
-.piece-b .piece-frame { aspect-ratio: 852 / 1120; }
-.piece-c .piece-frame { aspect-ratio: 1333 / 980; }
+.piece-a .piece-frame { aspect-ratio: 1104 / 1280; }
+.piece-b .piece-frame { aspect-ratio: 853 / 1280; }
+.piece-c .piece-frame { aspect-ratio: 1333 / 1720; }
 
 .piece-cap { display: flex; align-items: baseline; gap: 14px; margin-top: 18px; }
 .piece-cap .num { font-family: var(--serif); font-style: italic; font-size: 14px; color: var(--champagne-ink); }
@@ -387,7 +387,7 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.06; let
 .exp-note svg { color: var(--champagne-ink); flex-shrink: 0; }
 
 .exp-visual { position: relative; }
-.exp-visual .piece-frame { aspect-ratio: 1333 / 1620; }
+.exp-visual .piece-frame { aspect-ratio: 1333 / 1720; }
 .exp-visual .piece-frame img { width: 100%; height: 100%; object-fit: cover; }
 .exp-visual::before {
   content: ""; position: absolute; right: -14px; top: -14px; width: 50%; height: 50%;
@@ -558,7 +558,7 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.06; let
   .showcase-grid { display: block; }
   .piece + .piece { margin-top: clamp(30px, 7vw, 56px); }
   .piece-a, .piece-b, .piece-c { margin: 0; }
-  .piece-b .piece-frame { aspect-ratio: 852 / 1120; }
+  .piece-b .piece-frame { aspect-ratio: 853 / 1280; }
   .exp-grid { grid-template-columns: 1fr; gap: 40px; }
   .exp-visual { order: -1; max-width: 460px; }
   .cal-preview { grid-template-columns: 1fr; }
