@@ -176,7 +176,7 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.05; let
 .corner-chain--light { color: var(--champagne); opacity: .5; }
 
 .appt-right { padding: clamp(32px, 4vw, 64px) clamp(22px, 3vw, 56px); display: flex; align-items: center; }
-.scheduler { background: var(--ivory); color: var(--charcoal); width: 100%; padding: clamp(24px, 2.6vw, 40px); box-shadow: 0 40px 80px -50px rgba(0,0,0,.7); }
+.scheduler { background: var(--ivory); color: var(--charcoal); width: 100%; max-width: 680px; margin-inline: auto; padding: clamp(22px, 2.2vw, 32px); box-shadow: 0 40px 80px -50px rgba(0,0,0,.7); }
 .scheduler .s-eyebrow { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--champagne-ink); margin-bottom: 12px; }
 .scheduler h3 { font-size: clamp(1.5rem, 2.4vw, 2rem); margin-bottom: 20px; }
 .scheduler .orn { color: var(--champagne); margin-bottom: 22px; }
@@ -205,9 +205,9 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.05; let
 /* appointment footer bar */
 .appt-footer { border-top: 1px solid rgba(247,244,244,.16); margin-top: clamp(40px, 5vw, 64px); }
 .appt-footer-inner { display: flex; align-items: center; gap: 0; flex-wrap: wrap; }
-.af-cell { padding: clamp(20px, 2.4vw, 30px) clamp(16px, 2vw, 30px); font-size: 13.5px; color: rgba(247,244,244,.82); }
+.af-cell { padding: clamp(26px, 3.2vw, 44px) clamp(18px, 2.2vw, 34px); font-size: 15px; color: rgba(247,244,244,.85); }
 .af-cell + .af-cell { border-left: 1px solid rgba(247,244,244,.16); }
-.af-logo img { height: 34px; width: auto; }
+.af-logo img { height: 44px; width: auto; }
 .af-cell a:hover { color: var(--ivory); text-decoration: underline; text-underline-offset: 3px; }
 .af-push { margin-left: auto; border-left: none !important; }
 
