@@ -91,9 +91,15 @@ if (reduceMotion) {
 /* Hero light-catches */
 if (!reduceMotion) setTimeout(() => $$(".sparkle").forEach(s => s.classList.add("go")), 2000);
 
-/* Subtle cursor parallax on the hero photo */
+/* Respect reduced motion: hold the hero video on its poster frame */
+if (reduceMotion) {
+  const hv = $(".hero-video");
+  if (hv) { hv.removeAttribute("autoplay"); hv.pause?.(); }
+}
+
+/* Subtle cursor parallax on the hero photo/video */
 if (finePointer && !reduceMotion) {
-  const photo = $(".hero-right img");
+  const photo = $(".hero-right video, .hero-right img");
   const hero = $(".hero-right");
   let tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
   const loop = () => {
