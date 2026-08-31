@@ -99,7 +99,7 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.05; let
 
 /* ============================== HERO ============================== */
 .hero { position: relative; background: var(--ivory); }
-.case { position: relative; height: calc(100svh - var(--nav-h)); min-height: 600px; margin-top: var(--nav-h); display: grid; grid-template-columns: 38% 62%; }
+.case { position: relative; height: calc(100svh - var(--nav-h) - 210px); min-height: 500px; margin-top: var(--nav-h); display: grid; grid-template-columns: 38% 62%; }
 
 .ln { position: absolute; background: var(--line); z-index: 3; }
 .ln-vert   { top: 0; left: 38%; width: 1px; height: 100%; transform: scaleY(0); transform-origin: top; animation: drawY 1.2s var(--ease) .5s forwards; }
