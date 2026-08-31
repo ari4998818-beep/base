@@ -48,8 +48,8 @@
       <img src="assets/chloe-logo.png" alt="Chloe Jewelers" width="1202" height="750">
     </a>
     <nav class="nav-links" aria-label="Primary">
-      <a href="#collection">Collection</a>
-      <a href="#appointment">Appointment</a>
+      <a href="#collection">Discover Chloe</a>
+      <a href="#appointment">Private jewelry appointments</a>
     </nav>
     <div class="nav-right">
       <a class="btn btn-primary nav-cta" href="#appointment" data-appt-cta>Schedule an Appointment</a>
@@ -62,8 +62,8 @@
 </header>
 
 <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
-  <a class="m-link" href="#collection">Collection</a>
-  <a class="m-link" href="#appointment">Appointment</a>
+  <a class="m-link" href="#collection">Discover Chloe</a>
+  <a class="m-link" href="#appointment">Private jewelry appointments</a>
   <a class="btn btn-primary" href="#appointment" data-appt-cta>Schedule an Appointment</a>
   <p class="m-foot">By appointment only · daytime and evening appointments available<br>
     <a href="tel:+18455380053">845-538-0053</a></p>
@@ -71,155 +71,173 @@
 
 <main>
 
-  <!-- ===================== HERO / DISPLAY CASE ===================== -->
+  <!-- ===================== HERO ===================== -->
   <section class="hero" aria-label="Chloe Jewelers">
     <div class="case">
-      <!-- architectural lines -->
-      <span class="ln ln-top"></span>
-      <span class="ln ln-bottom"></span>
-      <span class="ln ln-left"></span>
-      <span class="ln ln-right"></span>
       <span class="ln ln-vert"></span>
-      <span class="ln ln-horz"></span>
+      <span class="ln ln-bottom"></span>
 
-      <!-- logo compartment -->
-      <div class="cell cell-logo">
+      <div class="hero-left">
         <img class="hero-logo" src="assets/chloe-logo.png" alt="Chloe Jewelers" width="1202" height="750">
-      </div>
-
-      <!-- headline compartment -->
-      <div class="cell cell-text">
-        <p class="eyebrow">Private jewelry appointments</p>
-        <h1 class="hero-title">The perfect piece,<br><span class="serif-italic">personally</span> selected.</h1>
+        <h1 class="hero-title">The perfect piece,<br>personally selected.</h1>
         <p class="hero-copy">Discover an exceptional selection of fine jewelry through a private, personalized appointment.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="#appointment" data-appt-cta>Schedule an Appointment</a>
-          <a class="btn btn-ghost" href="#collection">Discover Chloe</a>
         </div>
-        <p class="hero-note">Daytime and evening appointments available.</p>
+
+        <svg class="corner-chain" viewBox="0 0 210 210" fill="none" aria-hidden="true">
+          <path class="arc" d="M204 26 A 178 178 0 0 1 26 204"/>
+          <ellipse cx="20" cy="150" rx="5" ry="11"/>
+          <ellipse cx="20" cy="170" rx="5" ry="11"/>
+          <ellipse cx="20" cy="190" rx="5" ry="11"/>
+        </svg>
       </div>
 
-      <!-- necklace compartment -->
-      <div class="cell cell-photo" data-parallax>
+      <div class="hero-right" data-parallax>
         <img src="assets/hero-necklace.jpg"
              alt="A gold diamond necklace and matching ring displayed on a soft cream setting embossed with the Chloe Jewelers name"
-             width="1104" height="1280" fetchpriority="high"
-             onerror="this.style.display='none'">
+             width="1104" height="1280" fetchpriority="high" onerror="this.style.display='none'">
+        <span class="sparkle s1" style="left:60%; top:33%"></span>
+        <span class="sparkle s2" style="left:82%; top:46%"></span>
+        <span class="sparkle s3" style="left:70%; top:60%"></span>
       </div>
-
-      <!-- floating specimen: the ring, crossing between compartments -->
-      <div class="inset" data-parallax-soft aria-hidden="true">
-        <div class="inset-frame">
-          <img src="assets/gold-ring.jpg" alt="" width="1333" height="1720" loading="lazy" onerror="this.style.display='none'">
-        </div>
-      </div>
-
-      <!-- chain line connecting the compartments -->
-      <svg class="chain" viewBox="0 0 320 240" fill="none" aria-hidden="true">
-        <path d="M14 26 C150 44 118 176 158 150 C210 116 250 176 306 206"/>
-        <circle cx="14" cy="26" r="2.4"/>
-        <circle cx="158" cy="150" r="2.4"/>
-        <circle cx="306" cy="206" r="2.4"/>
-      </svg>
-
-      <!-- a few light-catches -->
-      <span class="sparkle s1" style="left:60%; top:33%"></span>
-      <span class="sparkle s2" style="left:83%; top:45%"></span>
-      <span class="sparkle s3" style="left:70%; top:60%"></span>
     </div>
   </section>
 
   <!-- ===================== VALUES ===================== -->
   <section class="values" aria-label="Selection, quality, personal service">
     <div class="values-inner">
-      <div class="value" data-value><span class="v-num">i</span><span class="v-word">Selection</span></div>
-      <div class="value" data-value><span class="v-num">ii</span><span class="v-word">Quality</span></div>
-      <div class="value" data-value><span class="v-num">iii</span><span class="v-word">Personal Service</span></div>
+      <div class="value" data-value>
+        <span class="orn" aria-hidden="true"><span class="dia"></span></span>
+        <span class="v-num">i</span><span class="v-word">Selection</span>
+      </div>
+      <div class="value" data-value>
+        <span class="orn" aria-hidden="true"><span class="dia"></span></span>
+        <span class="v-num">ii</span><span class="v-word">Quality</span>
+      </div>
+      <div class="value" data-value>
+        <span class="orn" aria-hidden="true"><span class="dia"></span></span>
+        <span class="v-num">iii</span><span class="v-word">Personal Service</span>
+      </div>
     </div>
     <p class="values-sub reveal">A thoughtfully curated selection, exceptional quality, and the personal guidance to help you find what feels entirely your own.</p>
   </section>
 
   <!-- ===================== SHOWCASE ===================== -->
   <section class="showcase" id="collection" aria-label="The collection">
-    <div class="wrap showcase-grid">
+    <div class="showcase-grid">
       <div class="showcase-copy">
         <p class="eyebrow reveal">The Collection</p>
         <h2 class="reveal d1">A closer look.</h2>
-        <p class="reveal d2">A glimpse of the fine jewelry you might discover in a private appointment — chosen with care, shown by hand.</p>
+        <p class="reveal d2">A glimpse of the fine jewelry you might discover in a private appointment&mdash;chosen with care and shown personally.</p>
         <p class="showcase-statement reveal d3">Thoughtfully crafted with high-quality lab-grown diamonds.</p>
       </div>
-      <div class="showcase-stage reveal d1">
-        <div class="frame frame-main">
-          <img src="assets/silver-set.jpg"
-               alt="A white-gold diamond necklace and floral diamond earrings presented beside a Chloe Jewelers box"
-               width="853" height="1000" loading="lazy" onerror="this.style.display='none'">
-        </div>
-        <div class="frame-inset">
-          <div class="frame">
-            <img src="assets/gold-ring.jpg"
-                 alt="A woven gold band ring resting on a Chloe Jewelers presentation box"
-                 width="1333" height="1720" loading="lazy" onerror="this.style.display='none'">
+      <div class="gallery">
+        <figure class="g-item reveal d1">
+          <div class="g-frame">
+            <img src="assets/gold-ring.jpg" alt="A woven gold band ring resting on a Chloe Jewelers presentation box" width="1333" height="1720" loading="lazy" onerror="this.style.display='none'">
           </div>
-        </div>
+          <figcaption class="g-cap">Refined details, selected for you.</figcaption>
+        </figure>
+        <figure class="g-item reveal d2">
+          <div class="g-frame">
+            <img src="assets/silver-set.jpg" alt="A white-gold diamond necklace and floral diamond earrings presented beside a Chloe Jewelers box" width="853" height="1120" loading="lazy" onerror="this.style.display='none'">
+          </div>
+          <figcaption class="g-cap">Meaningful pieces for every occasion.</figcaption>
+        </figure>
       </div>
     </div>
   </section>
 
-  <!-- ===================== APPOINTMENT + CONTACT ===================== -->
+  <!-- ===================== APPOINTMENT ===================== -->
   <section class="appt" id="appointment" aria-label="Schedule an appointment">
-    <div class="wrap">
-      <div class="appt-head reveal">
-        <p class="eyebrow">Appointments</p>
-        <h2>Your time. Your style.<br>Your perfect piece.</h2>
-        <p>Reserve a private appointment and enjoy personalized guidance in finding the right piece.</p>
+    <div class="appt-grid">
+      <div class="appt-left">
+        <p class="eyebrow reveal">Appointments</p>
+        <h2 class="reveal d1">Your time. Your style.<br>Your perfect piece.</h2>
+        <p class="reveal d2">Reserve a private appointment and enjoy personal guidance in finding the right piece.</p>
+        <ul class="feature-list reveal d2">
+          <li class="feature">
+            <span class="f-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></svg></span>
+            <span class="f-label">By appointment only</span>
+          </li>
+          <li class="feature">
+            <span class="f-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg></span>
+            <span class="f-label">Daytime &amp; evening availability</span>
+          </li>
+          <li class="feature">
+            <span class="f-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+            <span class="f-label">Location provided upon confirmation</span>
+          </li>
+        </ul>
+
+        <svg class="corner-chain corner-chain--light" viewBox="0 0 210 210" fill="none" aria-hidden="true">
+          <path class="arc" d="M204 26 A 178 178 0 0 1 26 204"/>
+          <ellipse cx="20" cy="150" rx="5" ry="11"/>
+          <ellipse cx="20" cy="170" rx="5" ry="11"/>
+          <ellipse cx="20" cy="190" rx="5" ry="11"/>
+        </svg>
       </div>
 
-      <div class="appt-panel reveal d1">
-        <!-- Cal.com inline embed mounts here once configured (see main.js CONFIG.calLink) -->
+      <div class="appt-right">
+        <!-- Cal.com inline embed mounts here if CONFIG.calLink is set (see main.js) -->
         <div id="cal-inline"></div>
 
-        <!-- Refined state shown until the real Cal.com link is configured -->
-        <div class="appt-cta" id="appt-cta">
-          <p class="ac-name">Private Jewelry Appointment</p>
-          <p class="ac-soon">Online scheduling coming shortly</p>
-          <div class="appt-actions">
-            <a class="btn btn-light" href="tel:+18455380053">Call 845-538-0053</a>
-            <a class="btn btn-ghost btn-ghost--light" href="mailto:chloejewelers@gmail.com">Email Chloe</a>
+        <div class="scheduler reveal d1" id="scheduler">
+          <p class="s-eyebrow">Private Jewelry Appointment</p>
+          <h3>Choose a time that suits you.</h3>
+          <div class="orn orn--tight" aria-hidden="true"><span class="dia"></span></div>
+
+          <div class="sched-body">
+            <div class="sched-cal">
+              <div class="cal-head">
+                <button class="cal-nav" id="cal-prev" aria-label="Previous month">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <span class="cal-month" id="cal-month" aria-live="polite">Month</span>
+                <button class="cal-nav" id="cal-next" aria-label="Next month">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+              </div>
+              <div class="cal-grid" role="grid" aria-label="Select a date">
+                <span class="dow" aria-hidden="true">Sun</span>
+                <span class="dow" aria-hidden="true">Mon</span>
+                <span class="dow" aria-hidden="true">Tue</span>
+                <span class="dow" aria-hidden="true">Wed</span>
+                <span class="dow" aria-hidden="true">Thu</span>
+                <span class="dow" aria-hidden="true">Fri</span>
+                <span class="dow" aria-hidden="true">Sat</span>
+                <!-- days injected by main.js -->
+              </div>
+            </div>
+
+            <div class="sched-slots" role="group" aria-label="Select a time">
+              <button class="slot" data-slot>11:00 AM</button>
+              <button class="slot" data-slot>1:30 PM</button>
+              <button class="slot" data-slot>6:00 PM</button>
+              <button class="slot" data-slot>7:15 PM</button>
+              <div class="slot-continue">
+                <button class="btn btn-primary" id="sched-continue">Continue</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="contact">
-        <div class="contact-grid reveal">
-          <div class="contact-item">
-            <div class="ci-k">Call</div>
-            <a class="ci-v" href="tel:+18455380053">845-538-0053</a>
-          </div>
-          <div class="contact-item">
-            <div class="ci-k">Email</div>
-            <a class="ci-v" href="mailto:chloejewelers@gmail.com">chloejewelers@gmail.com</a>
-          </div>
-        </div>
-        <div class="contact-tags reveal d1">
-          <span class="contact-tag">By appointment only</span>
-          <span class="contact-tag">Daytime and evening appointments available</span>
-          <span class="contact-tag">Location details provided upon confirmation</span>
-        </div>
+    <!-- footer bar -->
+    <div class="appt-footer">
+      <div class="appt-footer-inner">
+        <div class="af-cell af-logo"><img src="assets/chloe-logo-ivory.png" alt="Chloe Jewelers"></div>
+        <div class="af-cell"><a href="tel:+18455380053">845-538-0053</a></div>
+        <div class="af-cell"><a href="mailto:chloejewelers@gmail.com">chloejewelers@gmail.com</a></div>
+        <div class="af-cell af-push">By appointment only</div>
+        <div class="af-cell">© <span id="year">2026</span> Chloe Jewelers</div>
       </div>
     </div>
   </section>
 
 </main>
-
-<footer class="footer">
-  <div class="footer-inner">
-    <img src="assets/chloe-logo-ivory.png" alt="Chloe Jewelers">
-    <div class="footer-meta">
-      <span>© <span id="year">2026</span> Chloe Jewelers</span>
-      <span>By appointment only</span>
-    </div>
-  </div>
-</footer>
 
 <script src="main.js"></script>
 </body>
