@@ -110,7 +110,7 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.05; let
 .hero-left { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; padding: clamp(28px, 4vw, 64px); }
 .hero-logo { width: clamp(210px, 24vw, 360px); height: auto; margin-bottom: clamp(22px, 3vw, 40px); opacity: 0; transform: scale(.96); animation: logoIn 1.3s var(--ease-out) 1s forwards; }
 @keyframes logoIn { to { opacity: 1; transform: none; } }
-.hero-title { font-size: clamp(2.1rem, 3.2vw, 3.1rem); line-height: 1.08; margin-bottom: 20px; text-wrap: balance; opacity: 0; animation: fadeUp 1s var(--ease-out) 1.35s forwards; }
+.hero-title { font-weight: 400; font-size: clamp(2.15rem, 3.4vw, 3.4rem); line-height: 1.1; letter-spacing: -0.004em; margin-bottom: 22px; text-wrap: balance; opacity: 0; animation: fadeUp 1s var(--ease-out) 1.35s forwards; }
 .hero-copy { color: var(--text-soft); font-size: clamp(1rem, 1.15vw, 1.08rem); max-width: 38ch; margin-bottom: 28px; opacity: 0; animation: fadeUp 1s var(--ease-out) 1.5s forwards; }
 .hero-actions { opacity: 0; animation: fadeUp 1s var(--ease-out) 1.65s forwards; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
