@@ -1,10 +1,10 @@
-# Inside the Sukkah
+# SukkahPin
 
 A community gallery of sukkahs: discover, submit, vote, and shop the look.
 Static site, no build step: plain HTML, CSS, and ES modules.
 
 ```bash
-cd inside-the-sukkah
+cd sukkahpin
 python3 -m http.server 8000   # → http://localhost:8000
 ```
 
@@ -33,6 +33,7 @@ js/ui.js        cards, vote flow, WhatsApp share, modal, toast
 js/views/*.js   one file per page
 css/styles.css  the whole design system (tokens at the top)
 img/            placeholder photos
+brand/          logo (SVG + PNG), icon, and ready-made social graphics
 ```
 
 ## Things to know before launch
@@ -56,3 +57,21 @@ img/            placeholder photos
 English is the default. The **אידיש** button in the nav switches the interface to heimish Yiddish and the
 layout to right-to-left. Owner-written content (titles, descriptions, notes) stays in the owner's language.
 Share text on WhatsApp follows the current language.
+
+## Brand
+
+The wordmark is **SukkahPin** in Inter Tight Bold, converted to outlines so it renders the same everywhere.
+The dot of the "i" is a green pin (`#7CC242`) with a cut-out eye. The UI accent stays citron (`#D8F23A`).
+
+| File | Use |
+|---|---|
+| `brand/sukkahpin-logo.svg` / `png/sukkahpin-logo.png` | Default: black type, green pin, transparent |
+| `brand/sukkahpin-logo-white.svg` / `.png` | On dark backgrounds or photos |
+| `brand/sukkahpin-logo-black.svg` / `.png` | One-colour (print, stamps) |
+| `brand/sukkahpin-pin.svg`, `sukkahpin-icon.svg`, `png/sukkahpin-icon-*.png` | Favicon, app icon, small spaces |
+| `brand/social/whatsapp-status-1080x1920.png` | WhatsApp status / stories |
+| `brand/social/og-image-1200x630.png` | Link previews (WhatsApp, iMessage, social) |
+| `brand/social/avatar-*.png` | Profile pictures (circle-safe) |
+
+Keep clear space around the wordmark of at least the pin's height. Don't recolour the type, stretch it, or put
+the green pin on the citron accent.

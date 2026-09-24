@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Inside the Sukkah — design system
+   SukkahPin — design system
    White, black, one citron accent. Type and photography do the work.
    ========================================================================== */
 
@@ -130,9 +130,10 @@ code { font-size: .92em; background: var(--soft); padding: 1px 6px; border-radiu
 }
 body.scrolled .nav, body:not([data-route='home']) .nav { background: rgba(255,255,255,.86); backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px); }
 body.scrolled .nav { box-shadow: 0 1px 0 var(--line); }
-.logo { display: inline-grid; position: relative; font: 800 17px/.95 var(--f-display); letter-spacing: -0.02em; text-transform: uppercase; }
-.logo i { position: absolute; top: -4px; left: 72px; font: 600 20px/1 var(--f-body); color: var(--lime); -webkit-text-stroke: .5px #b8cf2a; font-style: normal; }
-[dir='rtl'] .logo { font-family: 'Inter Tight', sans-serif; direction: ltr; }
+.logo { display: inline-flex; flex: none; }
+.logo img { height: 30px; width: auto; display: block; }
+.f-row .logo img { height: 26px; }
+@media (max-width: 560px) { .nav .logo img { height: 26px; } }
 .nav-links { display: flex; gap: 32px; margin-inline: auto; font-size: 14px; font-weight: 500; }
 .nav-links a { position: relative; padding: 6px 0; }
 .nav-links a::after { content: ''; position: absolute; inset: auto 0 0; height: 2px; background: var(--lime); transform: scaleX(0); transition: transform .3s var(--ease); transform-origin: left; }

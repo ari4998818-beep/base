@@ -5,8 +5,8 @@
 
 import { SEED_SUKKAHS, SEED_USERS, SEED_PRODUCTS, SEED_SETTINGS } from './seed.js';
 
-const KEY = 'its:v1';
-const DEVICE_KEY = 'its:device';
+const KEY = 'sp:v1';
+const DEVICE_KEY = 'sp:device';
 const listeners = new Set();
 
 const uid = (p = '') => p + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-3);
@@ -175,7 +175,7 @@ export function patchHotspot(sukkahId, hotspotId, patch) {
  * UI shows it. With a backend, send the email server-side and return nothing.
  */
 
-const VERIFIED_KEY = 'its:voter';
+const VERIFIED_KEY = 'sp:voter';
 export const voterEmail = () => { try { return localStorage.getItem(VERIFIED_KEY) || ''; } catch { return ''; } };
 const normEmail = (e) => e.trim().toLowerCase();
 export const validEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e.trim());
@@ -230,7 +230,7 @@ export function removeVote(id) {
 
 let dbp;
 const db = () => (dbp ??= new Promise((res, rej) => {
-  const r = indexedDB.open('its-photos', 1);
+  const r = indexedDB.open('sp-photos', 1);
   r.onupgradeneeded = () => r.result.createObjectStore('photos');
   r.onsuccess = () => res(r.result);
   r.onerror = () => rej(r.error);

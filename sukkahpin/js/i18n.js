@@ -1,4 +1,4 @@
-// English is the default. Yiddish is heimish Yiddish (the way it's written in
+// SukkahPin UI copy. English is the default. Yiddish is heimish Yiddish (the way it's written in
 // Williamsburg / Monsey / Lakewood): short, conversational, English loanwords
 // where that's what people actually say. Sukkah content (titles, descriptions)
 // stays as the owner wrote it; only the interface switches.
@@ -33,7 +33,7 @@ const en = {
   'vote.done': 'Your vote is in.', 'vote.doneSub': 'Want to help it win? Send it to your family chat.',
   'vote.dup': 'You already voted for this one.', 'vote.dupSub': 'Thanks! Sharing it helps just as much.',
   'share.wa': 'Share on WhatsApp', 'share.copy': 'Copy link', 'share.copied': 'Link copied',
-  'share.text': 'Check out this sukkah — vote for it here.',
+  'share.text': 'Check out this sukkah on SukkahPin — vote for it here.',
 
   'detail.by': 'By', 'detail.votes': 'votes', 'detail.special': 'What makes it special', 'detail.shop': 'Shop this sukkah',
   'detail.shopOn': 'Hide products', 'detail.shopHint': 'Tap ✦ to see what’s in the photo', 'detail.shopSection': 'Shop this sukkah',
@@ -105,7 +105,7 @@ const yi = {
   'vote.done': 'אייער שטימע איז אריין!', 'vote.doneSub': 'ווילט איר העלפן? שיקט עס אין די משפחה גרופע.',
   'vote.dup': 'איר האט שוין געשטימט פאר די סוכה.', 'vote.dupSub': 'יישר כח! שיקן עס ווייטער העלפט פונקט אזוי.',
   'share.wa': 'שיקט אויף וואטסעפ', 'share.copy': 'קאפירט דעם לינק', 'share.copied': 'דער לינק איז קאפירט',
-  'share.text': 'קוקט אויף די סוכה — גיבט א שטימע דא.',
+  'share.text': 'קוקט אויף די סוכה אויף SukkahPin — גיבט א שטימע דא.',
 
   'detail.by': 'פון', 'detail.votes': 'שטימען', 'detail.special': 'וואס איז ספעציעל', 'detail.shop': 'שאפט די סוכה',
   'detail.shopOn': 'באהאלט', 'detail.shopHint': 'דריקט אויף ✦ צו זען וואס איז אין בילד', 'detail.shopSection': 'שאפט די סוכה',
@@ -148,7 +148,7 @@ const yi = {
 };
 
 const DICTS = { en, yi };
-const LANG_KEY = 'its:lang';
+const LANG_KEY = 'sp:lang';
 
 export let lang = (() => { try { return localStorage.getItem(LANG_KEY) === 'yi' ? 'yi' : 'en'; } catch { return 'en'; } })();
 

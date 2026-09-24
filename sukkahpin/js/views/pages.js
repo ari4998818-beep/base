@@ -123,8 +123,8 @@ export function renderAbout(root) {
         : 'Someone built theirs from old pallets. Someone hung a chandelier. Someone put theirs on a Brooklyn rooftop with the whole skyline for a wall.'}</p>
       <div class="about-cols">
         <p>${yi
-          ? 'Inside the Sukkah איז א פלאץ צו זען די סוכות — נישט נאר די שיינסטע, נאר די וואס האבן א מעשה. מ׳קען כאפן אידעעס, שטימען פאר די וואס געפעלן אייך, און זען פונקט וואו מ׳האט יעדע לעמפ און יעדן טישטעך געקויפט.'
-          : 'Inside the Sukkah is a place to look at sukkahs — not just the most expensive ones, but the ones with a story. Get ideas, vote for the ones you love, and see exactly where every lamp and tablecloth came from.'}</p>
+          ? 'SukkahPin איז א פלאץ צו זען די סוכות — נישט נאר די שיינסטע, נאר די וואס האבן א מעשה. מ׳קען כאפן אידעעס, שטימען פאר די וואס געפעלן אייך, און זען פונקט וואו מ׳האט יעדע לעמפ און יעדן טישטעך געקויפט.'
+          : 'SukkahPin is a place to look at sukkahs — not just the most expensive ones, but the ones with a story. Get ideas, vote for the ones you love, and see exactly where every lamp and tablecloth came from.'}</p>
         <p>${yi
           ? 'עס קאסט גארנישט און עס נעמט פינף מינוט. בילדער פון טעלעפאן זענען פונקט גוט.'
           : 'Sharing yours is free and takes about five minutes. Photos from your phone are perfect.'}</p>

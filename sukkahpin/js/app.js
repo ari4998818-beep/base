@@ -22,7 +22,7 @@ const ROUTES = [
 function chrome() {
   const links = [['explore', '#/explore', 'nav.explore'], ['submit', '#/submit', 'nav.submit'], ['sources', '#/sources', 'nav.sources'], ['winners', '#/winners', 'nav.winners'], ['about', '#/about', 'nav.about']];
   $('#nav').innerHTML = `
-    <a class="logo" href="#/" aria-label="Inside the Sukkah — home"><span>Inside</span><span>the Sukkah</span><i aria-hidden="true">+</i></a>
+    <a class="logo" href="#/" aria-label="SukkahPin — home"><img src="brand/sukkahpin-logo.svg" alt="SukkahPin" width="135" height="30"></a>
     <nav class="nav-links" aria-label="Main">${links.map(([k, h, l]) => `<a href="${h}" data-nav="${k}">${t(l)}</a>`).join('')}</nav>
     <div class="nav-r">
       <button class="icon-btn" data-search aria-label="Search">${icon.search}</button>
@@ -36,9 +36,9 @@ function chrome() {
   $('#footer').innerHTML = `
     <div class="f-big">${esc(t('footer.line'))}</div>
     <div class="f-row">
-      <a class="logo" href="#/"><span>Inside</span><span>the Sukkah</span></a>
+      <a class="logo" href="#/"><img src="brand/sukkahpin-logo.svg" alt="SukkahPin" width="135" height="30"></a>
       <nav>${links.map(([, h, l]) => `<a href="${h}">${t(l)}</a>`).join('')}<a href="#/admin">${t('footer.admin')}</a></nav>
-      <p class="small muted">© ${new Date().getFullYear()} Inside the Sukkah${samples ? ` · ${t('footer.sample')}` : ''}</p>
+      <p class="small muted">© ${new Date().getFullYear()} SukkahPin${samples ? ` · ${t('footer.sample')}` : ''}</p>
     </div>`;
 }
 
@@ -58,15 +58,15 @@ function route() {
   root.className = `view view-${key}`;
   old.replaceWith(root);
 
-  document.title = 'Inside the Sukkah — every sukkah has a story';
+  document.title = 'SukkahPin — every sukkah has a story';
   document.body.dataset.route = key;
   $$('[data-nav]').forEach((a) => a.classList.toggle('on', a.dataset.nav === key));
   closeMenu();
   fn(root, params, m, (c) => cleanups.push(c));
   hydrate(root);
   reveal(root);
-  if (!sessionStorage.getItem('its:keepScroll')) window.scrollTo(0, 0);
-  sessionStorage.removeItem('its:keepScroll');
+  if (!sessionStorage.getItem('sp:keepScroll')) window.scrollTo(0, 0);
+  sessionStorage.removeItem('sp:keepScroll');
 }
 
 /* Subtle reveal-on-scroll for sections and images. */
@@ -116,7 +116,7 @@ document.addEventListener('click', (e) => {
   if (e.target.closest('[data-lang]')) {
     setLang(lang === 'yi' ? 'en' : 'yi');
     chrome();
-    sessionStorage.setItem('its:keepScroll', '1');
+    sessionStorage.setItem('sp:keepScroll', '1');
     const y = window.scrollY;
     route();
     window.scrollTo(0, y);

@@ -172,11 +172,11 @@ export function bindProject(root, s) {
 
 export function renderDetail(root, slug) {
   const s = store.get(slug);
-  if (!s || (s.status !== 'approved' && !sessionStorage.getItem('its:admin'))) {
+  if (!s || (s.status !== 'approved' && !sessionStorage.getItem('sp:admin'))) {
     root.innerHTML = `<section class="section notfound"><h1 class="display">${t('detail.notFound')}</h1><a class="btn btn-dark" href="#/explore">${t('detail.back')}</a></section>`;
     return;
   }
-  document.title = `${s.title} · Inside the Sukkah`;
+  document.title = `${s.title} · SukkahPin`;
   root.innerHTML = detailHTML(s);
   hydrate(root);
   bindProject(root, s);

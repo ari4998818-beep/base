@@ -7,7 +7,7 @@ import { esc, $, $$, icon, img, fmt, toast, modal, hydrate } from '../ui.js';
 import { PHOTO_LABELS, PRODUCT_CATS } from './submit.js';
 
 const CATS = ['Modern', 'DIY', 'Family', 'Small Space', 'Luxury', 'Creative', 'Outdoor', 'Balcony', 'Lighting', 'Themed', 'Custom'];
-const authed = () => sessionStorage.getItem('its:admin') === '1';
+const authed = () => sessionStorage.getItem('sp:admin') === '1';
 const when = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
 function gate(root, done) {
@@ -23,7 +23,7 @@ function gate(root, done) {
   </section>`;
   $('[data-gate]', root).onsubmit = (e) => {
     e.preventDefault();
-    if (e.target.code.value === (store.settings().adminCode || 'sukkah')) { sessionStorage.setItem('its:admin', '1'); done(); }
+    if (e.target.code.value === (store.settings().adminCode || 'sukkah')) { sessionStorage.setItem('sp:admin', '1'); done(); }
     else $('.err', root).hidden = false;
   };
 }
@@ -188,7 +188,7 @@ export function renderAdmin(root, params) {
   const pending = store.list({ status: 'pending' }).length;
   const draw = () => renderAdmin(root, new URLSearchParams(location.hash.split('?')[1] || ''));
   root.innerHTML = `<section class="section admin">
-    <div class="split-head tight"><div><p class="eyebrow">Admin</p><h1 class="display">Inside the Sukkah</h1></div>
+    <div class="split-head tight"><div><p class="eyebrow">Admin</p><h1 class="display">SukkahPin</h1></div>
       <button class="btn btn-text" data-act="logout">Log out</button></div>
     <nav class="a-tabs">${Object.entries(TABS).map(([k, [l]]) => `<a href="#/admin?tab=${k}" class="${k === tab ? 'on' : ''}">${l}${k === 'pending' && pending ? ` <em>${pending}</em>` : ''}</a>`).join('')}</nav>
     <div class="a-body">${TABS[tab][1]()}</div>
@@ -200,7 +200,7 @@ export function renderAdmin(root, params) {
     if (!b) return;
     const id = b.closest('[data-id]')?.dataset.id;
     const act = b.dataset.act;
-    if (act === 'logout') { sessionStorage.removeItem('its:admin'); location.hash = '#/'; return; }
+    if (act === 'logout') { sessionStorage.removeItem('sp:admin'); location.hash = '#/'; return; }
     if (act === 'approve') { store.update(id, { status: 'approved' }); toast('Approved — it’s live'); }
     if (act === 'reject') { store.update(id, { status: 'rejected' }); toast('Rejected'); }
     if (act === 'edit') return editor(store.get(id), draw);

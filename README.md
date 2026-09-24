@@ -27,7 +27,7 @@ A restrained, institutional system: navy-led, quiet on accent, solid in structur
 
 ## Also in this repo
 
-- `inside-the-sukkah/` — *Inside the Sukkah*, a separate community sukkah gallery. See its own README.
+- `sukkahpin/` — *SukkahPin*, a separate community sukkah gallery. See its own README.
 
 ## Run it locally
 
