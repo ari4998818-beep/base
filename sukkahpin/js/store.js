@@ -31,7 +31,7 @@ const fromRow = (r) => ({
   title: r.title, location: r.location, description: r.description, special: r.special,
   categories: r.categories || [], tags: r.tags || [], ownerName: r.owner_name,
   cover: r.cover ?? 0, hero: r.hero ?? r.cover ?? 0, photos: r.photos || [], votes: r.votes, createdAt: r.created_at,
-  year: r.year || thisYear(), visit: r.visit || {}, video: r.video || null, editedAt: r.edited_at || null,
+  year: r.year || thisYear(), visit: r.visit || {}, video: r.video || null, editedAt: r.edited_at || null, views: r.views || 0,
 });
 export const fromDbRow = fromRow;
 const COLS = { title: 'title', location: 'location', description: 'description', special: 'special', categories: 'categories', tags: 'tags', ownerName: 'owner_name', cover: 'cover', hero: 'hero', photos: 'photos', votes: 'votes', status: 'status', sample: 'sample', featured: 'featured', editorsPick: 'editors_pick', year: 'year', visit: 'visit', video: 'video' };
@@ -260,6 +260,15 @@ export async function submit(draft) {
   return res;
 }
 
+/* ---------------- Views ---------------- */
+
+/** Counts one view per browser per sukkah per day. */
+export function countView(slug) {
+  const k = `sp:v:${slug}:${new Date().toISOString().slice(0, 10)}`;
+  try { if (localStorage.getItem(k)) return; localStorage.setItem(k, '1'); } catch {}
+  sb.rpc('sp_view', { p_slug: slug }).then(() => {}, () => {});
+}
+
 /* ---------------- Owner editing (private edit link, no account) ---------------- */
 
 const KEYS = 'sp:editKeys';
@@ -317,6 +326,24 @@ export async function verifyCode(email, code) {
   await Promise.all([loadMyVotes(), loadAdmin()]);
   return true;
 }
+export async function signInPassword(email, password) {
+  const { data, error } = await sb.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
+  if (error || !data.session) throw error || new Error('Sign-in failed');
+  state.session = data.session;
+  await Promise.all([loadMyVotes(), loadAdmin(), loadSukkahs()]);
+}
+export async function setPassword(password) {
+  const { error } = await sb.auth.updateUser({ password });
+  if (error) throw error;
+}
+/** Turns Supabase auth errors into plain language. */
+export function authMessage(err) {
+  const m = err?.message || String(err || '');
+  if (/rate limit|seconds|too many/i.test(m)) return 'Too many sign-in emails right now (Supabase’s free email allows only a couple per hour). Sign in with your password instead, or try again in an hour.';
+  if (/invalid login credentials/i.test(m)) return 'Wrong email or password.';
+  return m;
+}
+
 export async function signOut() {
   await sb.auth.signOut();
   state.session = null; state.admin = false; state.myVotes = new Set();

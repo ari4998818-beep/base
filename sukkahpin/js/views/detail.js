@@ -215,6 +215,7 @@ export function renderDetail(root, slug) {
     return;
   }
   document.title = `${s.title} · SukkahPin`;
+  if (s.status === 'approved') store.countView(s.slug);
   root.innerHTML = detailHTML(s);
   hydrate(root);
   bindProject(root, s);

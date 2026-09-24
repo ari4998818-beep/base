@@ -14,7 +14,7 @@ const en = {
   'hero.join': 'Join thousands sharing their sukkahs.', 'hero.scroll': ['Scroll', 'to explore'], 'hero.stat': 'Sukkahs',
   'hero.viewing': 'Now showing',
 
-  'tabs.trending': 'Trending', 'tabs.new': 'New', 'tabs.voted': 'Most Voted', 'tabs.all': 'View all',
+  'tabs.trending': 'Trending', 'tabs.year': 'This year', 'tabs.new': 'New', 'tabs.voted': 'Most Voted', 'tabs.all': 'View all',
   'style.eyebrow': 'Explore by style', 'style.h1': 'Find your', 'style.h2': 'inspiration.',
   'style.sub': 'From modern designs to cozy family setups, explore sukkahs by style, size, or theme.',
   'gallery.eyebrow': 'The gallery', 'gallery.h': 'Look closer.', 'gallery.empty': 'Nothing here yet. Be the first.',
@@ -103,7 +103,7 @@ const yi = {
   'hero.join': 'טויזנטער אידן טיילן שוין זייערע סוכות.', 'hero.scroll': ['סקראלט', 'אראפ'], 'hero.stat': 'סוכות',
   'hero.viewing': 'יעצט ווייזט מען',
 
-  'tabs.trending': 'פאפולער', 'tabs.new': 'נייע', 'tabs.voted': 'מערסטע שטימען', 'tabs.all': 'זעט אלעס',
+  'tabs.trending': 'פאפולער', 'tabs.year': 'היי יאר', 'tabs.new': 'נייע', 'tabs.voted': 'מערסטע שטימען', 'tabs.all': 'זעט אלעס',
   'style.eyebrow': 'לויט סטייל', 'style.h1': 'געפינט', 'style.h2': 'אייער סטייל.',
   'style.sub': 'פון מאדערנע סוכות ביז היימישע משפחה סוכות — זוכט לויט סטייל, גרייס, אדער טעמע.',
   'gallery.eyebrow': 'די גאלערי', 'gallery.h': 'קוקט נענטער.', 'gallery.empty': 'נאך גארנישט דא. זייט דער ערשטער!',

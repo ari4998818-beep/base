@@ -64,6 +64,8 @@ function route() {
   $$('[data-nav]').forEach((a) => a.classList.toggle('on', a.dataset.nav === key));
   closeMenu();
   fn(root, params, m, (c) => cleanups.push(c));
+  // Vercel Web Analytics: this site routes with #hash, so report each page ourselves.
+  window.va?.('pageview', { route: key === 'detail' ? '/sukkah/[slug]' : key === 'sources' && m?.[1] ? '/sources/[item]' : '/' + (path.replace(/^\//, '') || ''), path: '/' + path.replace(/^\//, '') });
   hydrate(root);
   reveal(root);
   if (!sessionStorage.getItem('sp:keepScroll')) window.scrollTo(0, 0);

@@ -6,9 +6,9 @@ export const STYLES = [
   ['Modern', 'img/t-modern.webp'], ['DIY', 'img/t-diy.webp'], ['Family', 'img/t-family.webp'], ['Small Space', 'img/t-small.webp'],
   ['Luxury', 'img/t-luxury.webp'], ['Creative', 'img/t-creative.webp'], ['Outdoor', 'img/t-outdoor.webp'], ['Balcony', 'img/t-balcony.webp'],
 ];
-export const FILTERS = ['Trending', 'New', 'Most Voted', 'Open to Visit', 'Modern', 'DIY', 'Family', 'Creative', 'Small Space', 'Luxury', 'Outdoor'];
+export const FILTERS = ['Trending', 'This Year', 'Most Voted', 'Open to Visit', 'New', 'Modern', 'DIY', 'Family', 'Creative', 'Small Space', 'Luxury', 'Outdoor'];
 const SORT_FILTERS = { Trending: 'trending', New: 'new', 'Most Voted': 'voted' };
-const filterLabel = (f) => (f === 'Open to Visit' ? t('visit.filter') : SORT_FILTERS[f] ? t({ Trending: 'tabs.trending', New: 'tabs.new', 'Most Voted': 'tabs.voted' }[f]) : tc(f));
+const filterLabel = (f) => (f === 'This Year' ? t('tabs.year') : f === 'Open to Visit' ? t('visit.filter') : SORT_FILTERS[f] ? t({ Trending: 'tabs.trending', New: 'tabs.new', 'Most Voted': 'tabs.voted' }[f]) : tc(f));
 
 function heroSet() {
   const all = store.list();
@@ -180,7 +180,7 @@ function trendingHTML() {
   return `<section class="section trending" id="trending">
     <div class="tabs-row">
       <div class="tabs" role="tablist">
-        ${[['trending', 'tabs.trending'], ['new', 'tabs.new'], ['voted', 'tabs.voted']].map(([k, l], i) => `<button role="tab" aria-selected="${i === 0}" data-sort="${k}">${t(l)}</button>`).join('')}
+        ${[['trending', 'tabs.trending'], ['year', 'tabs.year'], ['voted', 'tabs.voted']].map(([k, l], i) => `<button role="tab" aria-selected="${i === 0}" data-sort="${k}">${t(l)}</button>`).join('')}
       </div>
       <a class="link-arrow" href="#/explore">${t('tabs.all')} <span aria-hidden="true">${arrow()}</span></a>
     </div>
@@ -209,8 +209,11 @@ function stylesHTML() {
   </section>`;
 }
 
+const thisYearList = (sort) => store.list({ sort }).filter((s) => s.year === store.thisYear());
+
 export function galleryItems(filter) {
   const sort = SORT_FILTERS[filter];
+  if (filter === 'This Year') return thisYearList('trending');
   if (filter === 'Open to Visit') return store.list({ sort: 'voted' }).filter(store.isOpenToVisit);
   return sort ? store.list({ sort }) : store.list({ category: filter, sort: 'voted' });
 }
@@ -291,7 +294,7 @@ export function renderHome(root, cleanup) {
     $$('[data-sort]', tabs).forEach((x) => x.setAttribute('aria-selected', x === b));
     const c = $('[data-cards]', root);
     c.classList.add('swap');
-    setTimeout(() => { c.innerHTML = store.list({ sort: b.dataset.sort }).slice(0, 4).map(card).join(''); hydrate(c); c.classList.remove('swap'); }, 160);
+    setTimeout(() => { c.innerHTML = (b.dataset.sort === 'year' ? thisYearList('trending') : store.list({ sort: b.dataset.sort })).slice(0, 4).map(card).join(''); hydrate(c); c.classList.remove('swap'); }, 160);
   });
 
   const rail = $('[data-style-rail]', root);

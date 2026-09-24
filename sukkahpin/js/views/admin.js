@@ -23,29 +23,28 @@ function gate(root, done) {
     <p class="eyebrow">Admin</p>
     <h1 class="display">Staff only.</h1>
     <form class="form narrow" data-gate>
-      <label class="field"><span>Admin email</span><input type="email" name="email" autocomplete="email" required dir="ltr"></label>
+      <label class="field"><span>Admin email</span><input type="email" name="email" autocomplete="username" required dir="ltr"></label>
+      <label class="field"><span>Password</span><input type="password" name="password" autocomplete="current-password" dir="ltr"></label>
       <p class="err" hidden></p>
-      <button class="btn btn-dark">Email me a code</button>
+      <button class="btn btn-dark">Sign in</button>
+      <button type="button" class="btn btn-text" data-magic>No password? Email me a sign-in link</button>
     </form>
   </section>`;
   const f = $('[data-gate]', root);
   const err = (m) => { const e = $('.err', root); e.hidden = false; e.textContent = m; };
   f.onsubmit = async (e) => {
     e.preventDefault();
+    if (!f.password.value) return err('Enter your password — or tap “Email me a sign-in link”.');
+    const b = $('button', f); b.disabled = true;
+    try { await store.signInPassword(f.email.value, f.password.value); done(); }
+    catch (x) { b.disabled = false; err(store.authMessage(x)); }
+  };
+  $('[data-magic]', f).onclick = async () => {
     const email = f.email.value.trim();
+    if (!store.validEmail(email)) return err('Enter your admin email first.');
     try { localStorage.setItem('sp:returnTo', '#/admin'); } catch {}
-    try { await store.requestCode(email); } catch (x) { return err(x.message); }
-    f.innerHTML = `<p class="muted">Check <strong>${esc(email)}</strong> — enter the code, or tap the link in the email.</p>
-      <label class="field"><span>Code</span><input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" required class="code-input" dir="ltr"></label>
-      <p class="err" hidden></p>
-      <button class="btn btn-dark">Sign in</button>`;
-    f.code.focus();
-    f.onsubmit = async (ev) => {
-      ev.preventDefault();
-      if (!(await store.verifyCode(email, f.code.value))) return err('That code didn’t match.');
-      try { localStorage.removeItem('sp:returnTo'); } catch {}
-      done();
-    };
+    try { await store.requestCode(email); } catch (x) { return err(store.authMessage(x)); }
+    f.innerHTML = `<p class="muted">Check <strong>${esc(email)}</strong> and tap the sign-in link. Open it on this device.</p>`;
   };
 }
 
@@ -56,7 +55,7 @@ function row(s) {
     <td><a href="#/sukkah/${s.slug}" class="a-title">${esc(s.title)}</a><div class="small muted">${esc(s.location)} · ${esc(s.ownerName || '')}${store.contactOf(s.id)?.email ? ` · ${esc(store.contactOf(s.id).email)}` : ''}${store.contactOf(s.id)?.phone ? ` · ${esc(store.contactOf(s.id).phone)}` : ''}</div>
       <div class="a-flags">${s.sample ? '<b class="flag">Sample</b>' : ''}${s.featured ? '<b class="flag lime">Featured</b>' : ''}${s.editorsPick ? '<b class="flag dark">Editor’s Pick</b>' : ''}<b class="flag st-${s.status}">${s.status}</b>${s.editedAt ? `<b class="flag" title="${new Date(s.editedAt).toLocaleString()}">Edited by owner</b>` : ''}</div></td>
     <td class="num">${fmt(s.votes)}</td>
-    <td class="num">${s.photos.length}</td>
+    <td class="num">${fmt(s.views || 0)}</td>
     <td class="small muted">${when(s.createdAt)}</td>
     <td class="a-actions">
       ${s.status === 'pending' ? `<button class="btn btn-lime btn-sm" data-act="approve">Approve</button><button class="btn btn-ghost btn-sm" data-act="reject">Reject</button>` : ''}
@@ -67,7 +66,7 @@ function row(s) {
 }
 
 const table = (list, empty) => list.length
-  ? `<div class="a-table-wrap"><table class="a-table"><thead><tr><th></th><th>Sukkah</th><th class="num">Votes</th><th class="num">Photos</th><th>Added</th><th></th></tr></thead><tbody>${list.map(row).join('')}</tbody></table></div>`
+  ? `<div class="a-table-wrap"><table class="a-table"><thead><tr><th></th><th>Sukkah</th><th class="num">Votes</th><th class="num">Views</th><th>Added</th><th></th></tr></thead><tbody>${list.map(row).join('')}</tbody></table></div>`
   : `<p class="empty">${empty}</p>`;
 
 function tabPending() {
@@ -120,6 +119,10 @@ function tabSamples() {
       </form>
       <hr>
       <p class="small muted">Signed in as ${esc(store.voterEmail())}. Admins are the emails in the <code>sp_admins</code> table.</p>
+      <form class="form" data-password>
+        <label class="field"><span>New admin password (8+ characters)</span><input type="password" name="pw" minlength="8" autocomplete="new-password" required></label>
+        <button class="btn btn-dark btn-sm">Change password</button>
+      </form>
     </div>
   </div>`;
 }
@@ -286,6 +289,10 @@ export async function renderAdmin(root, params) {
     }
   };
   root.onsubmit = (e) => {
+    if (e.target.matches('[data-password]')) {
+      e.preventDefault();
+      return store.setPassword(e.target.pw.value).then(() => { e.target.reset(); toast('Password changed'); }, (x) => toast(store.authMessage(x)));
+    }
     if (!e.target.matches('[data-settings]')) return;
     e.preventDefault();
     store.setSettings(Object.fromEntries(new FormData(e.target))).then(() => toast('Settings saved'), fail);
