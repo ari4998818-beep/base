@@ -51,20 +51,22 @@ project are untouched.
 
 - **Submissions** go through `sp_submit()` (inserts a *pending* sukkah + private contact). Photos upload to
   `sp-photos/uploads/` (images only, 8 MB max).
-- **Voting** needs an email sign-in (Supabase Auth, email code or link). A trigger keeps `votes` in sync and
-  only approved sukkahs accept votes.
+- **Voting** is one tap via a guest (anonymous) sign-in; email is the fallback. A trigger keeps `votes` in sync,
+  only approved sukkahs accept votes, and each network is capped at 25 votes per sukkah per day.
 - **Admins**: add a row to `sp_admins` (lower-case email). `ari4998818@gmail.com` is there already.
 
-### One-time Supabase dashboard setup (required before launch)
+### One-time Supabase dashboard setup
 
-1. **Auth → URL Configuration**: set *Site URL* to the Vercel URL (e.g. `https://sukkahpin.vercel.app`) and add
-   `https://sukkahpin.vercel.app/**` and `https://*.vercel.app/**` to *Redirect URLs*. Without this, the emailed
-   sign-in link sends people to `localhost`.
-2. **Auth → Email Templates → Magic Link**: add the code so people can type it instead of tapping the link:
-   `<h2>Your SukkahPin code</h2><p>{{ .Token }}</p><p>Or <a href="{{ .ConfirmationURL }}">tap here to sign in</a>.</p>`
-   Do the same in the **Confirm signup** template (first-time emails use it).
-3. **Auth → SMTP**: connect a real email sender (Resend, Postmark, SendGrid…). Supabase's built-in sender is
-   for testing only and allows just a few emails per hour — far too few for voting.
+1. **Auth → Sign In / Providers → Allow anonymous sign-ins: ON.** This is what makes voting one tap: the
+   phone gets a guest account on the spot (no email). The database still allows one vote per guest per
+   sukkah, and at most 25 votes per sukkah per network per day (hashed IP), so clearing the browser or
+   using incognito can't stuff the ballot. If this is off, voting falls back to an email sign-in.
+   Optional hardening later: enable Cloudflare Turnstile under Auth → Bot and Abuse Protection.
+2. **Auth → URL Configuration**: set *Site URL* to the Vercel URL (e.g. `https://sukkahpin.vercel.app`) and add
+   `https://sukkahpin.vercel.app/**` to *Redirect URLs*. The admin sign-in link uses it.
+3. **Admin sign-in** is by emailed link to an address in `sp_admins`. Supabase's built-in sender handles this
+   (a few emails an hour is plenty for admins). Custom SMTP (Resend, etc.) is only needed if you later want
+   email-based voting or to edit the email templates.
 
 ## Deploy (Vercel, from git)
 

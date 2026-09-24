@@ -98,6 +98,8 @@ export const coverOf = (s) => s.photos[s.cover] || s.photos[0];
 export const heroOf = (s) => s.photos[s.hero ?? s.cover] || coverOf(s);
 export const isAdmin = () => state.admin;
 export const session = () => state.session;
+/** A real (email) account — not a one-tap guest voter. */
+export const isMember = () => !!state.session && !state.session.user?.is_anonymous;
 export const contactOf = (id) => state.contacts[id];
 
 /* ---------------- Admin writes ---------------- */
@@ -268,13 +270,28 @@ const markDevice = (id) => { try { const s = deviceVotes(); s.add(id); localStor
 
 export const hasVoted = (sukkahId) => state.myVotes.has(sukkahId) || deviceVotes().has(sukkahId);
 
-/** @returns {Promise<'ok'|'duplicate'|'unverified'|'error'>} */
+/**
+ * One-tap voting: without a session we sign the phone in as an anonymous guest
+ * (Supabase "anonymous sign-ins" — no email). Returns false if that's switched
+ * off in the dashboard, so the UI can fall back to email.
+ */
+export async function ensureVoter() {
+  if (state.session) return true;
+  const { data, error } = await sb.auth.signInAnonymously();
+  if (error || !data.session) { console.warn('guest sign-in unavailable:', error?.message); return false; }
+  state.session = data.session;
+  await loadMyVotes();
+  return true;
+}
+
+/** @returns {Promise<'ok'|'duplicate'|'unverified'|'limit'|'error'>} */
 export async function castVote(sukkahId) {
   if (!state.session) return 'unverified';
   if (hasVoted(sukkahId)) return 'duplicate';
   const { error } = await sb.from('sp_votes').insert({ sukkah_id: sukkahId });
   if (error) {
     if (error.code === '23505') { state.myVotes.add(sukkahId); markDevice(sukkahId); notify(); return 'duplicate'; }
+    if (error.code === 'P0429') return 'limit';
     console.error(error);
     return 'error';
   }
@@ -287,9 +304,9 @@ export async function castVote(sukkahId) {
 }
 
 export async function votes() {
-  const { data, error } = await sb.from('sp_votes').select('id, sukkah_id, email, created_at').order('created_at', { ascending: false }).limit(500);
+  const { data, error } = await sb.from('sp_votes').select('id, sukkah_id, email, ip_hash, created_at').order('created_at', { ascending: false }).limit(500);
   if (error) throw error;
-  return data.map((v) => ({ id: v.id, sukkahId: v.sukkah_id, email: v.email, at: v.created_at }));
+  return data.map((v) => ({ id: v.id, sukkahId: v.sukkah_id, email: v.email, ip: v.ip_hash, at: v.created_at }));
 }
 export async function removeVote(id, sukkahId) {
   const { error } = await sb.from('sp_votes').delete().eq('id', id);

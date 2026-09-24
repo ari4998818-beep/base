@@ -129,9 +129,10 @@ export async function vote(sukkahId) {
   const s = store.get(sukkahId);
   if (!s) return;
   if (store.hasVoted(s.id)) return voteDone(modal('', { cls: 'modal-sm' }), s, true);
-  if (store.session()) return finishVote(modal('<p class="muted">…</p>', { cls: 'modal-sm' }), s);
+  // One tap: signed in already, or sign in as a guest on the spot.
+  if (store.session() || (await store.ensureVoter())) return finishVote(modal('<div class="boot"><span></span></div>', { cls: 'modal-sm' }), s);
 
-  // Not signed in yet: email → code (or the link in the email) → vote.
+  // Guest sign-in switched off in Supabase → fall back to email code / link.
   const m = modal(`<div class="vote-flow">
       <p class="eyebrow">${t('vote.title')}</p>
       <h2 class="display-sm">${esc(s.title)}</h2>
@@ -182,8 +183,8 @@ export async function vote(sukkahId) {
 
 export async function finishVote(m, s) {
   const res = await store.castVote(s.id);
-  if (res === 'error' || res === 'unverified') {
-    m.el.innerHTML = `<div class="vote-done"><h2 class="display-sm">${t('vote.error')}</h2></div>`;
+  if (res === 'error' || res === 'unverified' || res === 'limit') {
+    m.el.innerHTML = `<div class="vote-done"><h2 class="display-sm">${t(res === 'limit' ? 'vote.limit' : 'vote.error')}</h2></div>`;
     return;
   }
   if (res === 'ok') burst(s.id);

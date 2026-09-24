@@ -9,7 +9,7 @@ const CATS = ['Modern', 'DIY', 'Family', 'Small Space', 'Luxury', 'Creative', 'O
 const when = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
 function gate(root, done) {
-  const signedIn = store.session();
+  const signedIn = store.isMember(); // one-tap guest voters count as signed out here
   if (signedIn) {
     root.innerHTML = `<section class="section admin-gate">
       <p class="eyebrow">Admin</p><h1 class="display">Not an admin.</h1>
@@ -92,9 +92,9 @@ let votesCache = [];
 function tabVotes() {
   const v = votesCache;
   const byId = (id) => store.get(id)?.title || '(deleted)';
-  return `<p class="muted small">Votes from verified emails (latest 500). Sample sukkahs start with seeded totals that aren’t individual votes — adjust those in Edit.</p>
+  return `<p class="muted small">Latest 500 votes. Guests are one-tap voters; the code after “Guest” is their network (same code = same Wi-Fi / connection). Sample sukkahs start with seeded totals that aren’t individual votes — adjust those in Edit.</p>
   ${v.length ? `<div class="a-table-wrap"><table class="a-table"><thead><tr><th>Email</th><th>Sukkah</th><th>When</th><th></th></tr></thead><tbody>
-    ${v.map((x) => `<tr data-vote-id="${x.id}" data-vote-sukkah="${x.sukkahId}"><td>${esc(x.email)}</td><td>${esc(byId(x.sukkahId))}</td><td class="small muted">${new Date(x.at).toLocaleString()}</td><td class="a-actions"><button class="btn btn-ghost btn-sm" data-act="remove-vote">Remove</button></td></tr>`).join('')}
+    ${v.map((x) => `<tr data-vote-id="${x.id}" data-vote-sukkah="${x.sukkahId}"><td>${x.email ? esc(x.email) : `<span class="muted">Guest · ${esc((x.ip || '').slice(0, 6) || '—')}</span>`}</td><td>${esc(byId(x.sukkahId))}</td><td class="small muted">${new Date(x.at).toLocaleString()}</td><td class="a-actions"><button class="btn btn-ghost btn-sm" data-act="remove-vote">Remove</button></td></tr>`).join('')}
   </tbody></table></div>` : '<p class="empty">No votes yet.</p>'}`;
 }
 function tabSamples() {
