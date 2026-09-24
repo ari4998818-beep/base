@@ -28,8 +28,9 @@ const en = {
   'cat.Custom': 'Custom', 'cat.Balcony / Patio': 'Balcony / Patio',
 
   'vote.vote': 'Vote', 'vote.voted': 'Voted', 'vote.title': 'Vote for', 'vote.why': 'One vote per person per sukkah. We just need to check your email once — no account, no password.',
-  'vote.email': 'Your email', 'vote.send': 'Send my code', 'vote.code': 'Enter the 6-digit code', 'vote.check': 'Vote',
-  'vote.demo': 'Demo mode — no email is sent. Your code is', 'vote.bad': 'That code didn’t match. Try again?', 'vote.badEmail': 'That email doesn’t look right.',
+  'vote.email': 'Your email', 'vote.send': 'Send my code', 'vote.code': 'Code from the email', 'vote.check': 'Vote',
+  'vote.sent': 'Check your email.', 'vote.sentSub': 'Type the code we sent — or just tap the link in the email. Sent to', 'vote.bad': 'That code didn’t match. Try again?',
+  'vote.error': 'Something went wrong. Please try again.', 'vote.slow': 'Too many tries — wait a minute and try again.', 'vote.badEmail': 'That email doesn’t look right.',
   'vote.done': 'Your vote is in.', 'vote.doneSub': 'Want to help it win? Send it to your family chat.',
   'vote.dup': 'You already voted for this one.', 'vote.dupSub': 'Thanks! Sharing it helps just as much.',
   'share.wa': 'Share on WhatsApp', 'share.copy': 'Copy link', 'share.copied': 'Link copied',
@@ -61,7 +62,7 @@ const en = {
   'sub.need4': 'Add your name and a valid email to continue.',
   'sub.s5': 'Preview', 'sub.s5sub': 'This is your page. Look good?', 'sub.submit': 'Submit My Sukkah',
   'sub.done': 'Your sukkah is in.', 'sub.doneSub': 'We’ll let you know once it’s live.', 'sub.doneShare': 'Tell the family',
-  'sub.another': 'Back to the gallery',
+  'sub.another': 'Back to the gallery', 'sub.failed': 'Couldn’t send it — check your connection and try again.',
 
   'src.eyebrow': 'Sukkah Sources', 'src.h1': 'Seen it.', 'src.h2': 'Shop it.',
   'src.sub': 'Everything our community tagged in their sukkahs — lights, tables, walls, and the DIY tricks behind them.',
@@ -100,8 +101,9 @@ const yi = {
   'cat.Custom': 'ספעציעל געבויט', 'cat.Balcony / Patio': 'באלקאן / פעטיא',
 
   'vote.vote': 'שטימט', 'vote.voted': 'געשטימט', 'vote.title': 'שטימט פאר', 'vote.why': 'איין שטימע פער מענטש פאר יעדע סוכה. מיר דארפן נאר איינמאל טשעקן אייער אימעיל — קיין אקאונט, קיין פאסווארד.',
-  'vote.email': 'אייער אימעיל', 'vote.send': 'שיקט מיר א קאוד', 'vote.code': 'לייגט אריין דעם 6-ציפער קאוד', 'vote.check': 'שטימט',
-  'vote.demo': 'דעמא — מ׳שיקט נישט קיין אימעיל. אייער קאוד איז', 'vote.bad': 'דער קאוד שטימט נישט. פרובירט נאכאמאל?', 'vote.badEmail': 'דער אימעיל זעט נישט אויס גוט.',
+  'vote.email': 'אייער אימעיל', 'vote.send': 'שיקט מיר א קאוד', 'vote.code': 'דער קאוד פון אימעיל', 'vote.check': 'שטימט',
+  'vote.sent': 'קוקט אין אייער אימעיל.', 'vote.sentSub': 'לייגט אריין דעם קאוד — אדער דריקט אויפ׳ן לינק אין אימעיל. געשיקט צו', 'vote.bad': 'דער קאוד שטימט נישט. פרובירט נאכאמאל?',
+  'vote.error': 'עפעס איז נישט געגאנגען. פרובירט נאכאמאל.', 'vote.slow': 'צופיל מאל — ווארט א מינוט און פרובירט נאכאמאל.', 'vote.badEmail': 'דער אימעיל זעט נישט אויס גוט.',
   'vote.done': 'אייער שטימע איז אריין!', 'vote.doneSub': 'ווילט איר העלפן? שיקט עס אין די משפחה גרופע.',
   'vote.dup': 'איר האט שוין געשטימט פאר די סוכה.', 'vote.dupSub': 'יישר כח! שיקן עס ווייטער העלפט פונקט אזוי.',
   'share.wa': 'שיקט אויף וואטסעפ', 'share.copy': 'קאפירט דעם לינק', 'share.copied': 'דער לינק איז קאפירט',
@@ -133,7 +135,7 @@ const yi = {
   'sub.need4': 'שרייבט אייער נאמען און אן אימעיל.',
   'sub.s5': 'קוקט עס איבער', 'sub.s5sub': 'דאס איז אייער בלאט. גוט אזוי?', 'sub.submit': 'שיקט אריין מיין סוכה',
   'sub.done': 'אייער סוכה איז אריין!', 'sub.doneSub': 'מיר וועלן אייך לאזן וויסן ווען זי גייט ארויף.', 'sub.doneShare': 'זאגט די משפחה',
-  'sub.another': 'צוריק צו די גאלערי',
+  'sub.another': 'צוריק צו די גאלערי', 'sub.failed': 'עס איז נישט אריין — טשעקט די אינטערנעט און פרובירט נאכאמאל.',
 
   'src.eyebrow': 'וואו צו קויפן', 'src.h1': 'געזען?', 'src.h2': 'קויפט עס.',
   'src.sub': 'אלעס וואס מענטשן האבן געטאגט אין זייערע סוכות — ליכט, טישן, ווענט, און די אליינס-געמאכטע טריקס.',

@@ -1,30 +1,51 @@
-// Internal admin. NOTE: V1 has no server, so the passcode only keeps casual
-// visitors out of the UI; it is not security. Put this behind real auth
-// (e.g. Supabase Auth + row-level security) when the backend lands.
+// Internal admin. Sign-in is a Supabase email code; what an account can read or
+// change is decided by Row Level Security (emails listed in sp_admins).
 
 import * as store from '../store.js';
-import { esc, $, $$, icon, img, fmt, toast, modal, hydrate } from '../ui.js';
+import { esc, $, $$, icon, img, fmt, toast, modal } from '../ui.js';
 import { PHOTO_LABELS, PRODUCT_CATS } from './submit.js';
 
 const CATS = ['Modern', 'DIY', 'Family', 'Small Space', 'Luxury', 'Creative', 'Outdoor', 'Balcony', 'Lighting', 'Themed', 'Custom'];
-const authed = () => sessionStorage.getItem('sp:admin') === '1';
 const when = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
 function gate(root, done) {
+  const signedIn = store.session();
+  if (signedIn) {
+    root.innerHTML = `<section class="section admin-gate">
+      <p class="eyebrow">Admin</p><h1 class="display">Not an admin.</h1>
+      <p class="muted">${esc(store.voterEmail())} isn’t on the admin list.</p>
+      <div class="row-btns" style="margin-top:24px"><button class="btn btn-dark" data-signout>Sign out</button><a class="btn btn-ghost" href="#/">Home</a></div>
+    </section>`;
+    $('[data-signout]', root).onclick = async () => { await store.signOut(); done(); };
+    return;
+  }
   root.innerHTML = `<section class="section admin-gate">
     <p class="eyebrow">Admin</p>
     <h1 class="display">Staff only.</h1>
     <form class="form narrow" data-gate>
-      <label class="field"><span>Passcode</span><input type="password" name="code" autocomplete="current-password" required></label>
-      <p class="err" hidden>Wrong passcode.</p>
-      <button class="btn btn-dark">Enter</button>
-      <p class="small muted">Demo passcode: <code>sukkah</code> (change it under Samples &amp; settings).</p>
+      <label class="field"><span>Admin email</span><input type="email" name="email" autocomplete="email" required dir="ltr"></label>
+      <p class="err" hidden></p>
+      <button class="btn btn-dark">Email me a code</button>
     </form>
   </section>`;
-  $('[data-gate]', root).onsubmit = (e) => {
+  const f = $('[data-gate]', root);
+  const err = (m) => { const e = $('.err', root); e.hidden = false; e.textContent = m; };
+  f.onsubmit = async (e) => {
     e.preventDefault();
-    if (e.target.code.value === (store.settings().adminCode || 'sukkah')) { sessionStorage.setItem('sp:admin', '1'); done(); }
-    else $('.err', root).hidden = false;
+    const email = f.email.value.trim();
+    try { localStorage.setItem('sp:returnTo', '#/admin'); } catch {}
+    try { await store.requestCode(email); } catch (x) { return err(x.message); }
+    f.innerHTML = `<p class="muted">Check <strong>${esc(email)}</strong> — enter the code, or tap the link in the email.</p>
+      <label class="field"><span>Code</span><input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" required class="code-input" dir="ltr"></label>
+      <p class="err" hidden></p>
+      <button class="btn btn-dark">Sign in</button>`;
+    f.code.focus();
+    f.onsubmit = async (ev) => {
+      ev.preventDefault();
+      if (!(await store.verifyCode(email, f.code.value))) return err('That code didn’t match.');
+      try { localStorage.removeItem('sp:returnTo'); } catch {}
+      done();
+    };
   };
 }
 
@@ -32,7 +53,7 @@ function row(s) {
   const c = store.coverOf(s);
   return `<tr data-id="${s.id}">
     <td><span class="a-thumb">${c ? img(c.src, '', 'loading="lazy"') : ''}</span></td>
-    <td><a href="#/sukkah/${s.slug}" class="a-title">${esc(s.title)}</a><div class="small muted">${esc(s.location)} · ${esc(s.ownerName || '')}${s.contact?.email ? ` · ${esc(s.contact.email)}` : ''}</div>
+    <td><a href="#/sukkah/${s.slug}" class="a-title">${esc(s.title)}</a><div class="small muted">${esc(s.location)} · ${esc(s.ownerName || '')}${store.contactOf(s.id)?.email ? ` · ${esc(store.contactOf(s.id).email)}` : ''}${store.contactOf(s.id)?.phone ? ` · ${esc(store.contactOf(s.id).phone)}` : ''}</div>
       <div class="a-flags">${s.sample ? '<b class="flag">Sample</b>' : ''}${s.featured ? '<b class="flag lime">Featured</b>' : ''}${s.editorsPick ? '<b class="flag dark">Editor’s Pick</b>' : ''}<b class="flag st-${s.status}">${s.status}</b></div></td>
     <td class="num">${fmt(s.votes)}</td>
     <td class="num">${s.photos.length}</td>
@@ -67,12 +88,13 @@ function tabLinks() {
   </tr>`).join('')}
   </tbody></table></div>`;
 }
+let votesCache = [];
 function tabVotes() {
-  const v = store.votes();
+  const v = votesCache;
   const byId = (id) => store.get(id)?.title || '(deleted)';
-  return `<p class="muted small">Verified votes cast on this site. Seeded vote totals on sample sukkahs aren’t individual records — adjust those in Edit.</p>
+  return `<p class="muted small">Votes from verified emails (latest 500). Sample sukkahs start with seeded totals that aren’t individual votes — adjust those in Edit.</p>
   ${v.length ? `<div class="a-table-wrap"><table class="a-table"><thead><tr><th>Email</th><th>Sukkah</th><th>When</th><th></th></tr></thead><tbody>
-    ${v.map((x) => `<tr data-vote-id="${x.id}"><td>${esc(x.email)}</td><td>${esc(byId(x.sukkahId))}</td><td class="small muted">${new Date(x.at).toLocaleString()}</td><td class="a-actions"><button class="btn btn-ghost btn-sm" data-act="remove-vote">Remove</button></td></tr>`).join('')}
+    ${v.map((x) => `<tr data-vote-id="${x.id}" data-vote-sukkah="${x.sukkahId}"><td>${esc(x.email)}</td><td>${esc(byId(x.sukkahId))}</td><td class="small muted">${new Date(x.at).toLocaleString()}</td><td class="a-actions"><button class="btn btn-ghost btn-sm" data-act="remove-vote">Remove</button></td></tr>`).join('')}
   </tbody></table></div>` : '<p class="empty">No votes yet.</p>'}`;
 }
 function tabSamples() {
@@ -93,11 +115,10 @@ function tabSamples() {
       <form class="form" data-settings>
         <label class="field"><span>Hero stat (circle badge)</span><input name="heroStat" value="${esc(st.heroStat)}"></label>
         <label class="field"><span>Contest line (Winners page)</span><input name="contestLine" value="${esc(st.contestLine)}"></label>
-        <label class="field"><span>Admin passcode</span><input name="adminCode" value="${esc(st.adminCode || 'sukkah')}"></label>
         <button class="btn btn-dark btn-sm">Save settings</button>
       </form>
       <hr>
-      <button class="btn btn-ghost btn-sm" data-act="reset-all">Reset everything to demo data</button>
+      <p class="small muted">Signed in as ${esc(store.voterEmail())}. Admins are the emails in the <code>sp_admins</code> table.</p>
     </div>
   </div>`;
 }
@@ -162,14 +183,14 @@ function editor(s, rerender) {
     if (b.dataset.pcover) { work.cover = +b.dataset.pcover; commitPhotos(); }
     if (b.dataset.pdel && work.photos.length > 1 && confirm('Remove this photo?')) { work.photos.splice(+b.dataset.pdel, 1); keepCover(); commitPhotos(); }
     if (b.dataset.hdel) { const [i, id] = b.dataset.hdel.split('|'); work.photos[+i].hotspots = work.photos[+i].hotspots.filter((h) => h.id !== id); commitPhotos(); }
-    if (b.matches('[data-edel]') && confirm(`Delete “${s.title}” permanently?`)) { store.remove(s.id); m.close(); toast('Deleted'); }
+    if (b.matches('[data-edel]') && confirm(`Delete “${s.title}” permanently?`)) store.remove(s.id).then(() => { m.close(); toast('Deleted'); }, fail);
   });
   // Photo edits save immediately (along with any typed changes) and redraw the drawer.
-  const commitPhotos = () => { collect(); const fresh = store.get(s.id); m.close(); editor(fresh, rerender); };
+  const commitPhotos = async () => { try { const fresh = await collect(); m.close(); editor(fresh, rerender); } catch (x) { fail(x); } };
 
   const collect = () => {
     const d = new FormData(f);
-    store.update(s.id, {
+    return store.update(s.id, {
       title: d.get('title').trim(), location: d.get('location').trim(), ownerName: d.get('ownerName').trim(),
       votes: Math.max(0, parseInt(d.get('votes'), 10) || 0), description: d.get('description').trim(), special: d.get('special').trim(),
       categories: d.getAll('cat'), tags: d.getAll('cat').slice(0, 3),
@@ -177,59 +198,64 @@ function editor(s, rerender) {
       photos: work.photos, cover: work.cover, hero: work.cover,
     });
   };
-  f.addEventListener('submit', (e) => { e.preventDefault(); collect(); toast('Saved'); m.close(); });
+  f.addEventListener('submit', async (e) => { e.preventDefault(); try { await collect(); toast('Saved'); m.close(); } catch (x) { fail(x); } });
 }
 
 /* ---------------- Page ---------------- */
 
-export function renderAdmin(root, params) {
-  if (!authed()) return gate(root, () => renderAdmin(root, params));
+const fail = (x) => { console.error(x); toast(`Couldn’t save: ${x?.message || x}`); };
+
+export async function renderAdmin(root, params) {
+  if (!store.isAdmin()) return gate(root, () => renderAdmin(root, params));
   const tab = TABS[params.get('tab')] ? params.get('tab') : 'pending';
+  root.innerHTML = '<div class="boot"><span></span></div>';
+  try {
+    await store.adminLoad();
+    if (tab === 'votes') votesCache = await store.votes();
+  } catch (x) { fail(x); }
+  if (!root.isConnected) return;
   const pending = store.list({ status: 'pending' }).length;
   const draw = () => renderAdmin(root, new URLSearchParams(location.hash.split('?')[1] || ''));
   root.innerHTML = `<section class="section admin">
     <div class="split-head tight"><div><p class="eyebrow">Admin</p><h1 class="display">SukkahPin</h1></div>
-      <button class="btn btn-text" data-act="logout">Log out</button></div>
+      <button class="btn btn-text" data-act="logout">Sign out</button></div>
     <nav class="a-tabs">${Object.entries(TABS).map(([k, [l]]) => `<a href="#/admin?tab=${k}" class="${k === tab ? 'on' : ''}">${l}${k === 'pending' && pending ? ` <em>${pending}</em>` : ''}</a>`).join('')}</nav>
     <div class="a-body">${TABS[tab][1]()}</div>
   </section>`;
-  hydrate(root);
+
+  const run = async (fn, msg) => { try { await fn(); if (msg) toast(msg); } catch (x) { fail(x); } draw(); };
 
   root.onclick = (e) => {
     const b = e.target.closest('[data-act]');
     if (!b) return;
     const id = b.closest('[data-id]')?.dataset.id;
     const act = b.dataset.act;
-    if (act === 'logout') { sessionStorage.removeItem('sp:admin'); location.hash = '#/'; return; }
-    if (act === 'approve') { store.update(id, { status: 'approved' }); toast('Approved — it’s live'); }
-    if (act === 'reject') { store.update(id, { status: 'rejected' }); toast('Rejected'); }
+    if (act === 'logout') return store.signOut().then(() => (location.hash = '#/'));
+    if (act === 'approve') return run(() => store.update(id, { status: 'approved' }), 'Approved — it’s live');
+    if (act === 'reject') return run(() => store.update(id, { status: 'rejected' }), 'Rejected');
     if (act === 'edit') return editor(store.get(id), draw);
-    if (act === 'delete' && confirm('Delete this sukkah?')) store.remove(id);
-    if (act === 'remove-samples' && confirm('Delete every sample sukkah? Real submissions stay.')) store.removeSamples();
-    if (act === 'restore-samples') store.restoreSamples();
-    if (act === 'reset-all' && confirm('Reset all data to the demo state? This removes submissions and votes on this device.')) store.resetAll();
-    if (act === 'remove-vote') store.removeVote(b.closest('[data-vote-id]').dataset.voteId);
+    if (act === 'delete' && confirm('Delete this sukkah?')) return run(() => store.remove(id), 'Deleted');
+    if (act === 'remove-samples' && confirm('Delete every sample sukkah? Real submissions stay.')) return run(() => store.removeSamples(), 'Samples removed');
+    if (act === 'restore-samples') return run(() => store.restoreSamples(), 'Samples restored');
+    if (act === 'remove-vote') { const tr = b.closest('[data-vote-id]'); return run(() => store.removeVote(tr.dataset.voteId, tr.dataset.voteSukkah), 'Vote removed'); }
     if (act === 'remove-link' || act === 'remove-hs') {
       const [sid, hid] = b.closest('[data-hs]').dataset.hs.split('|');
-      act === 'remove-hs' ? store.removeHotspot(sid, hid) : store.patchHotspot(sid, hid, { url: '' });
+      return run(() => (act === 'remove-hs' ? store.removeHotspot(sid, hid) : store.patchHotspot(sid, hid, { url: '' })));
     }
-    draw();
   };
   root.onchange = (e) => {
     if (e.target.matches('[data-url]')) {
       const [sid, hid] = e.target.closest('[data-hs]').dataset.hs.split('|');
-      store.patchHotspot(sid, hid, { url: e.target.value.trim() });
-      toast('Link updated');
+      store.patchHotspot(sid, hid, { url: e.target.value.trim() }).then(() => toast('Link updated'), fail);
     }
     if (e.target.matches('[data-replace]') && e.target.value) {
       const sid = e.target.closest('[data-id]').dataset.id;
-      if (confirm('Give this sample’s slot to the selected sukkah and delete the sample?')) { store.replaceSample(sid, e.target.value); toast('Replaced'); draw(); }
+      if (confirm('Give this sample’s slot to the selected sukkah and delete the sample?')) run(() => store.replaceSample(sid, e.target.value), 'Replaced');
     }
   };
   root.onsubmit = (e) => {
     if (!e.target.matches('[data-settings]')) return;
     e.preventDefault();
-    store.setSettings(Object.fromEntries(new FormData(e.target)));
-    toast('Settings saved');
+    store.setSettings(Object.fromEntries(new FormData(e.target))).then(() => toast('Settings saved'), fail);
   };
 }

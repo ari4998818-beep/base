@@ -1,5 +1,6 @@
-// Placeholder content. Every record here is flagged `sample: true` so admins can
-// find, edit, replace, or delete it from /#/admin → Samples.
+// Placeholder content. These rows are already in Supabase (sp_sukkahs, sample = true);
+// this file is what admin → "Restore samples" re-inserts. Admins can find, edit,
+// replace, or delete them from /#/admin → Samples.
 //
 // Product links point at store *search* pages, not specific listings, so nothing
 // here pretends to be a real product page. Swap them for real links anytime.

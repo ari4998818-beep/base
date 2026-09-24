@@ -24,7 +24,7 @@ async function prepare(file) {
   const c = Object.assign(document.createElement('canvas'), { width: Math.round(bmp.width * scale), height: Math.round(bmp.height * scale) });
   c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
   const blob = await new Promise((r) => c.toBlob(r, 'image/jpeg', 0.82));
-  return { id: store.uidFor('p-'), blob, src: URL.createObjectURL(blob), label: '', hotspots: [] };
+  return { id: store.uid(), blob, src: URL.createObjectURL(blob), label: '', hotspots: [] };
 }
 
 function head() {
@@ -206,20 +206,21 @@ export function renderSubmit(root) {
 
   const finish = async () => {
     const btn = $('[data-next]', root);
-    if (btn) btn.disabled = true;
+    if (btn) { btn.disabled = true; btn.classList.add('is-busy'); }
+    let s;
     try {
-      for (const p of draft.photos) p.stored = await store.putPhoto(p.id, p.blob);
+      for (const p of draft.photos) p.stored ||= await store.uploadPhoto(p.blob);
+      s = await store.submit({
+        ...draftAsSukkah(),
+        contact: { name: draft.name, email: draft.email, phone: draft.phone },
+        photos: draft.photos.map((p) => ({ id: p.id, src: p.stored, label: p.label, hotspots: p.hotspots })),
+      });
     } catch (e) {
       console.error(e);
-      if (btn) btn.disabled = false;
-      return toast('Could not save photos on this device.');
+      if (btn) { btn.disabled = false; btn.classList.remove('is-busy'); }
+      return toast(t('sub.failed'));
     }
-    const s = store.submit({
-      ...draftAsSukkah(),
-      categories: draftAsSukkah().categories,
-      contact: { name: draft.name, email: draft.email, phone: draft.phone },
-      photos: draft.photos.map((p) => ({ id: p.id, src: p.stored, label: p.label, hotspots: p.hotspots })),
-    });
+    draft.photos.forEach((p) => URL.revokeObjectURL(p.src));
     draft = blank();
     root.innerHTML = `<section class="wizard">${done(s)}</section>`;
     window.scrollTo({ top: 0 });
@@ -301,7 +302,7 @@ export function renderSubmit(root) {
       const pend = $('[data-pending]', root);
       const url = d.url.trim();
       draft.photos[draft.activePhoto].hotspots.push({
-        id: store.uidFor('h-'), x: +pend.dataset.x, y: +pend.dataset.y,
+        id: store.uid(), x: +pend.dataset.x, y: +pend.dataset.y,
         name: d.name.trim(), vendor: d.vendor.trim(), url: url && !/^https?:\/\//i.test(url) ? 'https://' + url : url,
         price: d.price.trim(), category: d.category, note: d.note.trim(),
       });

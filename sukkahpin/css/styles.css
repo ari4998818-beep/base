@@ -791,3 +791,10 @@ body.scrolled .nav { box-shadow: 0 1px 0 var(--line); }
 
 /* Owner-written content keeps its own direction inside the Yiddish (RTL) UI. */
 [dir='rtl'] :is(.project-desc, .project-meta dd, .special blockquote, .p-note, .product h3, .pop h4, .p-vendor, .card h3, .loc, .tile-meta, .board-title, .src-meta strong, .pm-meta, .search-quick a, .now-showing strong, .project-title) { unicode-bidi: plaintext; }
+
+/* Boot loader: a thin citron bar while data loads */
+.boot { min-height: 70vh; display: grid; place-items: center; }
+.boot span { width: 120px; height: 3px; background: var(--line); position: relative; overflow: hidden; border-radius: 2px; }
+.boot span::after { content: ''; position: absolute; inset: 0; width: 40%; background: var(--lime); animation: boot 1s infinite var(--ease); }
+@keyframes boot { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+.btn.is-busy { opacity: .6; pointer-events: none; }

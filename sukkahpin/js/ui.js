@@ -25,16 +25,9 @@ export const icon = {
 
 /** <img> that also works for uploaded (IndexedDB) photos. Call hydrate() after inserting. */
 export function img(src, alt = '', attrs = '') {
-  if (src?.startsWith('idb:') ) return `<img data-idb="${esc(src)}" alt="${esc(alt)}" ${attrs}>`;
   return `<img src="${esc(src)}" alt="${esc(alt)}" ${attrs}>`;
 }
-export function hydrate(root = document) {
-  $$('img[data-idb]', root).forEach(async (el) => {
-    const src = el.dataset.idb;
-    el.removeAttribute('data-idb');
-    el.src = await store.photoURL(src);
-  });
-}
+export function hydrate() {} // photos are plain URLs now (Supabase Storage / static)
 
 /* ---------------- Cards ---------------- */
 
@@ -132,50 +125,69 @@ function voteDone(m, s, dup) {
 }
 
 /** Entry point for every vote button on the site. */
-export function vote(sukkahId) {
+export async function vote(sukkahId) {
   const s = store.get(sukkahId);
   if (!s) return;
   if (store.hasVoted(s.id)) return voteDone(modal('', { cls: 'modal-sm' }), s, true);
-  const r = store.castVote(s.id);
-  if (r === 'ok') { burst(sukkahId); return voteDone(modal('', { cls: 'modal-sm' }), s, false); }
+  if (store.session()) return finishVote(modal('<p class="muted">…</p>', { cls: 'modal-sm' }), s);
 
-  // Needs verification first.
+  // Not signed in yet: email → code (or the link in the email) → vote.
   const m = modal(`<div class="vote-flow">
       <p class="eyebrow">${t('vote.title')}</p>
       <h2 class="display-sm">${esc(s.title)}</h2>
       <p class="muted small">${t('vote.why')}</p>
       <form class="vf-email">
-        <label class="field"><span>${t('vote.email')}</span><input type="email" name="email" autocomplete="email" inputmode="email" required placeholder="name@email.com"></label>
+        <label class="field"><span>${t('vote.email')}</span><input type="email" name="email" autocomplete="email" inputmode="email" required placeholder="name@email.com" dir="ltr"></label>
         <p class="err" hidden></p>
         <button class="btn btn-lime btn-block">${t('vote.send')} <span aria-hidden="true">${arrow()}</span></button>
       </form>
     </div>`, { cls: 'modal-sm' });
 
   const f = $('.vf-email', m.el);
-  f.addEventListener('submit', (e) => {
+  const showErr = (form, k, detail) => { const e = $('.err', form); e.hidden = false; e.textContent = t(k) + (detail ? ` (${detail})` : ''); };
+  f.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = f.email.value;
-    if (!store.validEmail(email)) { $('.err', f).hidden = false; $('.err', f).textContent = t('vote.badEmail'); return; }
-    const code = store.requestCode(email);
+    const email = f.email.value.trim();
+    if (!store.validEmail(email)) return showErr(f, 'vote.badEmail');
+    const btn = $('button', f); btn.disabled = true;
+    try {
+      // If they tap the link in the email instead, the site finishes the vote on return.
+      try { localStorage.setItem('sp:pendingVote', s.slug); } catch {}
+      await store.requestCode(email);
+    } catch (err) {
+      btn.disabled = false;
+      return showErr(f, /rate|seconds/i.test(err.message) ? 'vote.slow' : 'vote.error', err.message);
+    }
     $('.vote-flow', m.el).innerHTML = `
       <p class="eyebrow">${t('vote.title')}</p>
-      <h2 class="display-sm">${esc(s.title)}</h2>
-      <p class="demo-note">${t('vote.demo')} <strong dir="ltr">${code}</strong></p>
+      <h2 class="display-sm">${t('vote.sent')}</h2>
+      <p class="muted small">${t('vote.sentSub')} <strong dir="ltr">${esc(email)}</strong></p>
       <form class="vf-code">
-        <label class="field"><span>${t('vote.code')}</span><input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required class="code-input" dir="ltr"></label>
+        <label class="field"><span>${t('vote.code')}</span><input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" pattern="[0-9]{6,10}" required class="code-input" dir="ltr"></label>
         <p class="err" hidden></p>
         <button class="btn btn-lime btn-block">${icon.heart(true)} ${t('vote.check')}</button>
       </form>`;
     const cf = $('.vf-code', m.el);
     cf.code.focus();
-    cf.addEventListener('submit', (ev) => {
+    cf.addEventListener('submit', async (ev) => {
       ev.preventDefault();
-      if (!store.verifyCode(email, cf.code.value)) { $('.err', cf).hidden = false; $('.err', cf).textContent = t('vote.bad'); return; }
-      const res = store.castVote(s.id);
-      if (res === 'ok') burst(s.id);
-      voteDone(m, s, res === 'duplicate');
+      const b = $('button', cf); b.disabled = true;
+      const ok = await store.verifyCode(email, cf.code.value);
+      if (!ok) { b.disabled = false; return showErr(cf, 'vote.bad'); }
+      try { localStorage.removeItem('sp:pendingVote'); } catch {}
+      finishVote(m, s);
     });
   });
+}
+
+export async function finishVote(m, s) {
+  const res = await store.castVote(s.id);
+  if (res === 'error' || res === 'unverified') {
+    m.el.innerHTML = `<div class="vote-done"><h2 class="display-sm">${t('vote.error')}</h2></div>`;
+    return;
+  }
+  if (res === 'ok') burst(s.id);
+  voteDone(m, s, res === 'duplicate');
 }
 
 function burst(id) {

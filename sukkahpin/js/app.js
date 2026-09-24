@@ -1,6 +1,6 @@
 import * as store from './store.js';
 import { t, lang, setLang, applyLang } from './i18n.js';
-import { $, $$, icon, esc, refreshVotes, hydrate, fmt } from './ui.js';
+import { $, $$, icon, esc, refreshVotes, hydrate, fmt, modal, finishVote } from './ui.js';
 import { renderHome } from './views/home.js';
 import { renderDetail } from './views/detail.js';
 import { renderSubmit } from './views/submit.js';
@@ -136,8 +136,33 @@ store.onChange(() => {
   $$('[data-vote-count]').forEach((d) => { const s = store.get(d.dataset.voteCount); if (s) d.textContent = fmt(s.votes); });
 });
 
-applyLang();
-chrome();
-window.addEventListener('hashchange', route);
-route();
-onScroll();
+/* ---------------- Boot ---------------- */
+
+async function boot() {
+  applyLang();
+  chrome();
+  $('#app').innerHTML = '<div class="boot" aria-busy="true"><span></span></div>';
+  // Returning from the emailed sign-in link: Supabase reads the tokens from the URL hash.
+  const fromEmail = /access_token=|error_description=/.test(location.hash);
+  try {
+    await store.init();
+  } catch (e) {
+    console.error(e);
+    $('#app').innerHTML = `<section class="section notfound"><h1 class="display">${t('vote.error')}</h1><button class="btn btn-dark" onclick="location.reload()">↻</button></section>`;
+    return;
+  }
+  let pending = null;
+  try { pending = localStorage.getItem('sp:pendingVote'); } catch {}
+  let returnTo = null;
+  try { returnTo = localStorage.getItem('sp:returnTo'); localStorage.removeItem('sp:returnTo'); } catch {}
+  if (fromEmail) history.replaceState(null, '', location.pathname + (pending ? `#/sukkah/${pending}` : returnTo || '#/'));
+  window.addEventListener('hashchange', route);
+  route();
+  onScroll();
+  if (pending && store.session()) {
+    try { localStorage.removeItem('sp:pendingVote'); } catch {}
+    const s = store.get(pending);
+    if (s) finishVote(modal('', { cls: 'modal-sm' }), s);
+  }
+}
+boot();

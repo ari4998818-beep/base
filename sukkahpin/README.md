@@ -1,14 +1,13 @@
 # SukkahPin
 
 A community gallery of sukkahs: discover, submit, vote, and shop the look.
-Static site, no build step: plain HTML, CSS, and ES modules.
+Static front end (plain HTML, CSS, ES modules, no build step) on **Supabase** (database, email sign-in,
+photo storage), deployed on **Vercel** from git.
 
 ```bash
 cd sukkahpin
-python3 -m http.server 8000   # → http://localhost:8000
+python3 -m http.server 8000   # → http://localhost:8000  (talks to the live Supabase project)
 ```
-
-Deploys to any static host. `netlify.toml` publishes this folder as-is.
 
 ## Pages
 
@@ -21,13 +20,14 @@ Deploys to any static host. `netlify.toml` publishes this folder as-is.
 | `#/sources` · `#/sources/<item>` | Every tagged product, by shelf, with "Seen in these sukkahs" |
 | `#/winners` | Editor's Picks + live standings |
 | `#/about` | About |
-| `#/admin` | Review, approve/reject, edit, reorder photos, set the cover, review and fix product links, feature / Editor's Pick, manage votes, manage sample content. Demo passcode: `sukkah` |
+| `#/admin` | Review, approve/reject, edit, reorder photos, set the cover, review and fix product links, feature / Editor's Pick, manage votes, manage sample content. Sign in with an email listed in `sp_admins` |
 
 ## Files
 
 ```
-js/seed.js      placeholder sukkahs, users, products (all flagged sample: true)
-js/store.js     data layer — the only file that touches storage
+js/seed.js      placeholder sukkahs (already loaded into Supabase; used by admin "Restore samples")
+js/config.js    Supabase URL + publishable key
+js/store.js     data layer — the only file that talks to Supabase
 js/i18n.js      English + heimish Yiddish strings
 js/ui.js        cards, vote flow, WhatsApp share, modal, toast
 js/views/*.js   one file per page
@@ -36,21 +36,53 @@ img/            placeholder photos
 brand/          logo (SVG + PNG), icon, and ready-made social graphics
 ```
 
-## Things to know before launch
+## Backend (Supabase project `sukkah-gallery`)
 
-- **No backend yet.** State lives in the visitor's browser (localStorage, plus IndexedDB for uploaded photos),
-  so submissions and votes aren't shared between devices. `js/store.js` is the only file that reads or writes
-  data. Swap its functions for API calls (Supabase fits well: Postgres, Storage for photos, Auth for admin)
-  and the pages don't change.
-- **Voting uses email codes, in demo mode.** Nothing is emailed; the code appears on screen. With a backend,
-  send the code from the server and stop returning it. Duplicates are blocked per email and per device.
-- **The admin passcode is not security.** It only keeps casual visitors out of the UI. Put the admin behind
-  real auth with the backend.
+SukkahPin uses its own `sp_*` tables and `sp-photos` bucket, so the earlier prototype tables in the same
+project are untouched.
+
+| Table | What | Who can read / write |
+|---|---|---|
+| `sp_sukkahs` | Sukkahs, photos + product hotspots (jsonb), vote count | Public reads approved; admins everything |
+| `sp_contacts` | Submitter name / email / phone | Admins only |
+| `sp_votes` | One row per (sukkah, signed-in user) — unique | Users insert/read their own; admins read/delete |
+| `sp_admins` | Admin emails | — |
+| `sp_settings` | Hero stat, contest line | Public read; admins write |
+
+- **Submissions** go through `sp_submit()` (inserts a *pending* sukkah + private contact). Photos upload to
+  `sp-photos/uploads/` (images only, 8 MB max).
+- **Voting** needs an email sign-in (Supabase Auth, email code or link). A trigger keeps `votes` in sync and
+  only approved sukkahs accept votes.
+- **Admins**: add a row to `sp_admins` (lower-case email). `ari4998818@gmail.com` is there already.
+
+### One-time Supabase dashboard setup (required before launch)
+
+1. **Auth → URL Configuration**: set *Site URL* to the Vercel URL (e.g. `https://sukkahpin.vercel.app`) and add
+   `https://sukkahpin.vercel.app/**` and `https://*.vercel.app/**` to *Redirect URLs*. Without this, the emailed
+   sign-in link sends people to `localhost`.
+2. **Auth → Email Templates → Magic Link**: add the code so people can type it instead of tapping the link:
+   `<h2>Your SukkahPin code</h2><p>{{ .Token }}</p><p>Or <a href="{{ .ConfirmationURL }}">tap here to sign in</a>.</p>`
+   Do the same in the **Confirm signup** template (first-time emails use it).
+3. **Auth → SMTP**: connect a real email sender (Resend, Postmark, SendGrid…). Supabase's built-in sender is
+   for testing only and allows just a few emails per hour — far too few for voting.
+
+## Deploy (Vercel, from git)
+
+1. vercel.com → **Add New… → Project** → import the GitHub repo `ari4998818-beep/base`.
+2. **Root Directory**: `sukkahpin`. Framework preset: **Other**. No build command, no output directory.
+3. Deploy. Every push now redeploys: the default branch goes to production, other branches get preview URLs.
+   (To make this branch production, merge it into `main`, or change *Settings → Git → Production Branch*.)
+4. Put the resulting URL into the Supabase *Site URL* (step 1 above). Add a custom domain in Vercel whenever.
+
+## Still to know
+
 - **Placeholder photos are crops of the approved homepage mockup,** upscaled, so they're soft on large screens.
   Replace them via `/admin → Samples & settings`: delete the samples, or hand a sample's slot to a real
   submission.
 - **Product links** in the sample data point to store *search* pages, not specific products.
 - The "500+ sukkahs" badge and the contest line on Winners are editable in admin settings.
+- Photo uploads are open to anyone (that's how submissions work). Admins can delete a sukkah, which also deletes
+  its uploaded photos.
 
 ## Language
 

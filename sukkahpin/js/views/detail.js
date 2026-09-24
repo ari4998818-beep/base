@@ -172,7 +172,7 @@ export function bindProject(root, s) {
 
 export function renderDetail(root, slug) {
   const s = store.get(slug);
-  if (!s || (s.status !== 'approved' && !sessionStorage.getItem('sp:admin'))) {
+  if (!s || (s.status !== 'approved' && !store.isAdmin())) {
     root.innerHTML = `<section class="section notfound"><h1 class="display">${t('detail.notFound')}</h1><a class="btn btn-dark" href="#/explore">${t('detail.back')}</a></section>`;
     return;
   }

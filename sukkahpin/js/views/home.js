@@ -143,18 +143,15 @@ function initHero(root, cleanup) {
       mainImg.alt = main.title;
       mainImg.onload = () => mainImg.classList.remove('fade');
       setTimeout(() => mainImg.classList.remove('fade'), 700);
-      hydrateSrc(mainImg);
     }, 220);
     const fi = $('img', f);
     fi.src = store.heroOf(other).src;
     fi.alt = other.title;
-    hydrateSrc(fi);
     f.setAttribute('aria-label', other.title);
     f.classList.remove('flip'); void f.offsetWidth; f.classList.add('flip');
     nowShowing.href = `#/sukkah/${main.slug}`;
     $('strong', nowShowing).textContent = main.title;
   }
-  const hydrateSrc = async (el) => { if (el.getAttribute('src')?.startsWith('idb:')) el.src = await store.photoURL(el.getAttribute('src')); };
 
   $('[data-video]', hero)?.addEventListener('click', openFilm);
   $('[data-scroll-cue]', hero)?.addEventListener('click', () => $('#trending')?.scrollIntoView({ behavior: 'smooth' }));
