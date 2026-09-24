@@ -69,7 +69,8 @@ project are untouched.
 ## Deploy (Vercel, from git)
 
 1. vercel.com → **Add New… → Project** → import the GitHub repo `ari4998818-beep/base`.
-2. **Root Directory**: `sukkahpin`. Framework preset: **Other**. No build command, no output directory.
+2. Framework preset: **Other**. Leave **Root Directory** as `./` — the repo-root `vercel.json` serves the
+   `sukkahpin/` folder. (Setting Root Directory to `sukkahpin` also works; then `sukkahpin/vercel.json` applies.)
 3. Deploy. Every push now redeploys: the default branch goes to production, other branches get preview URLs.
    (To make this branch production, merge it into `main`, or change *Settings → Git → Production Branch*.)
 4. Put the resulting URL into the Supabase *Site URL* (step 1 above). Add a custom domain in Vercel whenever.
