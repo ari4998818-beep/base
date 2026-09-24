@@ -25,6 +25,10 @@ A restrained, institutional system: navy-led, quiet on accent, solid in structur
 - **Elevation:** hairline 1px borders over near-invisible shadows — no glow.
 - **Stats:** real figures (units, years, states), never adjectives.
 
+## Also in this repo
+
+- `inside-the-sukkah/` — *Inside the Sukkah*, a separate community sukkah gallery. See its own README.
+
 ## Run it locally
 
 It's a static site — just open `index.html` in a browser, or:
