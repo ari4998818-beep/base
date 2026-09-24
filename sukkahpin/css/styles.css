@@ -843,3 +843,8 @@ body.scrolled .nav { box-shadow: 0 1px 0 var(--line); }
 .visit-q .chips { margin-bottom: 4px; }
 .visit-fields { display: grid; gap: 22px; margin-top: 18px; padding: 20px; background: var(--soft); border-radius: 6px; }
 .visit-fields .note { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); }
+
+/* ---------- Owner editing ---------- */
+.editing-flag { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; background: var(--lime); padding: 7px 14px; border-radius: 999px; margin-bottom: 20px; }
+.keep-link { margin-top: 24px; padding: 22px; border: 1px solid var(--ink); border-radius: 6px; display: grid; gap: 10px; max-width: 560px; width: 100%; }
+.keep-link .a-url { font-size: 13px; }

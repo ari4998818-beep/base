@@ -54,13 +54,14 @@ function row(s) {
   return `<tr data-id="${s.id}">
     <td><span class="a-thumb">${c ? img(c.src, '', 'loading="lazy"') : ''}</span></td>
     <td><a href="#/sukkah/${s.slug}" class="a-title">${esc(s.title)}</a><div class="small muted">${esc(s.location)} · ${esc(s.ownerName || '')}${store.contactOf(s.id)?.email ? ` · ${esc(store.contactOf(s.id).email)}` : ''}${store.contactOf(s.id)?.phone ? ` · ${esc(store.contactOf(s.id).phone)}` : ''}</div>
-      <div class="a-flags">${s.sample ? '<b class="flag">Sample</b>' : ''}${s.featured ? '<b class="flag lime">Featured</b>' : ''}${s.editorsPick ? '<b class="flag dark">Editor’s Pick</b>' : ''}<b class="flag st-${s.status}">${s.status}</b></div></td>
+      <div class="a-flags">${s.sample ? '<b class="flag">Sample</b>' : ''}${s.featured ? '<b class="flag lime">Featured</b>' : ''}${s.editorsPick ? '<b class="flag dark">Editor’s Pick</b>' : ''}<b class="flag st-${s.status}">${s.status}</b>${s.editedAt ? `<b class="flag" title="${new Date(s.editedAt).toLocaleString()}">Edited by owner</b>` : ''}</div></td>
     <td class="num">${fmt(s.votes)}</td>
     <td class="num">${s.photos.length}</td>
     <td class="small muted">${when(s.createdAt)}</td>
     <td class="a-actions">
       ${s.status === 'pending' ? `<button class="btn btn-lime btn-sm" data-act="approve">Approve</button><button class="btn btn-ghost btn-sm" data-act="reject">Reject</button>` : ''}
       <button class="btn btn-ghost btn-sm" data-act="edit">Edit</button>
+      <button class="btn btn-ghost btn-sm" data-act="owner-link" title="Make a private link the owner can use to edit">Owner link</button>
     </td>
   </tr>`;
 }
@@ -257,6 +258,14 @@ export async function renderAdmin(root, params) {
     if (act === 'approve') return run(() => store.update(id, { status: 'approved' }), 'Approved — it’s live');
     if (act === 'reject') return run(() => store.update(id, { status: 'rejected' }), 'Rejected');
     if (act === 'edit') return editor(store.get(id), draw);
+    if (act === 'owner-link') return store.ownerLink(id).then((link) => {
+      const sk = store.get(id);
+      modal(`<p class="eyebrow">Owner edit link</p><h2 class="display-sm">${esc(sk.title)}</h2>
+        <p class="muted small">Send this to the owner only. Anyone with it can edit this sukkah. Making a new link turns off the old one.</p>
+        <input class="a-url" value="${esc(link)}" readonly dir="ltr" onclick="this.select()" style="margin:16px 0">
+        <div class="stack-btns"><button class="btn btn-dark btn-sm" data-copy="${esc(link)}">Copy link</button>
+        <a class="btn btn-wa btn-sm" href="https://wa.me/?text=${encodeURIComponent('Here’s your link to edit ' + sk.title + ' on SukkahPin:\n' + link)}" target="_blank" rel="noopener">${icon.wa}<span>Send on WhatsApp</span></a></div>`, { cls: 'modal-sm' });
+    }, fail);
     if (act === 'delete' && confirm('Delete this sukkah?')) return run(() => store.remove(id), 'Deleted');
     if (act === 'remove-samples' && confirm('Delete every sample sukkah? Real submissions stay.')) return run(() => store.removeSamples(), 'Samples removed');
     if (act === 'restore-samples') return run(() => store.restoreSamples(), 'Samples restored');

@@ -113,6 +113,7 @@ export function detailHTML(s, { preview = false } = {}) {
           ${preview ? '' : `<div class="project-actions">
             <button class="btn btn-vote ${store.hasVoted(s.id) ? 'is-voted' : ''}" data-vote="${s.id}">${icon.heart(store.hasVoted(s.id))}<span data-vote-label>${store.hasVoted(s.id) ? t('vote.voted') : t('vote.vote')}</span><span class="count" data-count>${fmt(s.votes)}</span></button>
             ${shareButtons(s)}
+            ${store.myKey(s.slug) ? `<a class="btn btn-ghost" href="#/edit/${s.slug}">✎ <span>${t('detail.edit')}</span></a>` : ''}
           </div>`}
           ${visitHTML(s)}
         </div>

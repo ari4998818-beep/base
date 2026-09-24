@@ -30,9 +30,24 @@ async function prepare(file) {
   return { id: store.uid(), blob, src: URL.createObjectURL(blob), label: '', hotspots: [] };
 }
 
+/** Pre-fill the wizard from an existing sukkah (owner edit mode). */
+function draftFrom(s, key) {
+  const c = s.contact || {};
+  const cats = s.categories.map((x) => (x === 'Balcony' ? 'Balcony / Patio' : x));
+  return {
+    ...blank(), mode: 'edit', slug: s.slug, key, status: s.status,
+    photos: s.photos.map((p) => ({ id: p.id || store.uid(), src: p.src, stored: p.src, label: p.label || '', hotspots: p.hotspots || [] })),
+    cover: s.cover || 0, title: s.title, location: s.location, description: s.description || '', special: s.special || '', categories: cats,
+    name: c.name || s.ownerName || '', email: c.email || '', phone: c.phone || '',
+    showName: !s.ownerName || s.ownerName === c.name, display: s.ownerName && s.ownerName !== c.name ? s.ownerName : '',
+    year: s.year || store.thisYear(), visit: { open: false, address: '', times: '', contact: '', ...(s.visit || {}) },
+    video: s.video?.url ? { link: s.video.url, kind: s.video.kind, url: s.video.url } : null,
+  };
+}
+
 function head() {
   const titles = ['sub.s1', 'sub.s2', 'sub.s3', 'sub.s4', 'sub.s5'];
-  return `<div class="wiz-head">
+  return `${draft.mode === 'edit' ? `<p class="editing-flag">${icon.spark} ${t('sub.editing')} <strong>${esc(draft.title)}</strong></p>` : ''}<div class="wiz-head">
     <div class="wiz-progress" aria-hidden="true">${Array.from({ length: STEPS }, (_, i) => `<i class="${i < draft.step ? 'on' : ''}"></i>`).join('')}</div>
     <p class="eyebrow">${t('sub.step')} ${String(draft.step).padStart(2, '0')} <span class="muted">/ 0${STEPS}</span></p>
     <h1 class="display">${t(titles[draft.step - 1])}</h1>
@@ -202,7 +217,7 @@ function draftAsSukkah() {
 function step5() {
   return `${head()}
   <div class="preview-frame">${detailHTML(draftAsSukkah(), { preview: true })}</div>
-  ${nav({ nextLabel: t('sub.submit') })}`;
+  ${nav({ nextLabel: draft.mode === 'edit' ? t('sub.saveChanges') : t('sub.submit') })}`;
 }
 
 function done(s) {
@@ -215,13 +230,42 @@ function done(s) {
       <a class="btn btn-wa" href="https://wa.me/?text=${encodeURIComponent(shareText)}" target="_blank" rel="noopener">${icon.wa}<span>${t('sub.doneShare')}</span></a>
       <a class="btn btn-ghost" href="#/explore">${t('sub.another')}</a>
     </div>
-    <p class="small muted ref">#${esc(s.slug)}</p>
+    ${s.key ? keepLinkHTML(s.slug, s.key, s.title) : ''}
+  </div>`;
+}
+
+function keepLinkHTML(slug, key, title) {
+  const link = store.editLink(slug, key);
+  const msg = `${t('sub.editLinkText').replace('{title}', title || '')}\n${link}`;
+  return `<div class="keep-link">
+    <p class="eyebrow">${t('sub.keepLink')}</p>
+    <p class="muted small">${t('sub.keepLinkSub')}</p>
+    <input class="a-url" value="${esc(link)}" readonly dir="ltr" onclick="this.select()">
+    <div class="stack-btns">
+      <button class="btn btn-dark btn-sm" data-copy="${esc(link)}">${icon.link}<span>${t('share.copy')}</span></button>
+      <a class="btn btn-wa btn-sm" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">${icon.wa}<span>${t('sub.sendMe')}</span></a>
+    </div>
+  </div>`;
+}
+
+function doneEdit(d) {
+  return `<div class="done">
+    <div class="done-mark">${icon.spark}</div>
+    <h1 class="display-xl">${t('sub.saved')}</h1>
+    <p class="lede muted">${d.status === 'approved' ? t('sub.savedSub') : t('sub.savedPending')}</p>
+    <div class="stack-btns">
+      ${d.status === 'approved' ? `<a class="btn btn-lime" href="#/sukkah/${esc(d.slug)}">${t('sub.viewPage')} <span aria-hidden="true">${arrow()}</span></a>` : ''}
+      <a class="btn btn-ghost" href="#/edit/${esc(d.slug)}?k=${esc(d.key)}">${t('detail.edit')}</a>
+    </div>
+    ${keepLinkHTML(d.slug, d.key, d.title)}
   </div>`;
 }
 
 /* ---------------- Controller ---------------- */
 
-export function renderSubmit(root) {
+export function renderSubmit(root, edit) {
+  if (edit) draft = draftFrom(edit.sukkah, edit.key);
+  else if (draft.mode === 'edit') draft = blank();
   const views = [step1, step2, step3, step4, step5];
   const draw = () => {
     root.innerHTML = `<section class="wizard step-${draft.step}">${views[draft.step - 1]()}</section>`;
@@ -259,18 +303,26 @@ export function renderSubmit(root) {
     try {
       for (const p of draft.photos) p.stored ||= await store.uploadPhoto(p.blob);
       if (draft.video?.file) draft.video.url ||= await store.uploadVideo(draft.video.file);
-      s = await store.submit({
+      const payload = {
         ...draftAsSukkah(),
         video: draft.video ? { kind: draft.video.file ? 'file' : draft.video.kind, url: draft.video.url } : null,
         contact: { name: draft.name, email: draft.email, phone: draft.phone },
         photos: draft.photos.map((p) => ({ id: p.id, src: p.stored, label: p.label, hotspots: p.hotspots })),
-      });
+      };
+      if (draft.mode === 'edit') {
+        await store.ownerUpdate(draft.slug, draft.key, payload);
+        const d = { slug: draft.slug, key: draft.key, title: draft.title, status: draft.status === 'rejected' ? 'pending' : draft.status };
+        draft = blank();
+        root.innerHTML = `<section class="wizard">${doneEdit(d)}</section>`;
+        return window.scrollTo({ top: 0 });
+      }
+      s = { ...(await store.submit(payload)), title: payload.title };
     } catch (e) {
       console.error(e);
       if (btn) { btn.disabled = false; btn.classList.remove('is-busy'); }
       return toast(t('sub.failed'));
     }
-    draft.photos.forEach((p) => URL.revokeObjectURL(p.src));
+    draft.photos.forEach((p) => p.src.startsWith('blob:') && URL.revokeObjectURL(p.src));
     draft = blank();
     root.innerHTML = `<section class="wizard">${done(s)}</section>`;
     window.scrollTo({ top: 0 });
@@ -398,4 +450,17 @@ export function renderSubmit(root) {
   };
 
   draw();
+}
+
+/** #/edit/:slug?k=… — owners fix their own sukkah with their private link. */
+export async function renderEdit(root, slug, keyParam) {
+  const key = keyParam || store.myKey(slug);
+  const fail = () => { root.innerHTML = `<section class="section notfound"><h1 class="display">${t('edit.bad')}</h1><p class="muted">${t('edit.badSub')}</p><a class="btn btn-dark" href="#/">${t('detail.back')}</a></section>`; };
+  if (!key) return fail();
+  root.innerHTML = '<div class="boot"><span></span></div>';
+  const s = await store.ownerGet(slug, key);
+  if (!root.isConnected) return;
+  if (!s) return fail();
+  store.saveKey(slug, key); // remember on this device so the page shows "Edit my sukkah"
+  renderSubmit(root, { sukkah: s, key });
 }

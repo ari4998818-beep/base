@@ -31,8 +31,9 @@ const fromRow = (r) => ({
   title: r.title, location: r.location, description: r.description, special: r.special,
   categories: r.categories || [], tags: r.tags || [], ownerName: r.owner_name,
   cover: r.cover ?? 0, hero: r.hero ?? r.cover ?? 0, photos: r.photos || [], votes: r.votes, createdAt: r.created_at,
-  year: r.year || thisYear(), visit: r.visit || {}, video: r.video || null,
+  year: r.year || thisYear(), visit: r.visit || {}, video: r.video || null, editedAt: r.edited_at || null,
 });
+export const fromDbRow = fromRow;
 const COLS = { title: 'title', location: 'location', description: 'description', special: 'special', categories: 'categories', tags: 'tags', ownerName: 'owner_name', cover: 'cover', hero: 'hero', photos: 'photos', votes: 'votes', status: 'status', sample: 'sample', featured: 'featured', editorsPick: 'editors_pick', year: 'year', visit: 'visit', video: 'video' };
 const toRow = (patch) => Object.fromEntries(Object.entries(patch).filter(([k]) => COLS[k]).map(([k, v]) => [COLS[k], v]));
 
@@ -254,7 +255,46 @@ export async function submit(draft) {
     },
   });
   if (error) throw error;
-  return { slug: data };
+  const res = typeof data === 'string' ? { slug: data } : data;
+  if (res.key) saveKey(res.slug, res.key);
+  return res;
+}
+
+/* ---------------- Owner editing (private edit link, no account) ---------------- */
+
+const KEYS = 'sp:editKeys';
+const readKeys = () => { try { return JSON.parse(localStorage.getItem(KEYS) || '{}'); } catch { return {}; } };
+export function saveKey(slug, key) { try { localStorage.setItem(KEYS, JSON.stringify({ ...readKeys(), [slug]: key })); } catch {} }
+export const myKey = (slug) => readKeys()[slug] || '';
+export const editLink = (slug, key) => `${location.origin}${location.pathname}#/edit/${slug}?k=${key}`;
+
+/** Returns the sukkah (any status) + its contact, or null if the key doesn't match. */
+export async function ownerGet(slug, key) {
+  const { data, error } = await sb.rpc('sp_owner_get', { p_slug: slug, p_key: key });
+  if (error || !data) return null;
+  return { ...fromRow(data), contact: data.contact || {} };
+}
+export async function ownerUpdate(slug, key, draft) {
+  const { error } = await sb.rpc('sp_owner_update', {
+    p_slug: slug, p_key: key,
+    p: {
+      title: draft.title, location: draft.location, description: draft.description || '', special: draft.special || '',
+      categories: draft.categories, owner_name: draft.ownerName, cover: draft.cover, photos: draft.photos,
+      name: draft.contact.name, email: draft.contact.email, phone: draft.contact.phone || '',
+      year: draft.year, visit: draft.visit || { open: false }, video: draft.video || null,
+    },
+  });
+  if (error) throw error;
+  saveKey(slug, key);
+  await loadSukkahs();
+  notify();
+}
+/** Admin: mint a new owner edit link (replaces the old one). */
+export async function ownerLink(id) {
+  const { data, error } = await sb.rpc('sp_owner_link', { p_id: id });
+  if (error) throw error;
+  const s = get(id);
+  return editLink(s.slug, data);
 }
 
 /* ---------------- Auth (email code) ----------------

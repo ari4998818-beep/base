@@ -51,6 +51,10 @@ project are untouched.
 
 - **Submissions** go through `sp_submit()` (inserts a *pending* sukkah + private contact). Photos and an optional
   video upload to `sp-photos/uploads/` (images + mp4/mov/webm, 50 MB max); a YouTube/Vimeo link works too.
+- **Owner editing**: every submission gets a private edit link (`#/edit/<slug>?k=<key>`; only a SHA-256 hash is
+  stored in `sp_edit_keys`). It's shown after submitting, remembered on that phone ("Edit my sukkah" button), and
+  admins can issue a fresh one from the admin list ("Owner link"). Editing a rejected sukkah sends it back to
+  pending; edits to live sukkahs are flagged "Edited by owner" in admin.
 - **Year & visiting**: owners pick the year. Only this year's sukkahs can be marked *open to visitors*; the
   address, times and optional phone/WhatsApp are then public on the page (with Directions + WhatsApp buttons)
   and in the gallery's "Open to visit" filter. They disappear automatically once the year rolls over.

@@ -3,7 +3,7 @@ import { t, lang, setLang, applyLang } from './i18n.js';
 import { $, $$, icon, esc, refreshVotes, hydrate, fmt, modal, finishVote } from './ui.js';
 import { renderHome } from './views/home.js';
 import { renderDetail } from './views/detail.js';
-import { renderSubmit } from './views/submit.js';
+import { renderSubmit, renderEdit } from './views/submit.js';
 import { renderExplore, renderSources, renderWinners, renderAbout } from './views/pages.js';
 import { renderAdmin } from './views/admin.js';
 
@@ -12,6 +12,7 @@ const ROUTES = [
   [/^\/explore$/, (root, p) => renderExplore(root, p), 'explore'],
   [/^\/sukkah\/([\w-]+)$/, (root, p, m) => renderDetail(root, m[1]), 'detail'],
   [/^\/submit$/, (root) => renderSubmit(root), 'submit'],
+  [/^\/edit\/([\w-]+)$/, (root, p, m) => renderEdit(root, m[1], p.get('k')), 'submit'],
   [/^\/sources$/, (root, p) => renderSources(root, p), 'sources'],
   [/^\/sources\/([\w-]+)$/, (root, p, m) => renderSources(root, p, m[1]), 'sources'],
   [/^\/winners$/, (root) => renderWinners(root), 'winners'],
