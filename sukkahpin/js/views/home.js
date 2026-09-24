@@ -6,9 +6,9 @@ export const STYLES = [
   ['Modern', 'img/t-modern.webp'], ['DIY', 'img/t-diy.webp'], ['Family', 'img/t-family.webp'], ['Small Space', 'img/t-small.webp'],
   ['Luxury', 'img/t-luxury.webp'], ['Creative', 'img/t-creative.webp'], ['Outdoor', 'img/t-outdoor.webp'], ['Balcony', 'img/t-balcony.webp'],
 ];
-export const FILTERS = ['Trending', 'New', 'Most Voted', 'Modern', 'DIY', 'Family', 'Creative', 'Small Space', 'Luxury', 'Outdoor'];
+export const FILTERS = ['Trending', 'New', 'Most Voted', 'Open to Visit', 'Modern', 'DIY', 'Family', 'Creative', 'Small Space', 'Luxury', 'Outdoor'];
 const SORT_FILTERS = { Trending: 'trending', New: 'new', 'Most Voted': 'voted' };
-const filterLabel = (f) => (SORT_FILTERS[f] ? t({ Trending: 'tabs.trending', New: 'tabs.new', 'Most Voted': 'tabs.voted' }[f]) : tc(f));
+const filterLabel = (f) => (f === 'Open to Visit' ? t('visit.filter') : SORT_FILTERS[f] ? t({ Trending: 'tabs.trending', New: 'tabs.new', 'Most Voted': 'tabs.voted' }[f]) : tc(f));
 
 function heroSet() {
   const all = store.list();
@@ -211,6 +211,7 @@ function stylesHTML() {
 
 export function galleryItems(filter) {
   const sort = SORT_FILTERS[filter];
+  if (filter === 'Open to Visit') return store.list({ sort: 'voted' }).filter(store.isOpenToVisit);
   return sort ? store.list({ sort }) : store.list({ category: filter, sort: 'voted' });
 }
 

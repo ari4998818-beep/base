@@ -57,6 +57,40 @@ function titleLines(title) {
   return `${esc(w.slice(0, -1).join(' '))}<br>${esc(w[w.length - 1])}`;
 }
 
+/** International digits for wa.me / tel: (10-digit numbers are assumed US/Canada). */
+function phoneDigits(raw) {
+  const d = (raw || '').replace(/[^\d+]/g, '');
+  const n = d.replace(/^\+/, '');
+  if (n.length < 7) return '';
+  return n.length === 10 ? `1${n}` : n;
+}
+
+function visitHTML(s) {
+  if (!store.isOpenToVisit(s)) return '';
+  const v = s.visit;
+  const maps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(v.address || s.location)}`;
+  const tel = phoneDigits(v.contact);
+  return `<div class="visit-card">
+    <p class="eyebrow"><i class="dot" aria-hidden="true"></i>${t('visit.open')} · ${s.year}</p>
+    <a class="visit-addr" href="${maps}" target="_blank" rel="noopener">${icon.pin}<span>${esc(v.address || s.location)}</span></a>
+    ${v.times ? `<p class="visit-times"><b>${t('visit.when')}</b> ${esc(v.times)}</p>` : ''}
+    <div class="visit-actions">
+      <a class="btn btn-dark btn-sm" href="${maps}" target="_blank" rel="noopener">${t('visit.directions')} <span aria-hidden="true">${arrow()}</span></a>
+      ${tel ? `<a class="btn btn-wa btn-sm" href="https://wa.me/${tel}?text=${encodeURIComponent(t('visit.waText').replace('{title}', s.title))}" target="_blank" rel="noopener">${icon.wa}<span>${t('visit.whatsapp')}</span></a>
+        <a class="btn btn-ghost btn-sm" href="tel:+${tel}" dir="ltr">${esc(v.contact)}</a>` : v.contact ? `<span class="muted small">${esc(v.contact)}</span>` : ''}
+    </div>
+  </div>`;
+}
+
+function videoHTML(s) {
+  const v = s.video;
+  if (!v?.url) return '';
+  const player = v.kind === 'youtube' || v.kind === 'vimeo'
+    ? `<iframe src="${esc(v.url)}" title="${esc(s.title)}" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`
+    : `<video src="${esc(v.url)}" controls playsinline preload="metadata"></video>`;
+  return `<section class="project-video"><p class="eyebrow">${t('detail.video')}</p><div class="video-frame">${player}</div></section>`;
+}
+
 export function detailHTML(s, { preview = false } = {}) {
   const photos = orderedPhotos(s);
   const prods = sukkahProducts(s);
@@ -72,7 +106,7 @@ export function detailHTML(s, { preview = false } = {}) {
           <div><dt>${t('detail.by')}</dt><dd>${esc(s.ownerName || '—')}</dd></div>
           <div><dt>${icon.pin}</dt><dd>${esc(s.location)}</dd></div>
           <div><dt>${t('detail.votes')}</dt><dd data-vote-count="${s.id}">${fmt(s.votes)}</dd></div>
-          <div><dt>${t('detail.photoCount')}</dt><dd>${photos.length}</dd></div>
+          <div><dt>${t('detail.year')}</dt><dd>${s.year || store.thisYear()} <span class="muted">· ${store.hebrewYear(s.year || store.thisYear())}</span>${(s.year || store.thisYear()) === store.thisYear() ? ` <b class="now-badge">${t('detail.thisYear')}</b>` : ''}</dd></div>
         </dl>
         <div class="project-intro">
           <p class="project-desc">${esc(s.description || '')}</p>
@@ -80,6 +114,7 @@ export function detailHTML(s, { preview = false } = {}) {
             <button class="btn btn-vote ${store.hasVoted(s.id) ? 'is-voted' : ''}" data-vote="${s.id}">${icon.heart(store.hasVoted(s.id))}<span data-vote-label>${store.hasVoted(s.id) ? t('vote.voted') : t('vote.vote')}</span><span class="count" data-count>${fmt(s.votes)}</span></button>
             ${shareButtons(s)}
           </div>`}
+          ${visitHTML(s)}
         </div>
       </div>
     </header>
@@ -90,6 +125,8 @@ export function detailHTML(s, { preview = false } = {}) {
     </div>` : ''}
 
     ${cover ? `<div class="project-cover">${shot(cover, 0, 'cover')}</div>` : ''}
+
+    ${videoHTML(s)}
 
     <section class="story">${storyHTML(photos)}</section>
 

@@ -31,9 +31,28 @@ const fromRow = (r) => ({
   title: r.title, location: r.location, description: r.description, special: r.special,
   categories: r.categories || [], tags: r.tags || [], ownerName: r.owner_name,
   cover: r.cover ?? 0, hero: r.hero ?? r.cover ?? 0, photos: r.photos || [], votes: r.votes, createdAt: r.created_at,
+  year: r.year || thisYear(), visit: r.visit || {}, video: r.video || null,
 });
-const COLS = { title: 'title', location: 'location', description: 'description', special: 'special', categories: 'categories', tags: 'tags', ownerName: 'owner_name', cover: 'cover', hero: 'hero', photos: 'photos', votes: 'votes', status: 'status', sample: 'sample', featured: 'featured', editorsPick: 'editors_pick' };
+const COLS = { title: 'title', location: 'location', description: 'description', special: 'special', categories: 'categories', tags: 'tags', ownerName: 'owner_name', cover: 'cover', hero: 'hero', photos: 'photos', votes: 'votes', status: 'status', sample: 'sample', featured: 'featured', editorsPick: 'editors_pick', year: 'year', visit: 'visit', video: 'video' };
 const toRow = (patch) => Object.fromEntries(Object.entries(patch).filter(([k]) => COLS[k]).map(([k, v]) => [COLS[k], v]));
+
+/* ---------------- Year / visiting / video helpers ---------------- */
+
+export const thisYear = () => new Date().getFullYear();
+export const hebrewYear = (y) => y + 3761; // Sukkos falls in the autumn, after Rosh Hashanah
+/** Open to visitors right now: this year's sukkah and the owner opted in. */
+export const isOpenToVisit = (s) => s.year === thisYear() && !!s.visit?.open;
+
+/** Turns a pasted link into something playable, or null if we can't embed it. */
+export function parseVideoLink(raw) {
+  const u = (raw || '').trim();
+  let m = u.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{11})/);
+  if (m) return { kind: 'youtube', url: `https://www.youtube-nocookie.com/embed/${m[1]}` };
+  m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (m) return { kind: 'vimeo', url: `https://player.vimeo.com/video/${m[1]}` };
+  if (/^https:\/\/\S+\.(mp4|webm|mov)(\?\S*)?$/i.test(u)) return { kind: 'file', url: u };
+  return null;
+}
 
 /* ---------------- Boot ---------------- */
 
@@ -118,7 +137,8 @@ export async function update(id, patch) {
   notify();
   return s;
 }
-const uploadedPaths = (s) => (s?.photos || []).map((p) => p.src?.split(`/${PHOTO_BUCKET}/`)[1]).filter((x) => x?.startsWith('uploads/'));
+const uploadedPaths = (s) => [...(s?.photos || []).map((p) => p.src), s?.video?.url]
+  .map((u) => u?.split(`/${PHOTO_BUCKET}/`)[1]).filter((x) => x?.startsWith('uploads/'));
 
 export async function remove(id) {
   const paths = uploadedPaths(get(id));
@@ -159,7 +179,7 @@ export async function restoreSamples() {
     slug: s.slug, status: 'approved', sample: true, featured: !!s.featured, editors_pick: !!s.editorsPick,
     title: s.title, location: s.location, description: s.description, special: s.special || '',
     categories: s.categories, tags: s.tags, owner_name: SEED_USERS.find((u) => u.id === s.owner)?.display || '',
-    cover: 0, hero: s.hero ?? 0, votes: s.votes,
+    cover: 0, hero: s.hero ?? 0, votes: s.votes, year: s.year || thisYear(), visit: s.visit || {},
     photos: s.photos.map((ph) => ({ id: uid(), src: ph.src, label: ph.label, hotspots: ph.hotspots.map((h) => ({ id: uid(), x: h.x, y: h.y, ...SEED_PRODUCTS[h.p] })) })),
   }));
   if (rows.length) {
@@ -212,6 +232,17 @@ export async function uploadPhoto(blob) {
   return sb.storage.from(PHOTO_BUCKET).getPublicUrl(path).data.publicUrl;
 }
 
+export const MAX_VIDEO_MB = 50;
+/** Uploads a video file as-is (phones already compress) and returns its public URL. */
+export async function uploadVideo(file) {
+  const ext = (file.name.split('.').pop() || 'mp4').toLowerCase().replace(/[^a-z0-9]/g, '') || 'mp4';
+  const path = `uploads/${uid()}.${ext}`;
+  const type = file.type || (ext === 'mov' ? 'video/quicktime' : `video/${ext}`);
+  const { error } = await sb.storage.from(PHOTO_BUCKET).upload(path, file, { contentType: type, cacheControl: '31536000' });
+  if (error) throw error;
+  return sb.storage.from(PHOTO_BUCKET).getPublicUrl(path).data.publicUrl;
+}
+
 /** Creates a pending sukkah + private contact in one call. Returns the new slug. */
 export async function submit(draft) {
   const { data, error } = await sb.rpc('sp_submit', {
@@ -219,6 +250,7 @@ export async function submit(draft) {
       title: draft.title, location: draft.location, description: draft.description || '', special: draft.special || '',
       categories: draft.categories, owner_name: draft.ownerName, cover: draft.cover,
       photos: draft.photos, name: draft.contact.name, email: draft.contact.email, phone: draft.contact.phone || '',
+      year: draft.year, visit: draft.visit || { open: false }, video: draft.video || null,
     },
   });
   if (error) throw error;

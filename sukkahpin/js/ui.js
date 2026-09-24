@@ -36,14 +36,19 @@ export function voteChip(s, cls = '') {
   return `<button class="vote-chip ${cls} ${voted ? 'is-voted' : ''}" data-vote="${s.id}" aria-pressed="${voted}" aria-label="${t('vote.vote')}: ${esc(s.title)}">${icon.heart(voted)}<span data-count>${fmt(s.votes)}</span></button>`;
 }
 
+function badges(s) {
+  const b = `${store.isOpenToVisit(s) ? `<span class="badge-open">${t('visit.badge')}</span>` : ''}${s.video?.url ? `<span class="badge-vid">${icon.play}</span>` : ''}`;
+  return b ? `<span class="tile-badges">${b}</span>` : '';
+}
+
 export function card(s) {
   const c = store.coverOf(s);
   return `<article class="card">
-    <a class="card-media" href="#/sukkah/${s.slug}">${img(c.src, s.title, 'loading="lazy"')}</a>
+    <a class="card-media" href="#/sukkah/${s.slug}">${img(c.src, s.title, 'loading="lazy"')}${badges(s)}</a>
     ${voteChip(s, 'on-media')}
     <div class="card-body">
       <h3><a href="#/sukkah/${s.slug}">${esc(s.title)}</a></h3>
-      <p class="loc">${icon.pin}${esc(s.location)}</p>
+      <p class="loc">${icon.pin}${esc(s.location)}${s.year && s.year !== store.thisYear() ? ` <span class="yr">· ${s.year}</span>` : ''}</p>
       <ul class="tags">${(s.tags || s.categories).slice(0, 3).map((x) => `<li>${esc(tc(x))}</li>`).join('')}</ul>
     </div>
   </article>`;
@@ -56,7 +61,7 @@ export function tile(s, i) {
     ${img(c.src, s.title, 'loading="lazy"')}
     <span class="tile-meta"><strong>${esc(s.title)}</strong><em>${esc(s.location)}</em></span>
     <span class="tile-votes">${icon.heart(store.hasVoted(s.id))}${fmt(s.votes)}</span>
-    ${s.editorsPick ? `<span class="pick">${t('detail.pick')}</span>` : ''}
+    <span class="tile-badges">${s.editorsPick ? `<span class="pick">${t('detail.pick')}</span>` : ''}${store.isOpenToVisit(s) ? `<span class="badge-open">${t('visit.badge')}</span>` : ''}${s.video?.url ? `<span class="badge-vid">${icon.play}</span>` : ''}</span>
   </a>`;
 }
 

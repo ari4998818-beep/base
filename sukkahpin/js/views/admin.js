@@ -145,6 +145,18 @@ function editor(s, rerender) {
       <label><input type="checkbox" name="sample" ${s.sample ? 'checked' : ''}> Sample content</label>
       <label>Status <select name="status">${['pending', 'approved', 'rejected'].map((x) => `<option ${s.status === x ? 'selected' : ''}>${x}</option>`).join('')}</select></label>
     </div>
+    <div class="form-grid">
+      <label class="field"><span>Year (Sukkos)</span><input name="year" type="number" min="1990" max="${store.thisYear()}" value="${s.year || store.thisYear()}"></label>
+      <label class="field"><span>Video (YouTube / Vimeo / .mp4 link — blank = none)</span><input name="video" value="${esc(s.video?.url || '')}" dir="ltr"></label>
+    </div>
+    <fieldset class="field"><legend>Open to visitors (shown only while the year is ${store.thisYear()})</legend>
+      <div class="a-toggles"><label><input type="checkbox" name="vopen" ${s.visit?.open ? 'checked' : ''}> Open to visit</label></div>
+      <div class="form-grid">
+        <label class="field"><span>Address (public)</span><input name="vaddress" value="${esc(s.visit?.address || '')}"></label>
+        <label class="field"><span>Times</span><input name="vtimes" value="${esc(s.visit?.times || '')}"></label>
+        <label class="field"><span>Contact phone / WhatsApp (public)</span><input name="vcontact" value="${esc(s.visit?.contact || '')}" dir="ltr"></label>
+      </div>
+    </fieldset>
     <p class="eyebrow">Photos — reorder, cover, labels, product tags</p>
     <ol class="a-photos">${s.photos.map((p, i) => `<li data-pi="${i}">
       <span class="a-thumb big">${img(p.src, '')}${i === s.cover ? '<b class="flag lime">Cover</b>' : ''}</span>
@@ -196,9 +208,20 @@ function editor(s, rerender) {
       categories: d.getAll('cat'), tags: d.getAll('cat').slice(0, 3),
       featured: d.has('featured'), editorsPick: d.has('editorsPick'), sample: d.has('sample'), status: d.get('status'),
       photos: work.photos, cover: work.cover, hero: work.cover,
+      year: Math.min(store.thisYear(), Math.max(1990, parseInt(d.get('year'), 10) || store.thisYear())),
+      visit: { open: d.has('vopen'), address: d.get('vaddress').trim(), times: d.get('vtimes').trim(), contact: d.get('vcontact').trim() },
+      video: videoFrom(d.get('video'), s.video),
     });
   };
   f.addEventListener('submit', async (e) => { e.preventDefault(); try { await collect(); toast('Saved'); m.close(); } catch (x) { fail(x); } });
+}
+
+/** Keep an uploaded file as-is, parse a pasted link, or clear it. */
+function videoFrom(raw, current) {
+  const u = (raw || '').trim();
+  if (!u) return null;
+  if (current?.url === u) return current;
+  return store.parseVideoLink(u) || current || null;
 }
 
 /* ---------------- Page ---------------- */

@@ -43,14 +43,17 @@ project are untouched.
 
 | Table | What | Who can read / write |
 |---|---|---|
-| `sp_sukkahs` | Sukkahs, photos + product hotspots (jsonb), vote count | Public reads approved; admins everything |
+| `sp_sukkahs` | Sukkahs, photos + product hotspots (jsonb), vote count, `year`, `visit` (open / address / times / contact), `video` | Public reads approved; admins everything |
 | `sp_contacts` | Submitter name / email / phone | Admins only |
 | `sp_votes` | One row per (sukkah, signed-in user) — unique | Users insert/read their own; admins read/delete |
 | `sp_admins` | Admin emails | — |
 | `sp_settings` | Hero stat, contest line | Public read; admins write |
 
-- **Submissions** go through `sp_submit()` (inserts a *pending* sukkah + private contact). Photos upload to
-  `sp-photos/uploads/` (images only, 8 MB max).
+- **Submissions** go through `sp_submit()` (inserts a *pending* sukkah + private contact). Photos and an optional
+  video upload to `sp-photos/uploads/` (images + mp4/mov/webm, 50 MB max); a YouTube/Vimeo link works too.
+- **Year & visiting**: owners pick the year. Only this year's sukkahs can be marked *open to visitors*; the
+  address, times and optional phone/WhatsApp are then public on the page (with Directions + WhatsApp buttons)
+  and in the gallery's "Open to visit" filter. They disappear automatically once the year rolls over.
 - **Voting** is one tap via a guest (anonymous) sign-in; email is the fallback. A trigger keeps `votes` in sync,
   only approved sukkahs accept votes, and each network is capped at 25 votes per sukkah per day.
 - **Admins**: add a row to `sp_admins` (lower-case email). `ari4998818@gmail.com` is there already.

@@ -51,7 +51,7 @@ const daysAgo = (d) => new Date(Date.now() - d * 864e5).toISOString();
 
 export const SEED_SUKKAHS = [
   {
-    slug: 'sunset-sukkah', title: 'The Sunset Sukkah', location: 'Monsey, NY', owner: 'u-gold', votes: 767, createdAt: daysAgo(3),
+    slug: 'sunset-sukkah', visit: { open: true, address: 'Monsey, NY', times: 'Chol Hamoed, 2–6 pm', contact: '' }, title: 'The Sunset Sukkah', location: 'Monsey, NY', owner: 'u-gold', votes: 767, createdAt: daysAgo(3),
     categories: ['Outdoor', 'Luxury', 'Lighting'], tags: ['Rooftop', 'Pergola', 'Lighting'],
     description: 'Built on the back deck so the table faces west. By the time Kiddush is over the whole sukkah turns gold.',
     special: 'Three rattan lanterns at different heights, and every chair faces the view.',
@@ -66,7 +66,7 @@ export const SEED_SUKKAHS = [
     ],
   },
   {
-    slug: 'greenhouse-sukkah', title: 'The Greenhouse Sukkah', location: 'Monsey, NY', owner: 'u-gold', votes: 842, createdAt: daysAgo(6),
+    slug: 'greenhouse-sukkah', visit: { open: true, address: 'Monsey, NY', times: 'Every evening of Chol Hamoed after 7 pm', contact: '' }, title: 'The Greenhouse Sukkah', location: 'Monsey, NY', owner: 'u-gold', votes: 842, createdAt: daysAgo(6),
     categories: ['Modern', 'Outdoor', 'Creative'], tags: ['Modern', 'Outdoor', 'Creative'],
     description: 'A black aluminum greenhouse frame with the roof panels removed. Schach on top, glass all around, and a hundred feet of string lights.',
     special: 'At night it glows like a lantern from the street.',
@@ -80,7 +80,7 @@ export const SEED_SUKKAHS = [
     ],
   },
   {
-    slug: 'linen-sukkah', title: 'The Linen Sukkah', location: 'Lakewood, NJ', owner: 'u-stern', votes: 691, createdAt: daysAgo(4),
+    slug: 'linen-sukkah', year: 2025, title: 'The Linen Sukkah', location: 'Lakewood, NJ', owner: 'u-stern', votes: 691, createdAt: daysAgo(4),
     categories: ['Luxury', 'DIY'], tags: ['Elegant', 'Classic', 'DIY'],
     description: 'All white, all linen. The walls are curtain panels clipped to a standard frame, so the whole look went up in an afternoon.',
     special: 'We seat twenty-two without it ever feeling crowded.',
@@ -120,7 +120,7 @@ export const SEED_SUKKAHS = [
     ],
   },
   {
-    slug: 'rooftop-sukkah', title: 'The Rooftop Sukkah', location: 'Brooklyn, NY', owner: 'u-fried', votes: 912, createdAt: daysAgo(9),
+    slug: 'rooftop-sukkah', year: 2024, title: 'The Rooftop Sukkah', location: 'Brooklyn, NY', owner: 'u-fried', votes: 912, createdAt: daysAgo(9),
     categories: ['Balcony', 'Outdoor', 'Modern'], tags: ['Balcony', 'City View', 'Modern'],
     description: 'Fourth-floor roof in Boro Park. Deck tiles over the tar, snap-together panels, and the whole skyline for a wall.',
     special: 'Our neighbors come up just to see the view on Chol Hamoed.',
@@ -143,7 +143,7 @@ export const SEED_SUKKAHS = [
     ],
   },
   {
-    slug: 'family-sukkah', title: 'The Family Sukkah', location: 'Baltimore, MD', owner: 'u-weiss', votes: 534, createdAt: daysAgo(7),
+    slug: 'family-sukkah', year: 2025, title: 'The Family Sukkah', location: 'Baltimore, MD', owner: 'u-weiss', votes: 534, createdAt: daysAgo(7),
     categories: ['Family', 'DIY'], tags: ['Family', 'DIY', 'Kids'],
     description: 'Seven kids, seven opinions. Every decoration in here was made or picked by one of them, and the balloons were non-negotiable.',
     special: 'The kids built the benches with their zeidy.',

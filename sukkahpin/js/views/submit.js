@@ -11,7 +11,10 @@ const MAX_PHOTOS = 8, MAX_TAGS = 8, STEPS = 5;
 const blank = () => ({
   step: 1, photos: [], cover: 0, title: '', location: '', description: '', special: '', categories: [],
   name: '', email: '', phone: '', showName: true, display: '', activePhoto: 0,
+  year: store.thisYear(), visit: { open: false, address: '', times: '', contact: '' },
+  video: null, // { file, name, size, src } for an upload, or { link, kind, url } for YouTube/Vimeo
 });
+const mb = (n) => `${(n / 1048576).toFixed(n < 10485760 ? 1 : 0)} MB`;
 let draft = blank();
 
 const totalTags = () => draft.photos.reduce((n, p) => n + p.hotspots.length, 0);
@@ -72,6 +75,20 @@ function step1() {
       </div>
     </li>`).join('')}
   </ol>
+  <section class="video-add">
+    <h3>${t('sub.video')} <em>${t('sub.optional')}</em></h3>
+    ${draft.video ? `<div class="video-chosen">
+        ${draft.video.file ? `<video src="${draft.video.src}" muted playsinline preload="metadata"></video><div><strong>${esc(draft.video.name)}</strong><span class="muted small">${mb(draft.video.size)}</span></div>`
+          : `<span class="vid-ico">${icon.play}</span><div><strong>${esc(draft.video.kind === 'vimeo' ? 'Vimeo' : draft.video.kind === 'youtube' ? 'YouTube' : 'Video')}</strong><span class="muted small" dir="ltr">${esc(draft.video.link)}</span></div>`}
+        <button type="button" class="icon-btn" data-video-remove aria-label="${t('sub.delete')}">${icon.close}</button>
+      </div>`
+    : `<p class="muted small">${t('sub.videoSub')}</p>
+      <div class="video-options">
+        <label class="btn btn-ghost">${icon.play}<span>${t('sub.videoUpload')}</span><input type="file" accept="video/*" data-video-file hidden></label>
+        <span class="muted small">${t('sub.or')}</span>
+        <input class="video-link" data-video-link type="url" inputmode="url" placeholder="${t('sub.videoLinkPh')}" dir="ltr">
+      </div>`}
+  </section>
   <p class="err" data-err hidden></p>
   ${nav()}`;
 }
@@ -88,9 +105,34 @@ function step2() {
     <fieldset class="field"><legend>${t('sub.cats')}</legend>
       <div class="chips">${SUBMIT_CATS.map((c) => `<button type="button" class="chip ${draft.categories.includes(c) ? 'on' : ''}" data-cat="${esc(c)}" aria-pressed="${draft.categories.includes(c)}">${esc(tc(c))}</button>`).join('')}</div>
     </fieldset>
+    ${yearVisitFields()}
   </form>
   <p class="err" data-err hidden></p>
   ${nav()}`;
+}
+
+function yearVisitFields() {
+  const y = store.thisYear();
+  const years = [y, y - 1, y - 2, y - 3, y - 4];
+  const current = draft.year === y;
+  const v = draft.visit;
+  return `<fieldset class="field"><legend>${t('sub.year')}</legend>
+      <div class="chips">${years.map((yr, i) => `<button type="button" class="chip ${draft.year === yr ? 'on' : ''}" data-year="${yr}" aria-pressed="${draft.year === yr}">${i === 0 ? `${t('sub.thisYear')} · ${yr}` : i === 4 ? `${yr} ${t('sub.orEarlier')}` : yr}</button>`).join('')}</div>
+    </fieldset>
+    ${current ? `<fieldset class="field visit-q"><legend>${t('sub.visitQ')}</legend>
+      <div class="chips">
+        <button type="button" class="chip ${v.open ? 'on' : ''}" data-open="1" aria-pressed="${v.open}">${t('sub.visitYes')}</button>
+        <button type="button" class="chip ${!v.open ? 'on' : ''}" data-open="0" aria-pressed="${!v.open}">${t('sub.visitNo')}</button>
+      </div>
+      ${v.open ? `<div class="visit-fields">
+        <p class="note">${icon.pin} ${t('sub.visitPublic')}</p>
+        <label class="field"><span>${t('sub.address')}</span><input name="vaddress" value="${esc(v.address)}" placeholder="${t('sub.addressPh')}" maxlength="160" autocomplete="street-address" required></label>
+        <div class="form-grid">
+          <label class="field"><span>${t('sub.times')}</span><input name="vtimes" value="${esc(v.times)}" placeholder="${t('sub.timesPh')}" maxlength="160"></label>
+          <label class="field"><span>${t('sub.visitContact')}</span><input name="vcontact" value="${esc(v.contact)}" placeholder="${t('sub.visitContactPh')}" maxlength="60" type="tel" inputmode="tel" dir="ltr"></label>
+        </div>
+      </div>` : ''}
+    </fieldset>` : ''}`;
 }
 
 function step3() {
@@ -152,6 +194,8 @@ function draftAsSukkah() {
     categories: cats.length ? cats : ['Creative'], tags: cats.slice(0, 3), votes: 0, editorsPick: false,
     ownerName: draft.showName ? draft.name : draft.display || draft.name, cover: draft.cover,
     photos: draft.photos.map((p) => ({ id: p.id, src: p.src, label: p.label, hotspots: p.hotspots })),
+    year: draft.year, visit: draft.year === store.thisYear() ? draft.visit : { open: false },
+    video: draft.video ? (draft.video.file ? { kind: 'file', url: draft.video.src } : { kind: draft.video.kind, url: draft.video.url }) : null,
   };
 }
 
@@ -191,7 +235,10 @@ export function renderSubmit(root) {
     const f = $('[data-form]', root);
     if (!f) return;
     const d = Object.fromEntries(new FormData(f));
-    if (draft.step === 2) Object.assign(draft, { title: d.title.trim(), location: d.location.trim(), description: d.description.trim(), special: d.special.trim() });
+    if (draft.step === 2) {
+      Object.assign(draft, { title: d.title.trim(), location: d.location.trim(), description: d.description.trim(), special: d.special.trim() });
+      if (draft.visit.open && 'vaddress' in d) Object.assign(draft.visit, { address: d.vaddress.trim(), times: d.vtimes.trim(), contact: d.vcontact.trim() });
+    }
     if (draft.step === 4) Object.assign(draft, { name: d.name.trim(), email: d.email.trim(), phone: d.phone.trim(), showName: d.show === '1', display: (d.display || '').trim() });
   };
 
@@ -199,6 +246,7 @@ export function renderSubmit(root) {
     saveForm();
     if (draft.step === 1 && !draft.photos.length) return err('sub.needPhoto');
     if (draft.step === 2 && (!draft.title || !draft.location)) return err('sub.need2');
+    if (draft.step === 2 && draft.year === store.thisYear() && draft.visit.open && !draft.visit.address) return err('sub.needAddr');
     if (draft.step === 4 && (!draft.name || !store.validEmail(draft.email))) return err('sub.need4');
     if (draft.step < STEPS) return go(draft.step + 1);
     await finish();
@@ -210,8 +258,10 @@ export function renderSubmit(root) {
     let s;
     try {
       for (const p of draft.photos) p.stored ||= await store.uploadPhoto(p.blob);
+      if (draft.video?.file) draft.video.url ||= await store.uploadVideo(draft.video.file);
       s = await store.submit({
         ...draftAsSukkah(),
+        video: draft.video ? { kind: draft.video.file ? 'file' : draft.video.kind, url: draft.video.url } : null,
         contact: { name: draft.name, email: draft.email, phone: draft.phone },
         photos: draft.photos.map((p) => ({ id: p.id, src: p.stored, label: p.label, hotspots: p.hotspots })),
       });
@@ -275,6 +325,9 @@ export function renderSubmit(root) {
       return;
     }
     if (el.dataset.pick != null) { draft.activePhoto = +el.dataset.pick; return draw(); }
+    if (el.dataset.year) { saveForm(); draft.year = +el.dataset.year; return draw(); }
+    if (el.dataset.open) { saveForm(); draft.visit.open = el.dataset.open === '1'; draw(); if (draft.visit.open) $('[name=vaddress]', root)?.focus(); return; }
+    if (el.matches('[data-video-remove]')) { if (draft.video?.src) URL.revokeObjectURL(draft.video.src); draft.video = null; return draw(); }
     if (el.dataset.untag != null) { draft.photos[draft.activePhoto].hotspots.splice(+el.dataset.untag, 1); return draw(); }
     if (el.matches('[data-tag-cancel]')) { $('[data-tag-form]', root).hidden = true; $('[data-pending]', root).hidden = true; }
   };
@@ -290,6 +343,20 @@ export function renderSubmit(root) {
 
   root.onchange = (e) => {
     if (e.target.matches('[data-files]')) addFiles(e.target.files);
+    if (e.target.matches('[data-video-file]')) {
+      const f = e.target.files[0];
+      if (!f) return;
+      if (f.size > store.MAX_VIDEO_MB * 1048576) return toast(t('sub.videoBig'));
+      draft.video = { file: f, name: f.name, size: f.size, src: URL.createObjectURL(f) };
+      return draw();
+    }
+    if (e.target.matches('[data-video-link]')) {
+      const v = store.parseVideoLink(e.target.value);
+      if (!e.target.value.trim()) return;
+      if (!v) return err('sub.videoBad');
+      draft.video = { link: e.target.value.trim(), ...v };
+      return draw();
+    }
     if (e.target.dataset.label != null) draft.photos[+e.target.dataset.label].label = e.target.value;
     if (e.target.name === 'show') { const d = $('[data-display]', root); d.hidden = e.target.value === '1'; if (!d.hidden) $('input', d).focus(); }
   };
