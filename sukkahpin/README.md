@@ -84,6 +84,15 @@ project are untouched.
    (To make this branch production, merge it into `main`, or change *Settings → Git → Production Branch*.)
 4. Put the resulting URL into the Supabase *Site URL* (step 1 above). Add a custom domain in Vercel whenever.
 
+## Analytics
+
+- **Vercel Web Analytics** (Vercel → project → Analytics): visitors, pages, referrers, countries. The script is
+  `/_vercel/insights/script.js` in `index.html`; `js/app.js` reports every `#/…` page change itself, because the
+  site routes with the URL hash. Turning analytics on only takes effect on the *next* deployment.
+- **Per-sukkah views**: the admin list's *Views* column (one view per browser per sukkah per day, `sp_view`).
+- Don't merge Vercel Agent's "Install Vercel Web Analytics" PRs — they edit the repo-root `index.html`, which
+  isn't the SukkahPin site.
+
 ## Still to know
 
 - **Placeholder photos are crops of the approved homepage mockup,** upscaled, so they're soft on large screens.
