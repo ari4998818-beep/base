@@ -6,6 +6,8 @@ import { renderDetail } from './views/detail.js';
 import { renderSubmit, renderEdit } from './views/submit.js';
 import { renderExplore, renderSources, renderWinners, renderAbout } from './views/pages.js';
 import { renderAdmin } from './views/admin.js';
+import * as popup from './popup.js';
+import { pickForm } from './ui.js';
 
 const ROUTES = [
   [/^\/?$/, (root, p, _m, c) => renderHome(root, c), 'home'],
@@ -35,6 +37,10 @@ function chrome() {
     <div class="menu-foot"><a class="btn btn-lime btn-lg" href="#/submit">${t('nav.cta')}</a><button class="lang big" data-lang>${t('nav.lang')}</button></div>`;
   const samples = store.list().some((s) => s.sample);
   $('#footer').innerHTML = `
+    <section class="f-picks">
+      <div><p class="eyebrow">${t('picks.tag')} · ${new Date().getFullYear()}</p><h2 class="display-sm">${t('picks.h')}</h2></div>
+      <div>${pickForm('footer', { compact: true })}</div>
+    </section>
     <div class="f-big">${esc(t('footer.line'))}</div>
     <div class="f-row">
       <a class="logo" href="#/"><img src="brand/sukkahpin-logo.svg" alt="SukkahPin" width="135" height="30"></a>
@@ -64,6 +70,7 @@ function route() {
   $$('[data-nav]').forEach((a) => a.classList.toggle('on', a.dataset.nav === key));
   closeMenu();
   fn(root, params, m, (c) => cleanups.push(c));
+  popup.onRoute(key);
   // Vercel Web Analytics: this site routes with #hash, so report each page ourselves.
   window.va?.('pageview', { route: key === 'detail' ? '/sukkah/[slug]' : key === 'sources' && m?.[1] ? '/sources/[item]' : '/' + (path.replace(/^\//, '') || ''), path: '/' + path.replace(/^\//, '') });
   hydrate(root);

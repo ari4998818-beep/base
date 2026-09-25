@@ -848,3 +848,43 @@ body.scrolled .nav { box-shadow: 0 1px 0 var(--line); }
 .editing-flag { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; background: var(--lime); padding: 7px 14px; border-radius: 999px; margin-bottom: 20px; }
 .keep-link { margin-top: 24px; padding: 22px; border: 1px solid var(--ink); border-radius: 6px; display: grid; gap: 10px; max-width: 560px; width: 100%; }
 .keep-link .a-url { font-size: 13px; }
+
+/* ---------- "Top picks" sign-up ---------- */
+.pick-form { display: grid; grid-template-columns: 1fr auto; gap: 10px; width: 100%; }
+.pick-form input { height: 52px; min-width: 0; border: 1px solid var(--line); border-radius: 999px; padding: 0 20px; font-size: 16px; outline: 0; background: #fff; }
+.pick-form input:focus { border-color: var(--ink); }
+.pick-form .btn { height: 52px; }
+.pick-form .err, .pick-form .pick-fine { grid-column: 1 / -1; margin: 0; }
+.pick-fine { font-size: 12px; color: var(--mute); }
+@media (max-width: 520px) { .pick-form:not(.compact) { grid-template-columns: 1fr; } .pick-form:not(.compact) .btn { width: 100%; } }
+.pick-done { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-2); }
+.pick-done.big { display: flex; gap: 14px; align-items: center; padding: 14px 16px; background: var(--soft); border-radius: 8px; border-inline-start: 3px solid var(--lime); }
+.pick-done.big > svg { width: 22px; height: 22px; flex: none; }
+.pick-done.big div { display: grid; }
+.pick-done.big span { font-size: 14px; color: var(--mute); }
+
+.modal-picks .modal-panel { width: min(100%, 860px); padding: 0; overflow: hidden; }
+.picks-pop { display: grid; grid-template-columns: 5fr 6fr; min-height: 420px; }
+.picks-photo { position: relative; background: var(--soft); }
+.picks-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.picks-tag { position: absolute; top: 16px; inset-inline-start: 16px; background: var(--lime); font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; padding: 6px 10px; border-radius: 2px; }
+.picks-body { padding: clamp(28px, 4vw, 44px); display: grid; gap: 14px; align-content: center; }
+.picks-body .display-sm { font-size: clamp(28px, 3.2vw, 40px); line-height: .98; }
+.picks-later { justify-self: start; color: var(--mute); }
+@media (max-width: 600px) {
+  .picks-pop { grid-template-columns: 1fr; min-height: 0; }
+  .picks-photo { height: 180px; }
+  .picks-body { padding: 24px 20px calc(24px + env(safe-area-inset-bottom)); }
+}
+.modal-picks .modal-x { background: rgba(255,255,255,.85); z-index: 2; }
+
+.vote-picks { width: 100%; margin-top: 10px; padding-top: 16px; border-top: 1px solid var(--line); display: grid; gap: 10px; }
+.vote-picks .pick-form { grid-template-columns: 1fr; }
+
+.f-picks { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 480px); gap: 20px 48px; align-items: end; padding: clamp(40px, 5vw, 64px) 0; border-top: 1px solid var(--line); }
+.f-picks .eyebrow { margin-bottom: 12px; }
+@media (max-width: 760px) { .f-picks { grid-template-columns: 1fr; } }
+
+.a-subs-head { display: grid; gap: 12px; margin-bottom: 24px; }
+.a-big { font: 800 32px/1 var(--f-display); letter-spacing: -0.03em; margin-inline-end: 6px; }
+[dir='rtl'] .picks-tag { letter-spacing: 0; font-size: 12px; }

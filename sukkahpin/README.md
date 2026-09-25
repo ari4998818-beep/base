@@ -84,6 +84,15 @@ project are untouched.
    (To make this branch production, merge it into `main`, or change *Settings → Git → Production Branch*.)
 4. Put the resulting URL into the Supabase *Site URL* (step 1 above). Add a custom domain in Vercel whenever.
 
+## "Top picks" sign-ups
+
+A gentle pop-up ("See this year's most creative sukkahs first") collects a phone number or email. It shows only
+after ~30 s on the site, 70% of a page scrolled, or a 2nd sukkah opened; once per visit; 14 days quiet after
+"Not now"; never after signing up or on Submit/Edit/Admin (`js/popup.js`). The same form sits in the footer and
+on the "Your vote is in" screen. Sign-ups go to `sp_subscribers` via `sp_subscribe()` (validated, phones
+normalised to +1…, duplicates ignored; the public can't read the list). Admin → **Subscribers**: count, CSV
+download, copy all phones (WhatsApp broadcast) / emails. Nothing is sent automatically.
+
 ## Analytics
 
 - **Vercel Web Analytics** (Vercel → project → Analytics): visitors, pages, referrers, countries. The script is

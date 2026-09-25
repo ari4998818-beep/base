@@ -260,6 +260,34 @@ export async function submit(draft) {
   return res;
 }
 
+/* ---------------- "Top picks" sign-ups ---------------- */
+
+const SUB_KEY = 'sp:subscribed';
+export const isSubscribed = () => { try { return !!localStorage.getItem(SUB_KEY); } catch { return false; } };
+/** Phone or email → 'email' | 'phone' | null (quick client-side check; the database validates too). */
+export function contactKind(v) {
+  const x = (v || '').trim();
+  if (x.includes('@')) return validEmail(x) ? 'email' : null;
+  const d = x.replace(/\D/g, '');
+  return d.length >= 7 && d.length <= 15 ? 'phone' : null;
+}
+/** @returns {Promise<'ok'|'exists'>} */
+export async function subscribe(contact, lang, source) {
+  const { data, error } = await sb.rpc('sp_subscribe', { p_contact: contact, p_lang: lang, p_source: source });
+  if (error) throw error;
+  try { localStorage.setItem(SUB_KEY, new Date().toISOString()); } catch {}
+  return data;
+}
+export async function subscribers() {
+  const { data, error } = await sb.from('sp_subscribers').select('*').order('created_at', { ascending: false });
+  if (error) throw error;
+  return data;
+}
+export async function removeSubscriber(id) {
+  const { error } = await sb.from('sp_subscribers').delete().eq('id', id);
+  if (error) throw error;
+}
+
 /* ---------------- Views ---------------- */
 
 /** Counts one view per browser per sukkah per day. */

@@ -89,6 +89,26 @@ function tabLinks() {
   </tbody></table></div>`;
 }
 let votesCache = [];
+let subsCache = [];
+const csvCell = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+function tabSubs() {
+  const v = subsCache;
+  const phones = v.filter((x) => x.kind === 'phone').map((x) => x.contact);
+  const emails = v.filter((x) => x.kind === 'email').map((x) => x.contact);
+  const csv = 'contact,type,language,signed_up_from,date\n' + v.map((x) => [x.contact, x.kind, x.lang, x.source, x.created_at].map(csvCell).join(',')).join('\n');
+  return `<div class="a-subs-head">
+      <p><strong class="a-big">${v.length}</strong> signed up for this year's top picks · ${phones.length} phone · ${emails.length} email</p>
+      <div class="row-btns">
+        <a class="btn btn-dark btn-sm" download="sukkahpin-subscribers.csv" href="data:text/csv;charset=utf-8,${encodeURIComponent(csv)}">Download CSV</a>
+        <button class="btn btn-ghost btn-sm" data-copy="${esc(phones.join('\n'))}" ${phones.length ? '' : 'disabled'}>Copy all phone numbers</button>
+        <button class="btn btn-ghost btn-sm" data-copy="${esc(emails.join(', '))}" ${emails.length ? '' : 'disabled'}>Copy all emails</button>
+      </div>
+      <p class="muted small">Send the picks yourself: paste the phone numbers into a WhatsApp broadcast list, or import the CSV into an email tool (Mailchimp, etc.).</p>
+    </div>
+    ${v.length ? `<div class="a-table-wrap"><table class="a-table"><thead><tr><th>Phone / email</th><th>Language</th><th>Signed up from</th><th>When</th><th></th></tr></thead><tbody>
+      ${v.map((x) => `<tr data-sub-id="${x.id}"><td dir="ltr">${esc(x.contact)}</td><td>${x.lang === 'yi' ? 'Yiddish' : 'English'}</td><td class="small muted">${esc(x.source)}</td><td class="small muted">${new Date(x.created_at).toLocaleString()}</td><td class="a-actions"><button class="btn btn-ghost btn-sm" data-act="remove-sub">Remove</button></td></tr>`).join('')}
+    </tbody></table></div>` : '<p class="empty">No sign-ups yet.</p>'}`;
+}
 function tabVotes() {
   const v = votesCache;
   const byId = (id) => store.get(id)?.title || '(deleted)';
@@ -127,7 +147,7 @@ function tabSamples() {
   </div>`;
 }
 
-const TABS = { pending: ['Pending', tabPending], all: ['All sukkahs', tabAll], links: ['Products & links', tabLinks], votes: ['Votes', tabVotes], samples: ['Samples & settings', tabSamples] };
+const TABS = { pending: ['Pending', tabPending], all: ['All sukkahs', tabAll], links: ['Products & links', tabLinks], votes: ['Votes', tabVotes], subs: ['Subscribers', tabSubs], samples: ['Samples & settings', tabSamples] };
 
 /* ---------------- Edit drawer ---------------- */
 
@@ -239,6 +259,7 @@ export async function renderAdmin(root, params) {
   try {
     await store.adminLoad();
     if (tab === 'votes') votesCache = await store.votes();
+    if (tab === 'subs') subsCache = await store.subscribers();
   } catch (x) { fail(x); }
   if (!root.isConnected) return;
   const pending = store.list({ status: 'pending' }).length;
@@ -272,6 +293,7 @@ export async function renderAdmin(root, params) {
     if (act === 'delete' && confirm('Delete this sukkah?')) return run(() => store.remove(id), 'Deleted');
     if (act === 'remove-samples' && confirm('Delete every sample sukkah? Real submissions stay.')) return run(() => store.removeSamples(), 'Samples removed');
     if (act === 'restore-samples') return run(() => store.restoreSamples(), 'Samples restored');
+    if (act === 'remove-sub' && confirm('Remove this subscriber?')) return run(() => store.removeSubscriber(b.closest('[data-sub-id]').dataset.subId), 'Removed');
     if (act === 'remove-vote') { const tr = b.closest('[data-vote-id]'); return run(() => store.removeVote(tr.dataset.voteId, tr.dataset.voteSukkah), 'Vote removed'); }
     if (act === 'remove-link' || act === 'remove-hs') {
       const [sid, hid] = b.closest('[data-hs]').dataset.hs.split('|');

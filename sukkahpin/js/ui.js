@@ -118,6 +118,42 @@ document.addEventListener('click', async (e) => {
   toast(t('share.copied'));
 });
 
+/* ---------------- "Top picks" sign-up form (pop-up, after-vote, footer) ---------------- */
+
+export function pickForm(source, { compact = false } = {}) {
+  if (store.isSubscribed()) return `<p class="pick-done">${icon.spark} ${t('picks.already')}</p>`;
+  return `<form class="pick-form ${compact ? 'compact' : ''}" data-subscribe="${esc(source)}" novalidate>
+    <input name="contact" type="text" inputmode="email" autocomplete="email" placeholder="${t('picks.ph')}" aria-label="${t('picks.ph')}" dir="ltr" required>
+    <button class="btn btn-lime">${t('picks.cta')} <span aria-hidden="true">${arrow()}</span></button>
+    <p class="err" hidden></p>
+    ${compact ? '' : `<p class="pick-fine">${t('picks.fine')}</p>`}
+  </form>`;
+}
+
+document.addEventListener('submit', async (e) => {
+  const f = e.target.closest('[data-subscribe]');
+  if (!f) return;
+  e.preventDefault();
+  const v = f.contact.value.trim();
+  const err = $('.err', f);
+  if (!store.contactKind(v)) { err.hidden = false; err.textContent = t('picks.bad'); f.contact.focus(); return; }
+  const b = $('button', f); b.disabled = true;
+  try {
+    const { lang } = await import('./i18n.js');
+    await store.subscribe(v, lang, f.dataset.subscribe);
+    f.outerHTML = `<div class="pick-done big">${icon.spark}<div><strong>${t('picks.done')}</strong><span>${t('picks.doneSub')}</span></div></div>`;
+    document.dispatchEvent(new CustomEvent('sp:subscribed'));
+  } catch (x) {
+    console.error(x);
+    b.disabled = false; err.hidden = false; err.textContent = t(/P0422|invalid/i.test(x.code + x.message) ? 'picks.bad' : 'vote.error');
+  }
+});
+// Switch the phone keyboard to digits once someone starts typing a number.
+document.addEventListener('input', (e) => {
+  const i = e.target.closest('[data-subscribe] input[name=contact]');
+  if (i) i.inputMode = /^[+\d(]/.test(i.value) ? 'tel' : 'email';
+});
+
 /* ---------------- Voting ---------------- */
 
 function voteDone(m, s, dup) {
@@ -126,6 +162,7 @@ function voteDone(m, s, dup) {
     <h2 class="display-sm">${dup ? t('vote.dup') : t('vote.done')}</h2>
     <p class="muted">${dup ? t('vote.dupSub') : t('vote.doneSub')}</p>
     <div class="stack-btns">${shareButtons(s)}</div>
+    ${store.isSubscribed() ? '' : `<div class="vote-picks"><p><strong>${t('picks.voteLine')}</strong></p>${pickForm('after-vote', { compact: true })}</div>`}
   </div>`;
 }
 
