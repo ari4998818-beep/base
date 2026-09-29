@@ -4,7 +4,7 @@
 // { id, preview: true } returns the HTML without sending (public info only, no edit key).
 //
 // Mail settings come from Supabase Vault via sp_mail_config() (resend_api_key, notify_from);
-// Edge Function secrets RESEND_API_KEY / NOTIFY_FROM override them if set. SITE_URL optional.
+// Edge Function secrets RESEND_API_KEY / NOTIFY_FROM override them if set. SITE_URL, NOTIFY_REPLY_TO optional.
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const SITE = (Deno.env.get('SITE_URL') ?? 'https://sukkahpin.com').replace(/\/$/, '');
@@ -85,10 +85,16 @@ Deno.serve(async (req) => {
   }
 
   const { data: key } = await admin.rpc('sp_add_key', { sid: s.id });
+  // Replies go to the admins (hello@ has no inbox). NOTIFY_REPLY_TO overrides.
+  let replyTo = (Deno.env.get('NOTIFY_REPLY_TO') ?? '').split(',').map((x) => x.trim()).filter(Boolean);
+  if (!replyTo.length) {
+    const { data: admins } = await admin.from('sp_admins').select('email');
+    replyTo = (admins ?? []).map((a: { email: string }) => a.email);
+  }
   const r = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${mail.key}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: mail.from, to: [c.email], subject: `Your sukkah is live: ${s.title}`, html: emailHTML(s, key ?? '') }),
+    body: JSON.stringify({ from: mail.from, to: [c.email], subject: `Your sukkah is live: ${s.title}`, html: emailHTML(s, key ?? ''), ...(replyTo.length ? { reply_to: replyTo } : {}) }),
   });
   if (!r.ok) {
     const err = await r.text();
