@@ -91,10 +91,10 @@ When a sukkah becomes *pending* (new submission, or a rejected one the owner fix
 `sp_admins` (or `NOTIFY_TO`) through **Resend**: photo, title, location, year, submitter name/email/phone and a
 "Review in admin" button. It only emails about real pending sukkahs and not twice within 10 minutes.
 
-Setup (once): create a free account at resend.com **with the admin email**, create an API key, then in Supabase →
-Edge Functions → Secrets add `RESEND_API_KEY`. Admin → Samples & settings → **Send test email** checks it.
-Optional secrets: `NOTIFY_TO` (comma-separated recipients), `NOTIFY_FROM` (after verifying your domain in Resend,
-e.g. `SukkahPin <alerts@sukkahpin.com>`), `SITE_URL`. With Resend's default test sender, mail can only go to the
+Setup (done): the Resend API key lives in Supabase **Vault** as `resend_api_key`; the functions read it (and
+`notify_from`) through `sp_mail_config()` (service role only). Edge Function secrets `RESEND_API_KEY` / `NOTIFY_FROM`
+override Vault if set. Admin → Samples & settings → **Send test email** checks it.
+Optional secrets: `NOTIFY_TO` (comma-separated recipients), `SITE_URL`. Function source: `supabase/functions/`. With Resend's default test sender, mail can only go to the
 address that owns the Resend account.
 
 ## "Your sukkah is live" email
@@ -106,8 +106,8 @@ View My Sukkah, **Make My Status Post** (their private `#/share/<slug>?k=…` li
 to copy. It's sent once (`approved_email_at`); later edits or re-approvals don't resend. Admin list →
 **Send / Resend live email** does it by hand (e.g. for sukkahs approved before email was set up).
 
-To email submitters (not just yourself), verify **sukkahpin.com** in Resend (DNS records at Squarespace) and set the
-secret `NOTIFY_FROM`, e.g. `SukkahPin <hello@sukkahpin.com>`.
+To email submitters (not just yourself), verify **sukkahpin.com** in Resend (DNS records at Squarespace), then store
+the sender in Vault: `select vault.create_secret('SukkahPin <hello@sukkahpin.com>', 'notify_from');`
 
 ## Share My Sukkah
 
