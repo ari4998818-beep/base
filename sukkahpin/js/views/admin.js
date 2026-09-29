@@ -61,6 +61,7 @@ function row(s) {
     <td class="a-actions">
       ${s.status === 'pending' ? `<button class="btn btn-lime btn-sm" data-act="approve">Approve</button><button class="btn btn-ghost btn-sm" data-act="reject">Reject</button>` : ''}
       <button class="btn btn-ghost btn-sm" data-act="edit">Edit</button>
+      ${s.status === 'approved' && !s.sample ? `<button class="btn btn-ghost btn-sm" data-act="live-email" title="${s.liveEmailAt ? `Sent ${new Date(s.liveEmailAt).toLocaleString()}` : 'Not sent yet'}">${s.liveEmailAt ? 'Resend live email' : 'Send live email'}</button>` : ''}
       <button class="btn btn-ghost btn-sm" data-act="owner-link" title="Make a private link the owner can use to edit">Owner link</button>
     </td>
   </tr>`;
@@ -329,6 +330,12 @@ export async function renderAdmin(root, params) {
     if (act === 'approve') return run(() => store.update(id, { status: 'approved' }), 'Approved — it’s live');
     if (act === 'reject') return run(() => store.update(id, { status: 'rejected' }), 'Rejected');
     if (act === 'edit') return editor(store.get(id), draw);
+    if (act === 'live-email') {
+      const sk = store.get(id);
+      if (sk.liveEmailAt && !confirm(`“${sk.title}” was already emailed. Send it again?`)) return;
+      b.disabled = true;
+      return store.sendLiveEmail(id).then((r) => { toast(`Sent to ${r.to}`); draw(); }, (x) => { b.disabled = false; toast(`Not sent: ${x.message}`); });
+    }
     if (act === 'owner-link') return store.ownerLink(id).then((link) => {
       const sk = store.get(id);
       modal(`<p class="eyebrow">Owner edit link</p><h2 class="display-sm">${esc(sk.title)}</h2>

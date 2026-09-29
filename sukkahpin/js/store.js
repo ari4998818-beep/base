@@ -31,7 +31,7 @@ const fromRow = (r) => ({
   title: r.title, location: r.location, description: r.description, special: r.special,
   categories: r.categories || [], tags: r.tags || [], ownerName: r.owner_name,
   cover: r.cover ?? 0, hero: r.hero ?? r.cover ?? 0, photos: r.photos || [], votes: r.votes, createdAt: r.created_at,
-  year: r.year || thisYear(), visit: r.visit || {}, video: r.video || null, editedAt: r.edited_at || null, views: r.views || 0,
+  year: r.year || thisYear(), visit: r.visit || {}, video: r.video || null, editedAt: r.edited_at || null, views: r.views || 0, liveEmailAt: r.approved_email_at || null,
 });
 export const fromDbRow = fromRow;
 const COLS = { title: 'title', location: 'location', description: 'description', special: 'special', categories: 'categories', tags: 'tags', ownerName: 'owner_name', cover: 'cover', hero: 'hero', photos: 'photos', votes: 'votes', status: 'status', sample: 'sample', featured: 'featured', editorsPick: 'editors_pick', year: 'year', visit: 'visit', video: 'video' };
@@ -258,6 +258,17 @@ export async function submit(draft) {
   const res = typeof data === 'string' ? { slug: data } : data;
   if (res.key) saveKey(res.slug, res.key);
   return res;
+}
+
+/** Admin: (re)send the "Your sukkah is live" email to the submitter. */
+export async function sendLiveEmail(id) {
+  const { data, error } = await sb.functions.invoke('notify-approved', { body: { id, resend: true } });
+  if (error) {
+    let msg = error.message;
+    try { msg = (await error.context.json()).error || msg; } catch {}
+    throw new Error(msg);
+  }
+  return data;
 }
 
 /** Admin: send a sample "new sukkah waiting" email to check the email setup. */

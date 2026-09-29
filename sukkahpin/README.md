@@ -97,6 +97,18 @@ Optional secrets: `NOTIFY_TO` (comma-separated recipients), `NOTIFY_FROM` (after
 e.g. `SukkahPin <alerts@sukkahpin.com>`), `SITE_URL`. With Resend's default test sender, mail can only go to the
 address that owns the Resend account.
 
+## "Your sukkah is live" email
+
+When a sukkah goes **pending → approved**, the trigger `sp_notify_approved` calls the Edge Function
+**`notify-approved`**, which emails the submitter: "Your sukkah is live", the photo, votes/views, and three buttons —
+View My Sukkah, **Make My Status Post** (their private `#/share/<slug>?k=…` link; an extra key is minted with
+`sp_add_key`, so their phone's link keeps working) and Share My Voting Link (WhatsApp) — plus the plain `/l/` link
+to copy. It's sent once (`approved_email_at`); later edits or re-approvals don't resend. Admin list →
+**Send / Resend live email** does it by hand (e.g. for sukkahs approved before email was set up).
+
+To email submitters (not just yourself), verify **sukkahpin.com** in Resend (DNS records at Squarespace) and set the
+secret `NOTIFY_FROM`, e.g. `SukkahPin <hello@sukkahpin.com>`.
+
 ## Share My Sukkah
 
 Every sukkah gets a designed 1080×1920 WhatsApp Status card, drawn in the browser on a `<canvas>`
