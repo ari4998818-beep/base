@@ -56,7 +56,9 @@ function row(s) {
       <div class="a-flags">${s.sample ? '<b class="flag">Sample</b>' : ''}${s.featured ? '<b class="flag lime">Featured</b>' : ''}${s.editorsPick ? '<b class="flag dark">Editor’s Pick</b>' : ''}<b class="flag st-${s.status}">${s.status}</b>${s.editedAt ? `<b class="flag" title="${new Date(s.editedAt).toLocaleString()}">Edited by owner</b>` : ''}</div></td>
     <td class="num">${fmt(s.votes)}</td>
     <td class="num">${fmt(s.views || 0)}</td>
-    <td class="num">${fmt(sharesCache[s.id] || 0)}</td>
+    <td class="num">${fmt(sharesCache[s.id]?.shares || 0)}</td>
+    <td class="num">${fmt(sharesCache[s.id]?.visits || 0)}</td>
+    <td class="num">${fmt(sharesCache[s.id]?.votes || 0)}</td>
     <td class="small muted">${when(s.createdAt)}</td>
     <td class="a-actions">
       ${s.status === 'pending' ? `<button class="btn btn-lime btn-sm" data-act="approve">Approve</button><button class="btn btn-ghost btn-sm" data-act="reject">Reject</button>` : ''}
@@ -68,7 +70,7 @@ function row(s) {
 }
 
 const table = (list, empty) => list.length
-  ? `<div class="a-table-wrap"><table class="a-table"><thead><tr><th></th><th>Sukkah</th><th class="num">Votes</th><th class="num">Views</th><th class="num" title="Status posts downloaded / shared + links copied">Shares</th><th>Added</th><th></th></tr></thead><tbody>${list.map(row).join('')}</tbody></table></div>`
+  ? `<div class="a-table-wrap"><table class="a-table"><thead><tr><th></th><th>Sukkah</th><th class="num">Votes</th><th class="num">Views</th><th class="num" title="Status posts downloaded / shared + links copied">Shares</th><th class="num" title="Visits that came in through the owner's shared links (WhatsApp, copied link, QR)">Share visits</th><th class="num" title="Votes cast by people who arrived through a shared link (same browser session)">Share votes</th><th>Added</th><th></th></tr></thead><tbody>${list.map(row).join('')}</tbody></table></div>`
   : `<p class="empty">${empty}</p>`;
 
 function tabPending() {
@@ -128,7 +130,7 @@ function tabShare() {
     <div class="a-card">
       <h3>Preview cards</h3>
       <p class="muted small">Opens the share page as a visitor sees it. Owners see the same designs with "my sukkah" wording.</p>
-      <ul class="a-mini">${live.map((x) => `<li><span>${esc(x.title)}</span><span class="muted small">${fmt(sharesCache[x.id] || 0)} shares</span><a class="btn btn-ghost btn-sm" href="#/share/${x.slug}">Preview</a></li>`).join('') || '<li class="muted">No live sukkahs yet.</li>'}</ul>
+      <ul class="a-mini">${live.map((x) => `<li><span>${esc(x.title)}</span><span class="muted small">${fmt(sharesCache[x.id]?.shares || 0)} shares · ${fmt(sharesCache[x.id]?.visits || 0)} visits</span><a class="btn btn-ghost btn-sm" href="#/share/${x.slug}">Preview</a></li>`).join('') || '<li class="muted">No live sukkahs yet.</li>'}</ul>
     </div>
   </div>`;
 }

@@ -301,10 +301,16 @@ export const shareSettings = () => {
   return { templates: { bold: true, clean: true, photo: true, ...(d.templates || {}) }, showVotes: d.showVotes !== false, copy: d.copy || {} };
 };
 /** Admin: share actions (download / WhatsApp / native / copy) per sukkah id. */
+/** Admin: per sukkah → { shares (status posts downloaded/shared + links copied), visits and votes via owner links }. */
 export async function shareCounts() {
-  const { data, error } = await sb.from('sp_share_events').select('sukkah_id, event').in('event', ['download', 'whatsapp', 'native', 'copy']).limit(20000);
+  const { data, error } = await sb.from('sp_share_events').select('sukkah_id, event').in('event', ['download', 'whatsapp', 'native', 'copy', 'visit', 'vote']).limit(50000);
   if (error) return {};
-  return data.reduce((m, e) => ((m[e.sukkah_id] = (m[e.sukkah_id] || 0) + 1), m), {});
+  const kind = { visit: 'visits', vote: 'votes' };
+  return data.reduce((m, e) => {
+    const c = (m[e.sukkah_id] ||= { shares: 0, visits: 0, votes: 0 });
+    c[kind[e.event] || 'shares']++;
+    return m;
+  }, {});
 }
 
 /* ---------------- "Top picks" sign-ups ---------------- */
