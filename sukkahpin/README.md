@@ -94,7 +94,7 @@ When a sukkah becomes *pending* (new submission, or a rejected one the owner fix
 Setup (done): the Resend API key lives in Supabase **Vault** as `resend_api_key`; the functions read it (and
 `notify_from`) through `sp_mail_config()` (service role only). Edge Function secrets `RESEND_API_KEY` / `NOTIFY_FROM`
 override Vault if set. Admin → Samples & settings → **Send test email** checks it.
-Optional secrets: `NOTIFY_TO` (comma-separated recipients), `SITE_URL`. Function source: `supabase/functions/`. With Resend's default test sender, mail can only go to the
+Optional secrets: `NOTIFY_TO` (comma-separated recipients), `SITE_URL`. Function source: `supabase/functions/` at the repo root (outside the served folder). With Resend's default test sender, mail can only go to the
 address that owns the Resend account.
 
 ## "Your sukkah is live" email
