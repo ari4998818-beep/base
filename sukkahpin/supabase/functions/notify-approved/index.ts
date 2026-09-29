@@ -32,7 +32,6 @@ function emailHTML(s: Record<string, any>, key: string) {
   const status = `${SITE}/#/share/${s.slug}${key ? `?k=${key}` : ''}`;
   const voteLink = `${SITE}/l/${s.slug}`;
   const wa = `https://wa.me/?text=${encodeURIComponent(`My sukkah is on SukkahPin — take a look and vote for it 👇\n${SITE}/w/${s.slug}`)}`;
-  const stats = [`♥ ${s.votes ?? 0} vote${s.votes === 1 ? '' : 's'}`, s.views ? `${s.views} views` : ''].filter(Boolean).join(' · ');
   return `<!doctype html><html><head><meta name="viewport" content="width=device-width"></head>
 <body style="margin:0;background:#f6f5f1;font-family:Helvetica,Arial,sans-serif;color:#0b0b0b">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 12px">
@@ -42,7 +41,7 @@ function emailHTML(s: Record<string, any>, key: string) {
   <tr><td style="padding:12px 28px 0;font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1.05">Your sukkah is live.</td></tr>
   <tr><td style="padding:12px 28px 0;font-size:17px;line-height:1.5"><b>${esc(s.title)}</b> is now on SukkahPin.<br>Share it with your friends and get the votes going.</td></tr>
   ${cover ? `<tr><td style="padding:20px 28px 0"><a href="${view}"><img src="${esc(cover)}" alt="${esc(s.title)}" width="464" style="display:block;width:100%;height:auto;max-height:300px;object-fit:cover;border-radius:6px"></a></td></tr>` : ''}
-  <tr><td style="padding:10px 28px 0;font-size:14px;color:#6f6f69">${esc(s.location ?? '')}${s.location ? ' · ' : ''}${stats}</td></tr>
+  ${s.location ? `<tr><td style="padding:10px 28px 0;font-size:14px;color:#6f6f69">${esc(s.location)}</td></tr>` : ''}
   <tr><td style="padding:22px 28px 0">${btn(view, 'View My Sukkah', '#0b0b0b', '#ffffff')}</td></tr>
   <tr><td style="padding:10px 28px 0">${btn(status, 'Make My Status Post', '#d8f23a', '#0b0b0b')}</td></tr>
   <tr><td style="padding:10px 28px 0">${btn(wa, 'Share My Voting Link', '#ffffff', '#0b0b0b', '#0b0b0b')}</td></tr>
