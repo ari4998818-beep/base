@@ -179,6 +179,10 @@ function tabSamples() {
         <button class="btn btn-dark btn-sm">Save settings</button>
       </form>
       <hr>
+      <h3>New-sukkah emails</h3>
+      <p class="muted small">When a sukkah is waiting for approval, every admin email gets a message with the photo, details and a “Review in admin” button. Needs the <code>RESEND_API_KEY</code> secret in Supabase (see README).</p>
+      <div class="row-btns"><button class="btn btn-ghost btn-sm" data-act="test-email">Send test email</button></div>
+      <hr>
       <p class="small muted">Signed in as ${esc(store.voterEmail())}. Admins are the emails in the <code>sp_admins</code> table.</p>
       <form class="form" data-password>
         <label class="field"><span>New admin password (8+ characters)</span><input type="password" name="pw" minlength="8" autocomplete="new-password" required></label>
@@ -320,6 +324,7 @@ export async function renderAdmin(root, params) {
     if (!b) return;
     const id = b.closest('[data-id]')?.dataset.id;
     const act = b.dataset.act;
+    if (act === 'test-email') { b.disabled = true; return store.testNotify().then(() => toast('Test email sent — check your inbox'), (x) => toast(`Not sent: ${x.message}`)).finally(() => (b.disabled = false)); }
     if (act === 'logout') return store.signOut().then(() => (location.hash = '#/'));
     if (act === 'approve') return run(() => store.update(id, { status: 'approved' }), 'Approved — it’s live');
     if (act === 'reject') return run(() => store.update(id, { status: 'rejected' }), 'Rejected');

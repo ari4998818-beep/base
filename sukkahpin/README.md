@@ -84,6 +84,19 @@ project are untouched.
    (To make this branch production, merge it into `main`, or change *Settings → Git → Production Branch*.)
 4. Put the resulting URL into the Supabase *Site URL* (step 1 above). Add a custom domain in Vercel whenever.
 
+## New-sukkah email alerts
+
+When a sukkah becomes *pending* (new submission, or a rejected one the owner fixed), the trigger
+`sp_notify_pending` calls the Supabase Edge Function **`notify-pending`** (via `pg_net`). It emails every address in
+`sp_admins` (or `NOTIFY_TO`) through **Resend**: photo, title, location, year, submitter name/email/phone and a
+"Review in admin" button. It only emails about real pending sukkahs and not twice within 10 minutes.
+
+Setup (once): create a free account at resend.com **with the admin email**, create an API key, then in Supabase →
+Edge Functions → Secrets add `RESEND_API_KEY`. Admin → Samples & settings → **Send test email** checks it.
+Optional secrets: `NOTIFY_TO` (comma-separated recipients), `NOTIFY_FROM` (after verifying your domain in Resend,
+e.g. `SukkahPin <alerts@sukkahpin.com>`), `SITE_URL`. With Resend's default test sender, mail can only go to the
+address that owns the Resend account.
+
 ## Share My Sukkah
 
 Every sukkah gets a designed 1080×1920 WhatsApp Status card, drawn in the browser on a `<canvas>`

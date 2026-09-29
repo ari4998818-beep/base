@@ -260,6 +260,17 @@ export async function submit(draft) {
   return res;
 }
 
+/** Admin: send a sample "new sukkah waiting" email to check the email setup. */
+export async function testNotify() {
+  const { data, error } = await sb.functions.invoke('notify-pending', { body: { test: true } });
+  if (error) {
+    let msg = error.message;
+    try { msg = (await error.context.json()).error || msg; } catch {}
+    throw new Error(msg);
+  }
+  return data;
+}
+
 /* ---------------- Share My Sukkah ---------------- */
 
 /** Short links — each one tells us where a visit came from. /s = QR on the status card, /w = WhatsApp, /l = copied link. */
