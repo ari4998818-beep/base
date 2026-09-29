@@ -8,6 +8,7 @@ import { renderSubmit, renderEdit } from './views/submit.js';
 import { renderExplore, renderSources, renderWinners, renderAbout } from './views/pages.js';
 import { renderAdmin } from './views/admin.js';
 import * as popup from './popup.js';
+import * as poster from './poster.js';
 import { pickForm } from './ui.js';
 
 const ROUTES = [
@@ -73,6 +74,7 @@ function route() {
   closeMenu();
   fn(root, params, m, (c) => cleanups.push(c));
   popup.onRoute(key);
+  poster.onRoute(key);
   // Vercel Web Analytics: this site routes with #hash, so report each page ourselves.
   window.va?.('pageview', { route: key === 'detail' ? '/sukkah/[slug]' : key === 'sources' && m?.[1] ? '/sources/[item]' : '/' + (path.replace(/^\//, '') || ''), path: '/' + path.replace(/^\//, '') });
   hydrate(root);
