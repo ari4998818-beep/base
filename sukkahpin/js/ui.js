@@ -101,8 +101,9 @@ export function modal(inner, { cls = '', onClose } = {}) {
 
 /* ---------------- Sharing ---------------- */
 
-export const sukkahURL = (s) => `${location.origin}${location.pathname}#/sukkah/${s.slug}`;
-export const waLink = (s) => `https://wa.me/?text=${encodeURIComponent(`${t('share.text')}\n${s.title} · ${s.location}\n${sukkahURL(s)}`)}`;
+// Short tracked links: /w/ = sent on WhatsApp, /l/ = copied link (see vercel.json rewrites + app.js boot).
+export const sukkahURL = (s) => store.shortLink(s.slug, 'l');
+export const waLink = (s) => `https://wa.me/?text=${encodeURIComponent(`${t('share.text')}\n${s.title} · ${s.location}\n${store.shortLink(s.slug, 'w')}`)}`;
 
 export function shareButtons(s, { compact = false } = {}) {
   return `<a class="btn btn-wa ${compact ? 'btn-sm' : ''}" href="${waLink(s)}" target="_blank" rel="noopener">${icon.wa}<span>${t('share.wa')}</span></a>
@@ -163,6 +164,7 @@ function voteDone(m, s, dup) {
     <p class="muted">${dup ? t('vote.dupSub') : t('vote.doneSub')}</p>
     <div class="stack-btns">${shareButtons(s)}</div>
     ${store.isSubscribed() ? '' : `<div class="vote-picks"><p><strong>${t('picks.voteLine')}</strong></p>${pickForm('after-vote', { compact: true })}</div>`}
+    <div class="vote-more"><p>${t('grow.q')}</p><div class="row-btns"><a class="btn btn-lime btn-sm" href="#/submit" data-close>${t('grow.submit')}</a><a class="btn btn-text" href="#/explore" data-close>${t('grow.explore')}</a></div></div>
   </div>`;
 }
 
@@ -225,6 +227,12 @@ export async function vote(sukkahId) {
 
 export async function finishVote(m, s) {
   const res = await store.castVote(s.id);
+  if (res === 'ok') {
+    // Credit the share link that brought this visitor here (if any).
+    let src = null;
+    try { src = sessionStorage.getItem(`sp:src:${s.slug}`); } catch {}
+    if (src) store.track(s.slug, 'vote', src);
+  }
   if (res === 'error' || res === 'unverified' || res === 'limit') {
     m.el.innerHTML = `<div class="vote-done"><h2 class="display-sm">${t(res === 'limit' ? 'vote.limit' : 'vote.error')}</h2></div>`;
     return;

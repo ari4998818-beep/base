@@ -109,11 +109,17 @@ export function detailHTML(s, { preview = false } = {}) {
           <div><dt>${t('detail.year')}</dt><dd>${s.year || store.thisYear()} <span class="muted">· ${store.hebrewYear(s.year || store.thisYear())}</span>${(s.year || store.thisYear()) === store.thisYear() ? ` <b class="now-badge">${t('detail.thisYear')}</b>` : ''}</dd></div>
         </dl>
         <div class="project-intro">
+          ${!preview && store.myKey(s.slug) ? `<div class="owner-live">
+            <p class="eyebrow"><i class="dot" aria-hidden="true"></i>${s.status === 'approved' ? t('share.live') : t('share.pending')}</p>
+            <p class="owner-live-h">${t('share.liveSub')}</p>
+            <div class="owner-stats" data-owner-stats></div>
+            <a class="btn btn-lime" href="#/share/${s.slug}">${icon.image}<span>${t('share.titleMine')}</span></a>
+          </div>` : ''}
           <p class="project-desc">${esc(s.description || '')}</p>
           ${preview ? '' : `<div class="project-actions">
             <button class="btn btn-vote ${store.hasVoted(s.id) ? 'is-voted' : ''}" data-vote="${s.id}">${icon.heart(store.hasVoted(s.id))}<span data-vote-label>${store.hasVoted(s.id) ? t('vote.voted') : t('vote.vote')}</span><span class="count" data-count>${fmt(s.votes)}</span></button>
             ${shareButtons(s)}
-            ${store.myKey(s.slug) ? `<a class="btn btn-ghost" href="#/edit/${s.slug}">✎ <span>${t('detail.edit')}</span></a>` : ''}
+            ${store.myKey(s.slug) ? `<a class="btn btn-ghost" href="#/edit/${s.slug}">✎ <span>${t('detail.edit')}</span></a>` : `<a class="btn btn-ghost" href="#/share/${s.slug}">${icon.image}<span>${t('share.titleTheirs')}</span></a>`}
           </div>`}
           ${visitHTML(s)}
         </div>
@@ -208,7 +214,7 @@ export function bindProject(root, s) {
   document.addEventListener('keydown', (e) => e.key === 'Escape' && closePop());
 }
 
-export function renderDetail(root, slug) {
+export function renderDetail(root, slug, params = new URLSearchParams()) {
   const s = store.get(slug);
   if (!s || (s.status !== 'approved' && !store.isAdmin())) {
     root.innerHTML = `<section class="section notfound"><h1 class="display">${t('detail.notFound')}</h1><a class="btn btn-dark" href="#/explore">${t('detail.back')}</a></section>`;
@@ -216,7 +222,20 @@ export function renderDetail(root, slug) {
   }
   document.title = `${s.title} · SukkahPin`;
   if (s.status === 'approved') store.countView(s.slug);
+  // Arrived from a shared link? Count the visit once per session and remember the source for the vote.
+  const src = params.get('src');
+  if (src && s.status === 'approved') {
+    try {
+      if (!sessionStorage.getItem(`sp:src:${s.slug}`)) store.track(s.slug, 'visit', src);
+      sessionStorage.setItem(`sp:src:${s.slug}`, src);
+    } catch {}
+  }
   root.innerHTML = detailHTML(s);
   hydrate(root);
   bindProject(root, s);
+  const key = store.myKey(s.slug);
+  if (key) store.ownerStats(s.slug, key).then((st) => {
+    const el = $('[data-owner-stats]', root);
+    if (st && el) el.innerHTML = `<span><b>${fmt(st.views)}</b> ${t('share.views')}</span><span><b>${fmt(st.votes)}</b> ${t('share.votes')}</span><span><b>${fmt(st.shares)}</b> ${t('share.shares')}</span>`;
+  });
 }

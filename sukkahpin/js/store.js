@@ -260,6 +260,31 @@ export async function submit(draft) {
   return res;
 }
 
+/* ---------------- Share My Sukkah ---------------- */
+
+/** Short links — each one tells us where a visit came from. /s = QR on the status card, /w = WhatsApp, /l = copied link. */
+export const shortLink = (slug, via = 's') => `${location.origin}/${via}/${slug}`;
+export const shortHost = (slug) => `${location.host}/s/${slug}`;
+
+/** Fire-and-forget share analytics. Pass the edit key when the owner is acting. */
+export function track(slug, event, src = '', key = null) {
+  sb.rpc('sp_track', { p_slug: slug, p_event: event, p_src: src, p_key: key || null }).then(() => {}, () => {});
+}
+export async function ownerStats(slug, key) {
+  const { data, error } = await sb.rpc('sp_owner_stats', { p_slug: slug, p_key: key });
+  return error ? null : data;
+}
+export const shareSettings = () => {
+  const d = state.settings.share || {};
+  return { templates: { bold: true, clean: true, photo: true, ...(d.templates || {}) }, showVotes: d.showVotes !== false, copy: d.copy || {} };
+};
+/** Admin: share actions (download / WhatsApp / native / copy) per sukkah id. */
+export async function shareCounts() {
+  const { data, error } = await sb.from('sp_share_events').select('sukkah_id, event').in('event', ['download', 'whatsapp', 'native', 'copy']).limit(20000);
+  if (error) return {};
+  return data.reduce((m, e) => ((m[e.sukkah_id] = (m[e.sukkah_id] || 0) + 1), m), {});
+}
+
 /* ---------------- "Top picks" sign-ups ---------------- */
 
 const SUB_KEY = 'sp:subscribed';

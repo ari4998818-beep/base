@@ -230,6 +230,8 @@ function done(s) {
       <a class="btn btn-wa" href="https://wa.me/?text=${encodeURIComponent(shareText)}" target="_blank" rel="noopener">${icon.wa}<span>${t('sub.doneShare')}</span></a>
       <a class="btn btn-ghost" href="#/explore">${t('sub.another')}</a>
     </div>
+    ${s.key ? `<a class="btn btn-lime" href="#/share/${esc(s.slug)}">${icon.image}<span>${t('share.previewPost')}</span></a>
+    <p class="small muted">${t('share.previewPostSub')}</p>` : ''}
     ${s.key ? keepLinkHTML(s.slug, s.key, s.title) : ''}
   </div>`;
 }

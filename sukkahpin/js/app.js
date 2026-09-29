@@ -3,6 +3,7 @@ import { t, lang, setLang, applyLang } from './i18n.js';
 import { $, $$, icon, esc, refreshVotes, hydrate, fmt, modal, finishVote } from './ui.js';
 import { renderHome } from './views/home.js';
 import { renderDetail } from './views/detail.js';
+import { renderShare } from './views/share.js';
 import { renderSubmit, renderEdit } from './views/submit.js';
 import { renderExplore, renderSources, renderWinners, renderAbout } from './views/pages.js';
 import { renderAdmin } from './views/admin.js';
@@ -12,7 +13,8 @@ import { pickForm } from './ui.js';
 const ROUTES = [
   [/^\/?$/, (root, p, _m, c) => renderHome(root, c), 'home'],
   [/^\/explore$/, (root, p) => renderExplore(root, p), 'explore'],
-  [/^\/sukkah\/([\w-]+)$/, (root, p, m) => renderDetail(root, m[1]), 'detail'],
+  [/^\/sukkah\/([\w-]+)$/, (root, p, m) => renderDetail(root, m[1], p), 'detail'],
+  [/^\/share\/([\w-]+)$/, (root, p, m) => renderShare(root, m[1], p), 'share'],
   [/^\/submit$/, (root) => renderSubmit(root), 'submit'],
   [/^\/edit\/([\w-]+)$/, (root, p, m) => renderEdit(root, m[1], p.get('k')), 'submit'],
   [/^\/sources$/, (root, p) => renderSources(root, p), 'sources'],
@@ -148,7 +150,30 @@ store.onChange(() => {
 
 /* ---------------- Boot ---------------- */
 
+/** /s/slug (QR), /w/slug (WhatsApp), /l/slug (copied link) → the sukkah page, remembering the source. */
+function shortLinkToHash() {
+  const m = location.pathname.match(/^\/(s|w|l)\/([\w-]+)\/?$/);
+  if (m) history.replaceState(null, '', `/#/sukkah/${m[2]}?src=${{ s: 'qr', w: 'whatsapp', l: 'link' }[m[1]]}`);
+}
+
+/** Once per sukkah: when the owner's sukkah goes live, invite them to make their status post. */
+function celebrateLive() {
+  let keys = {};
+  try { keys = JSON.parse(localStorage.getItem('sp:editKeys') || '{}'); } catch {}
+  const slug = Object.keys(keys).find((k) => store.get(k)?.status === 'approved' && !localStorage.getItem(`sp:live:${k}`));
+  if (!slug || location.hash.startsWith('#/share/') || location.hash.startsWith('#/edit/')) return;
+  try { localStorage.setItem(`sp:live:${slug}`, '1'); } catch {}
+  const s = store.get(slug);
+  modal(`<div class="live-pop">
+    <p class="eyebrow"><i class="dot" aria-hidden="true"></i>${t('share.live')}</p>
+    <h2 class="display-sm">${esc(s.title)}</h2>
+    <p class="muted">${t('share.liveSub2')}</p>
+    <a class="btn btn-lime btn-lg btn-block" href="#/share/${slug}" data-close>${t('share.make')} <span aria-hidden="true">→</span></a>
+  </div>`, { cls: 'modal-sm' });
+}
+
 async function boot() {
+  shortLinkToHash();
   applyLang();
   chrome();
   $('#app').innerHTML = '<div class="boot" aria-busy="true"><span></span></div>';
@@ -169,6 +194,7 @@ async function boot() {
   window.addEventListener('hashchange', route);
   route();
   onScroll();
+  setTimeout(celebrateLive, 1200);
   if (pending && store.session()) {
     try { localStorage.removeItem('sp:pendingVote'); } catch {}
     const s = store.get(pending);

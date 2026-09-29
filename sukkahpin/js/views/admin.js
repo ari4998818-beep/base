@@ -56,6 +56,7 @@ function row(s) {
       <div class="a-flags">${s.sample ? '<b class="flag">Sample</b>' : ''}${s.featured ? '<b class="flag lime">Featured</b>' : ''}${s.editorsPick ? '<b class="flag dark">Editor’s Pick</b>' : ''}<b class="flag st-${s.status}">${s.status}</b>${s.editedAt ? `<b class="flag" title="${new Date(s.editedAt).toLocaleString()}">Edited by owner</b>` : ''}</div></td>
     <td class="num">${fmt(s.votes)}</td>
     <td class="num">${fmt(s.views || 0)}</td>
+    <td class="num">${fmt(sharesCache[s.id] || 0)}</td>
     <td class="small muted">${when(s.createdAt)}</td>
     <td class="a-actions">
       ${s.status === 'pending' ? `<button class="btn btn-lime btn-sm" data-act="approve">Approve</button><button class="btn btn-ghost btn-sm" data-act="reject">Reject</button>` : ''}
@@ -66,7 +67,7 @@ function row(s) {
 }
 
 const table = (list, empty) => list.length
-  ? `<div class="a-table-wrap"><table class="a-table"><thead><tr><th></th><th>Sukkah</th><th class="num">Votes</th><th class="num">Views</th><th>Added</th><th></th></tr></thead><tbody>${list.map(row).join('')}</tbody></table></div>`
+  ? `<div class="a-table-wrap"><table class="a-table"><thead><tr><th></th><th>Sukkah</th><th class="num">Votes</th><th class="num">Views</th><th class="num" title="Status posts downloaded / shared + links copied">Shares</th><th>Added</th><th></th></tr></thead><tbody>${list.map(row).join('')}</tbody></table></div>`
   : `<p class="empty">${empty}</p>`;
 
 function tabPending() {
@@ -90,6 +91,46 @@ function tabLinks() {
 }
 let votesCache = [];
 let subsCache = [];
+let sharesCache = {};
+
+function tabShare() {
+  const cfg = store.shareSettings();
+  const c = (L, k) => esc(cfg.copy?.[L]?.[k] || '');
+  const live = store.list();
+  return `<div class="a-cards">
+    <div class="a-card">
+      <h3>Share My Sukkah cards</h3>
+      <p class="muted small">Every approved sukkah gets a 1080×1920 WhatsApp Status card, drawn live from its own photos — nothing to design or regenerate by hand. Changes here apply to every card right away.</p>
+      <form class="form" data-share-settings>
+        <fieldset class="field"><legend>Templates people can pick</legend>
+          <div class="a-toggles">
+            <label><input type="checkbox" name="tpl_bold" ${cfg.templates.bold ? 'checked' : ''}> Bold</label>
+            <label><input type="checkbox" name="tpl_clean" ${cfg.templates.clean ? 'checked' : ''}> Clean</label>
+            <label><input type="checkbox" name="tpl_photo" ${cfg.templates.photo ? 'checked' : ''}> Photo</label>
+          </div></fieldset>
+        <div class="a-toggles"><label><input type="checkbox" name="showVotes" ${cfg.showVotes ? 'checked' : ''}> Show vote count on cards by default</label></div>
+        <p class="eyebrow">Owner wording — English</p>
+        <div class="form-grid">
+          <label class="field"><span>Headline</span><input name="en_headline" value="${c('en', 'headline')}" placeholder="Come see my sukkah."></label>
+          <label class="field"><span>Vote line</span><input name="en_vote" value="${c('en', 'vote')}" placeholder="Vote for my sukkah"></label>
+          <label class="field"><span>Button (Clean card)</span><input name="en_button" value="${c('en', 'button')}" placeholder="View + Vote"></label>
+        </div>
+        <p class="eyebrow">Owner wording — Yiddish</p>
+        <div class="form-grid" dir="rtl">
+          <label class="field"><span>Headline</span><input name="yi_headline" value="${c('yi', 'headline')}" placeholder="קומט זען מיין סוכה."></label>
+          <label class="field"><span>Vote line</span><input name="yi_vote" value="${c('yi', 'vote')}" placeholder="גיבט א שטימע פאר מיין סוכה"></label>
+          <label class="field"><span>Button (Clean card)</span><input name="yi_button" value="${c('yi', 'button')}" placeholder="קוקט און שטימט"></label>
+        </div>
+        <button class="btn btn-dark btn-sm">Save card settings</button>
+      </form>
+    </div>
+    <div class="a-card">
+      <h3>Preview cards</h3>
+      <p class="muted small">Opens the share page as a visitor sees it. Owners see the same designs with "my sukkah" wording.</p>
+      <ul class="a-mini">${live.map((x) => `<li><span>${esc(x.title)}</span><span class="muted small">${fmt(sharesCache[x.id] || 0)} shares</span><a class="btn btn-ghost btn-sm" href="#/share/${x.slug}">Preview</a></li>`).join('') || '<li class="muted">No live sukkahs yet.</li>'}</ul>
+    </div>
+  </div>`;
+}
 const csvCell = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
 function tabSubs() {
   const v = subsCache;
@@ -147,7 +188,7 @@ function tabSamples() {
   </div>`;
 }
 
-const TABS = { pending: ['Pending', tabPending], all: ['All sukkahs', tabAll], links: ['Products & links', tabLinks], votes: ['Votes', tabVotes], subs: ['Subscribers', tabSubs], samples: ['Samples & settings', tabSamples] };
+const TABS = { pending: ['Pending', tabPending], all: ['All sukkahs', tabAll], links: ['Products & links', tabLinks], votes: ['Votes', tabVotes], subs: ['Subscribers', tabSubs], share: ['Share cards', tabShare], samples: ['Samples & settings', tabSamples] };
 
 /* ---------------- Edit drawer ---------------- */
 
@@ -258,6 +299,7 @@ export async function renderAdmin(root, params) {
   root.innerHTML = '<div class="boot"><span></span></div>';
   try {
     await store.adminLoad();
+    if (tab !== 'votes' && tab !== 'subs') sharesCache = await store.shareCounts();
     if (tab === 'votes') votesCache = await store.votes();
     if (tab === 'subs') subsCache = await store.subscribers();
   } catch (x) { fail(x); }
@@ -311,6 +353,15 @@ export async function renderAdmin(root, params) {
     }
   };
   root.onsubmit = (e) => {
+    if (e.target.matches('[data-share-settings]')) {
+      e.preventDefault();
+      const d = new FormData(e.target);
+      const pick = (L) => Object.fromEntries(['headline', 'vote', 'button'].map((k) => [k, (d.get(`${L}_${k}`) || '').trim()]).filter(([, v]) => v));
+      return store.setSettings({ share: {
+        templates: { bold: d.has('tpl_bold'), clean: d.has('tpl_clean'), photo: d.has('tpl_photo') },
+        showVotes: d.has('showVotes'), copy: { en: pick('en'), yi: pick('yi') },
+      } }).then(() => toast('Card settings saved'), fail);
+    }
     if (e.target.matches('[data-password]')) {
       e.preventDefault();
       return store.setPassword(e.target.pw.value).then(() => { e.target.reset(); toast('Password changed'); }, (x) => toast(store.authMessage(x)));

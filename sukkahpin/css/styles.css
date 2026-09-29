@@ -888,3 +888,89 @@ body.scrolled .nav { box-shadow: 0 1px 0 var(--line); }
 .a-subs-head { display: grid; gap: 12px; margin-bottom: 24px; }
 .a-big { font: 800 32px/1 var(--f-display); letter-spacing: -0.03em; margin-inline-end: 6px; }
 [dir='rtl'] .picks-tag { letter-spacing: 0; font-size: 12px; }
+
+/* ==========================================================================
+   SHARE MY SUKKAH
+   ========================================================================== */
+.share-page { max-width: 1160px; margin: 0 auto; padding: calc(var(--nav-h) + 20px) var(--gutter) 140px; }
+.share-head { display: grid; gap: 14px; margin-bottom: 24px; }
+.share-head .back-link { margin-bottom: 0; }
+.share-head .display { font-size: clamp(40px, 7vw, 76px); }
+.share-live { border: 1px solid var(--ink); border-radius: 8px; padding: 16px 18px; display: grid; gap: 6px; max-width: 560px; }
+.share-live.pending { border-color: var(--line); background: var(--soft); }
+.share-live .eyebrow, .owner-live .eyebrow, .live-pop .eyebrow { display: flex; align-items: center; gap: 8px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #3fbf5a; box-shadow: 0 0 0 4px rgba(63,191,90,.18); display: inline-block; }
+.share-live.pending .dot { display: none; }
+.share-stats { display: flex; gap: 28px; }
+.share-stats div { display: grid; }
+.share-stats dt { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--mute); order: 2; }
+.share-stats dd { font: 800 34px/1 var(--f-display); letter-spacing: -0.03em; }
+[dir='rtl'] .share-stats dt { letter-spacing: 0; font-size: 13px; }
+
+.share-grid { display: grid; gap: 24px; }
+.share-stage { display: grid; gap: 10px; justify-items: center; }
+.share-preview { width: 100%; display: flex; justify-content: center; }
+.share-preview canvas { display: block; width: min(100%, calc(58svh * 9 / 16)); height: auto; aspect-ratio: 9 / 16; border-radius: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 24px 60px -24px rgba(0,0,0,.35); touch-action: none; cursor: grab; background: var(--soft); }
+.share-preview canvas.dragging { cursor: grabbing; }
+.share-hint { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--mute); }
+.share-hint svg { width: 14px; height: 14px; }
+.share-warn { font-size: 13px; color: #8a5a00; background: #fff6d6; padding: 8px 12px; border-radius: 6px; text-align: center; }
+.share-rail { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 6px 2px; max-width: 100%; scrollbar-width: none; }
+.share-rail::-webkit-scrollbar { display: none; }
+.share-tpl { display: grid; gap: 6px; justify-items: center; scroll-snap-align: center; font-size: 12px; font-weight: 600; color: var(--mute); }
+.share-tpl canvas { width: 78px; height: auto; aspect-ratio: 9 / 16; border-radius: 6px; outline: 2px solid transparent; outline-offset: 3px; transition: outline-color .2s, transform .2s var(--ease); }
+.share-tpl[aria-selected='true'] { color: var(--ink); }
+.share-tpl[aria-selected='true'] canvas { outline-color: var(--ink); transform: translateY(-2px); }
+
+.share-controls { display: grid; gap: 20px; align-content: start; }
+.sc-group { display: grid; gap: 10px; }
+.sc-label { font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--mute); }
+[dir='rtl'] .sc-label { letter-spacing: 0; font-size: 13px; }
+.share-photos { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.share-photos button { width: 58px; height: 58px; flex: none; border-radius: 6px; overflow: hidden; opacity: .55; transition: opacity .2s; }
+.share-photos button.on { opacity: 1; box-shadow: 0 0 0 2px var(--ink); }
+.share-photos img { width: 100%; height: 100%; object-fit: cover; }
+.sc-group input[type=range] { width: 100%; accent-color: var(--ink); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; width: fit-content; }
+.seg button { height: 38px; padding: 0 18px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--mute); }
+.seg button.on { background: var(--ink); color: #fff; }
+.share-controls .chips .chip { height: auto; min-height: 36px; padding: 8px 14px; white-space: normal; text-align: start; }
+.share-custom { height: 46px; border: 1px solid var(--line); border-radius: 999px; padding: 0 18px; font-size: 15px; outline: 0; }
+.share-custom:focus { border-color: var(--ink); }
+.sc-toggles { display: flex; flex-wrap: wrap; gap: 10px 24px; font-size: 14px; }
+.sc-toggles label { display: inline-flex; gap: 8px; align-items: center; }
+.sc-toggles input { accent-color: var(--ink); width: 18px; height: 18px; }
+
+.share-actions { position: fixed; inset: auto 0 0; z-index: 30; background: rgba(255,255,255,.95); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--line); padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); display: grid; gap: 8px; }
+.share-actions-row { display: flex; gap: 8px; }
+.share-actions-row .btn { flex: 1; height: 44px; padding: 0 10px; font-size: 13px; }
+.btn-wa-solid { background: var(--ink); color: #fff; width: 100%; }
+.btn-wa-solid svg { color: var(--wa); width: 22px; height: 22px; }
+.btn-wa-solid:hover { background: #262626; }
+
+@media (min-width: 900px) {
+  .share-page { padding-bottom: 80px; }
+  .share-grid { grid-template-columns: minmax(0, 1fr) 380px; align-items: start; gap: 48px; }
+  .share-preview canvas { width: min(100%, 440px); }
+  .share-actions { position: static; background: none; border: 0; padding: 0; backdrop-filter: none; margin-top: 8px; }
+}
+
+/* Owner block on the sukkah page */
+.owner-live { display: grid; gap: 10px; justify-items: start; padding: 18px 20px; border: 1px solid var(--ink); border-radius: 8px; margin-bottom: 22px; }
+.owner-live-h { font: 700 20px/1.25 var(--f-display); letter-spacing: -0.01em; }
+.owner-stats { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; color: var(--mute); }
+.owner-stats b { color: var(--ink); font-size: 18px; margin-inline-end: 4px; }
+.owner-stats:empty { display: none; }
+
+/* After-vote growth prompt + "your sukkah is live" pop-up */
+.vote-more { width: 100%; margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--line); display: grid; gap: 8px; }
+.vote-more p { font-size: 14px; color: var(--mute); }
+.live-pop { display: grid; gap: 14px; }
+
+@media (max-width: 899px) {
+  .share-head { gap: 10px; margin-bottom: 18px; }
+  .share-head .display { font-size: 40px; }
+  .share-live { padding: 12px 14px; }
+  .share-live p:last-child { font-size: 14px; }
+  .share-stats dd { font-size: 26px; }
+}

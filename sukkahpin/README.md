@@ -84,6 +84,30 @@ project are untouched.
    (To make this branch production, merge it into `main`, or change *Settings → Git → Production Branch*.)
 4. Put the resulting URL into the Supabase *Site URL* (step 1 above). Add a custom domain in Vercel whenever.
 
+## Share My Sukkah
+
+Every sukkah gets a designed 1080×1920 WhatsApp Status card, drawn in the browser on a `<canvas>`
+(`js/sharecard.js`) from its real photos, the SukkahPin logo, a real QR code and its short link. Page: `#/share/<slug>`
+(`js/views/share.js`).
+
+- **Owner vs visitor**: the owner (edit key on this phone, or `?k=`) gets "Share My Sukkah" — "my sukkah" wording,
+  live/pending note and stats (views · votes · shares). Everyone else gets "Share this sukkah" with neutral wording.
+- **Templates**: Bold, Clean, Photo. Options: photo, drag-to-reposition + zoom, headline (presets or custom),
+  location on/off, vote count on/off, English / Yiddish. Blurry-photo warning when a photo is enlarged > 1.5×.
+- **Sharing**: *Share to WhatsApp* uses the phone's share sheet with the image (post to Status or a chat); where
+  that's not supported it downloads the image and opens WhatsApp with the link. Also Download, Copy link, More….
+- **Short links** (vercel.json rewrites → `app.js` boot): `/s/<slug>` = QR on the card, `/w/<slug>` = WhatsApp
+  message, `/l/<slug>` = copied link. They open the sukkah page directly and record the source.
+- **Tracking** (`sp_share_events` via `sp_track`): open, download, whatsapp, native, copy, visit (from a short
+  link, once per session) and vote (a vote by someone who arrived from a short link). Owner stats via
+  `sp_owner_stats`; admin list has a *Shares* column.
+- **Growth moments**: when an owner's sukkah goes live, their phone shows "Your sukkah is live → Create My Status
+  Post" once; the sukkah page shows an owner block with stats; the submit confirmation links to the status
+  preview; after voting, visitors see "Know someone with a great sukkah? Submit a Sukkah / Explore more".
+- **Admin → Share cards**: turn templates on/off, default vote-count display, edit the owner headline / vote line
+  / button in English and Yiddish, preview any sukkah's cards. Cards render live, so there's nothing to regenerate.
+- **Email later**: when a mail sender is connected, the approval email should link to `/#/share/<slug>?k=<key>`.
+
 ## "Top picks" sign-ups
 
 A gentle pop-up ("See this year's most creative sukkahs first") collects a phone number or email. It shows only
