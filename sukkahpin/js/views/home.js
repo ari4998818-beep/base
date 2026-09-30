@@ -284,7 +284,7 @@ export function bandHTML() {
 }
 
 export function renderHome(root, cleanup) {
-  root.innerHTML = heroHTML() + trendingHTML() + stylesHTML() + galleryHTML() + sourcesTeaserHTML() + bandHTML();
+  root.innerHTML = heroHTML() + trendingHTML() + /* stylesHTML() — "Find your inspiration" hidden for now */ galleryHTML() + sourcesTeaserHTML() + bandHTML();
   initHero(root, cleanup);
 
   const tabs = $('.trending .tabs', root);
