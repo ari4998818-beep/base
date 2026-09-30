@@ -42,5 +42,23 @@
       "source": "/l/:slug",
       "destination": "/"
     }
-  ]
+  ],
+  "images": {
+    "sizes": [
+      384,
+      828,
+      1600
+    ],
+    "formats": [
+      "image/webp"
+    ],
+    "minimumCacheTTL": 2678400,
+    "remotePatterns": [
+      {
+        "protocol": "https",
+        "hostname": "rmacchunsqezcsaqdxsl.supabase.co",
+        "pathname": "/storage/v1/object/public/**"
+      }
+    ]
+  }
 }

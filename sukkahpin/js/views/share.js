@@ -3,7 +3,7 @@
 
 import * as store from '../store.js';
 import { t, lang as siteLang } from '../i18n.js';
-import { esc, $, $$, icon, toast } from '../ui.js';
+import { esc, $, $$, icon, toast, optSrc } from '../ui.js';
 import { TEMPLATES, COPY, W, H, renderCard, loadImage, ensureFonts, makeQR, toBlob } from '../sharecard.js';
 
 const BLURRY = 1.5; // photo enlarged more than this → warn it may look soft
@@ -71,7 +71,7 @@ export async function renderShare(root, slug, params) {
 
       <div class="share-controls">
         ${photos.length > 1 ? `<div class="sc-group"><p class="sc-label">${t('share.photo')}</p>
-          <div class="share-photos">${photos.map((p, i) => `<button data-photo="${i}" aria-label="${t('share.photo')} ${i + 1}"><img src="${esc(p.src)}" alt="" loading="lazy"></button>`).join('')}</div></div>` : ''}
+          <div class="share-photos">${photos.map((p, i) => `<button data-photo="${i}" aria-label="${t('share.photo')} ${i + 1}"><img src="${esc(optSrc(p.src, 384))}" alt="" loading="lazy"></button>`).join('')}</div></div>` : ''}
 
         <div class="sc-group"><p class="sc-label">${t('share.zoom')}</p>
           <input type="range" min="1" max="2.5" step="0.01" value="1" data-zoom aria-label="${t('share.zoom')}"></div>
@@ -109,7 +109,7 @@ export async function renderShare(root, slug, params) {
     Promise.resolve(makeQR(store.shortLink(s.slug, 's'), 520)),
   ]);
   const imgs = {};
-  const getImg = async (i) => (imgs[i] ||= await loadImage(photos[i].src).catch(() => loadImage('img/hero-pergola.webp')));
+  const getImg = async (i) => (imgs[i] ||= await loadImage(optSrc(photos[i].src, 1600)).catch(() => loadImage(photos[i].src)).catch(() => loadImage('img/hero-pergola.webp')));
 
   const data = async (tpl) => {
     const L = st.lang, c = copy(L);

@@ -33,7 +33,7 @@ function heroHTML() {
 
     <div class="hero-stage">
       ${main ? `<figure class="hero-main" data-parallax="0.35">
-        <div class="hero-main-img">${img(store.heroOf(main).src, main.title, 'fetchpriority="high"')}</div>
+        <div class="hero-main-img">${img(store.heroOf(main).src, main.title, 'fetchpriority="high"', '(max-width: 600px) 100vw, 50vw')}</div>
         <p class="hand-note" aria-hidden="true">Real sukkahs.<br>Real inspiration.<svg viewBox="0 0 80 60"><path d="M72 6 C 50 18, 30 30, 12 50 M12 50 l 3 -12 M12 50 l 12 -3"/></svg></p>
         <a class="now-showing" href="#/sukkah/${main.slug}"><span>${t('hero.viewing')}</span><strong>${esc(main.title)}</strong><em>${arrow()}</em></a>
       </figure>` : ''}
@@ -166,7 +166,7 @@ function initHero(root, cleanup) {
 function openFilm() {
   const photos = store.list().flatMap((s) => s.photos.slice(0, 2).map((p) => ({ p, s })));
   const m = modal(`<div class="film">
-      <div class="film-stage">${photos.map(({ p, s }, i) => `<figure class="${i === 0 ? 'on' : ''}">${img(p.src, s.title)}<figcaption><strong>${esc(s.title)}</strong> · ${esc(s.location)}</figcaption></figure>`).join('')}</div>
+      <div class="film-stage">${photos.map(({ p, s }, i) => `<figure class="${i === 0 ? 'on' : ''}">${img(p.src, s.title, '', '100vw')}<figcaption><strong>${esc(s.title)}</strong> · ${esc(s.location)}</figcaption></figure>`).join('')}</div>
       <p class="film-title">${t('video.title')}</p>
     </div>`, { cls: 'modal-film', onClose: () => clearInterval(timer) });
   const figs = $$('.film-stage figure', m.el);

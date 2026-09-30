@@ -1,6 +1,6 @@
 import * as store from '../store.js';
 import { t, tc, isRTL } from '../i18n.js';
-import { esc, $, $$, icon, img, card, fmt, arrow, shareButtons, hydrate } from '../ui.js';
+import { esc, $, $$, icon, img, optSrc, card, fmt, arrow, shareButtons, hydrate } from '../ui.js';
 import { zoom } from './home.js';
 
 const pad = (n) => String(n).padStart(2, '0');
@@ -17,7 +17,7 @@ function spots(ph) {
 
 function shot(ph, i, cls = '') {
   return `<figure class="shot ${cls}">
-    <div class="shot-img" data-photo="${ph.id}">${img(ph.src, ph.label || '', i ? 'loading="lazy"' : 'fetchpriority="high"')}${spots(ph)}</div>
+    <div class="shot-img" data-photo="${ph.id}">${img(ph.src, ph.label || '', i ? 'loading="lazy"' : 'fetchpriority="high"', '(max-width: 600px) 100vw, 60vw')}${spots(ph)}</div>
     <figcaption><span>${pad(i + 1)}</span>${esc(ph.label || '')}</figcaption>
   </figure>`;
 }
@@ -87,7 +87,7 @@ function videoHTML(s) {
   if (!v?.url) return '';
   const player = v.kind === 'youtube' || v.kind === 'vimeo'
     ? `<iframe src="${esc(v.url)}" title="${esc(s.title)}" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`
-    : `<video src="${esc(v.url)}" controls playsinline preload="metadata"></video>`;
+    : `<video src="${esc(v.url)}" controls playsinline preload="none"${store.coverOf(s)?.src ? ` poster="${esc(optSrc(store.coverOf(s).src))}"` : ''}></video>`;
   return `<section class="project-video"><p class="eyebrow">${t('detail.video')}</p><div class="video-frame">${player}</div></section>`;
 }
 

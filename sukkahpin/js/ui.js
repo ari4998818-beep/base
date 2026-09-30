@@ -24,8 +24,17 @@ export const icon = {
 };
 
 /** <img> that also works for uploaded (IndexedDB) photos. Call hydrate() after inserting. */
-export function img(src, alt = '', attrs = '') {
-  return `<img src="${esc(src)}" alt="${esc(alt)}" ${attrs}>`;
+// Uploaded photos are served resized + compressed through Vercel's image service (cached at the edge),
+// which keeps Supabase egress low. Falls back to the original file if the service ever fails.
+const STORAGE_RE = /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\//;
+const OPTIMIZE = !/^(localhost|127\.|\[::1\])/.test(location.hostname);
+const WIDTHS = [384, 828, 1600]; // must match "images.sizes" in vercel.json
+export const optSrc = (src, w = 828) => (OPTIMIZE && STORAGE_RE.test(src || '') ? `/_vercel/image?url=${encodeURIComponent(src)}&w=${w}&q=75` : src);
+
+export function img(src, alt = '', attrs = '', sizes = '(max-width: 600px) 50vw, 400px') {
+  if (!OPTIMIZE || !STORAGE_RE.test(src || '')) return `<img src="${esc(src)}" alt="${esc(alt)}" ${attrs}>`;
+  const set = WIDTHS.map((w) => `${optSrc(src, w)} ${w}w`).join(', ');
+  return `<img src="${esc(optSrc(src))}" srcset="${esc(set)}" sizes="${sizes}" data-orig="${esc(src)}" onerror="this.onerror=null;this.removeAttribute('srcset');this.src=this.dataset.orig" alt="${esc(alt)}" ${attrs}>`;
 }
 export function hydrate() {} // photos are plain URLs now (Supabase Storage / static)
 
