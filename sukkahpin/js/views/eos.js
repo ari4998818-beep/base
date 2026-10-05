@@ -1,5 +1,5 @@
 // End-of-season campaign: the pages behind the email buttons, plus the admin tab.
-//   #/r/<token>/<answer>  one-click answer ("Would you use it?") — saved when the page opens
+//   #/r/<token>/<answer>  one-click answer ("What would you want from it?") — saved when the page opens
 //   #/nu/<token>          the short "Nu, tell us" feedback form
 //   #/unsub/<token>       unsubscribe (asks first, so link scanners can't unsubscribe anyone)
 // The token is each recipient's private key; nobody needs to sign in.
@@ -8,8 +8,8 @@ import * as store from '../store.js';
 import { esc, $, $$, img, toast, modal } from '../ui.js';
 
 export const ANSWERS = {
-  submitter: [['share', 'I’d share mine'], ['browse', 'I’d definitely browse'], ['both', 'I’d do both'], ['maybe', 'Maybe…'], ['sukkahs', 'I’m mostly here for sukkahs']],
-  general: [['browse', 'Yes — I’d browse'], ['share', 'I’d share mine too'], ['both', 'Both'], ['maybe', 'Maybe…'], ['sukkahs', 'Keep it to sukkahs']],
+  submitter: [['browse', 'I’d come to get ideas'], ['share', 'I’d share my own ideas'], ['both', 'I’d do both'], ['maybe', 'Not sure yet'], ['sukkahs', 'I’d keep it just for Sukkos']],
+  general: [['browse', 'I’d come to get ideas'], ['share', 'I’d share my own ideas'], ['both', 'I’d do both'], ['maybe', 'Not sure yet'], ['sukkahs', 'I’d keep it just for Sukkos']],
 };
 const AGAIN = [['definitely', 'Definitely'], ['probably', 'Probably'], ['maybe', 'Maybe'], ['no', 'Probably not']];
 const WANTS = [['chanukah', 'Chanukah setups'], ['parties', 'Parties / events'], ['tables', 'Tables'], ['purim', 'Purim ideas'], ['home', 'Home / decor ideas'], ['diy', 'DIY / creative projects'], ['sukkahs', 'Sukkahs only'], ['other', 'Other']];
@@ -107,7 +107,7 @@ export async function renderEosUnsub(root, token) {
 /* ---------------- Admin tab ---------------- */
 
 const SEGS = [['submitter', 'Submitter email', 'Everyone with an approved sukkah'], ['general', 'General email', 'Email subscribers who didn’t submit']];
-const LABELS = { share: 'Would share theirs', browse: 'Would browse', both: 'Would do both', maybe: 'Maybe', sukkahs: 'Sukkahs only' };
+const LABELS = { browse: 'Come to get ideas', share: 'Share their own ideas', both: 'Both', maybe: 'Not sure yet', sukkahs: 'Keep it just for Sukkos' };
 const pct = (n, d) => (d ? Math.round((n / d) * 100) : 0);
 const bar = (label, n, d) => `<tr><td>${label}</td><td class="num">${n}</td><td class="eos-bar-cell"><span class="eos-bar"><i style="width:${pct(n, d)}%"></i></span><span class="small muted">${pct(n, d)}%</span></td></tr>`;
 
@@ -160,7 +160,7 @@ export async function mountEosAdmin(el) {
     <p class="eyebrow">End of season results</p>
     <div class="eos-total"><b>${respondents}</b><span>people answered<br><span class="muted small">of ${results.recipients.filter((r) => r.sent_at).length} emailed</span></span></div>
     <div class="a-cards">
-      <div class="a-card"><h3>Would you use it? <em>everyone</em></h3>${answerTable()}</div>
+      <div class="a-card"><h3>What would you want from it? <em>everyone</em></h3>${answerTable()}</div>
       <div class="a-card"><h3>Submitters vs. general</h3><p class="eyebrow">Submitters</p>${answerTable('submitter')}<p class="eyebrow">General</p>${answerTable('general')}</div>
       <div class="a-card"><h3>Would submit again next Sukkos</h3><table class="a-table eos-table"><tbody>${AGAIN.map(([k, l]) => bar(l, again.filter((r) => r.again === k).length, again.length)).join('')}</tbody></table><p class="small muted">${again.length} submitters answered</p></div>
       <div class="a-card"><h3>What people want next</h3><table class="a-table eos-table"><tbody>${WANTS.map(([k, l]) => bar(l, fbs.filter((r) => (r.wants || []).includes(k)).length, fbs.length)).join('')}</tbody></table><p class="small muted">${fbs.length} filled in the form · people can pick more than one</p></div>

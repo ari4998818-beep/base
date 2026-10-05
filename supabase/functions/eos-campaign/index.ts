@@ -38,8 +38,8 @@ const PILL = (href: string, label: string, pad: string) => `<tr><td style="paddi
 const LIST = (items: string[]) => P(items.map((x) => `${x}<br>`).join(''), '14px 28px 0', 'font-weight:700;color:#0b0b0b');
 
 const ANSWERS: Record<Seg, [string, string][]> = {
-  submitter: [['share', 'I’d share mine'], ['browse', 'I’d definitely browse'], ['both', 'I’d do both'], ['maybe', 'Maybe…'], ['sukkahs', 'I’m mostly here for sukkahs']],
-  general: [['browse', 'Yes — I’d browse'], ['share', 'I’d share mine too'], ['both', 'Both'], ['maybe', 'Maybe…'], ['sukkahs', 'Keep it to sukkahs']],
+  submitter: [['browse', 'I’d come to get ideas'], ['share', 'I’d share my own ideas'], ['both', 'I’d do both'], ['maybe', 'Not sure yet'], ['sukkahs', 'I’d keep it just for Sukkos']],
+  general: [['browse', 'I’d come to get ideas'], ['share', 'I’d share my own ideas'], ['both', 'I’d do both'], ['maybe', 'Not sure yet'], ['sukkahs', 'I’d keep it just for Sukkos']],
 };
 
 function strip(others: Row[]) {
@@ -95,7 +95,8 @@ function buildEmail(seg: Seg, w: Row, others: Row[], token: string) {
     LIST(['Chanukah setups.', 'Parties.', 'Tables.', 'Purim.', 'DIY projects.', 'Home ideas.']),
     P(`What if there was one place for all of it?`),
     P(`We’re not saying we’re doing it yet. We want to hear from you first.`),
-    H('Would you use it?', 28, '28px 28px 0'),
+    H('What would you want from it?', 28, '28px 28px 0'),
+    P(`If we built something like SukkahPin for the rest of the year…`, '10px 28px 0'),
     answerButtons(seg, token),
     RULE,
     H('Nu, tell us.', 34),
@@ -118,9 +119,11 @@ function buildEmail(seg: Seg, w: Row, others: Row[], token: string) {
     P(`There are plenty of great ideas around us that never make it past a WhatsApp status.`, '16px 28px 0'),
     LIST(['Chanukah setups.', 'Parties.', 'Tables.', 'Purim.', 'DIY projects.', 'Home ideas.']),
     P(`What if the idea behind SukkahPin kept going all year — one place to see and share them?`),
-    H('Would you use it?', 28, '28px 28px 0'),
+    H('What would you want from it?', 28, '28px 28px 0'),
+    P(`If we built something like SukkahPin for the rest of the year…`, '10px 28px 0'),
     answerButtons(seg, token),
-    P(`Have an idea for us?`, '26px 28px 0', 'text-align:center'),
+    H('What should we do next?', 24, '30px 28px 0'),
+    P(`Chanukah? Parties? Home ideas? Something else?`, '10px 28px 0'),
     BTN(fb, 'Nu, tell us →', 'lime', '10px 28px 0'),
     RULE,
     P(`<span dir="rtl" lang="he">יישר כח</span> to everyone who browsed, voted and shared. Thanks for being part of the first SukkahPin.`, '24px 28px 0'),
