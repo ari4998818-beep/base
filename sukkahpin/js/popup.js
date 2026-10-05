@@ -8,7 +8,7 @@ import { modal, pickForm, esc, img } from './ui.js';
 
 const DISMISS_KEY = 'sp:picksDismissed';
 const QUIET_DAYS = 14;
-const SKIP_ROUTES = new Set(['submit', 'admin']);
+const SKIP_ROUTES = new Set(['submit', 'admin', 'eos']);
 let shownThisVisit = false, sukkahViews = 0, route = 'home', timer, scrollBound = false;
 
 function eligible() {

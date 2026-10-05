@@ -4,6 +4,7 @@
 import * as store from '../store.js';
 import { esc, $, $$, icon, img, fmt, toast, modal } from '../ui.js';
 import { PHOTO_LABELS, PRODUCT_CATS } from './submit.js';
+import { eosAdminHTML, mountEosAdmin } from './eos.js';
 
 const CATS = ['Modern', 'DIY', 'Family', 'Small Space', 'Luxury', 'Creative', 'Outdoor', 'Balcony', 'Lighting', 'Themed', 'Custom'];
 const when = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -195,7 +196,7 @@ function tabSamples() {
   </div>`;
 }
 
-const TABS = { pending: ['Pending', tabPending], all: ['All sukkahs', tabAll], links: ['Products & links', tabLinks], votes: ['Votes', tabVotes], subs: ['Subscribers', tabSubs], share: ['Share cards', tabShare], samples: ['Samples & settings', tabSamples] };
+const TABS = { pending: ['Pending', tabPending], all: ['All sukkahs', tabAll], links: ['Products & links', tabLinks], votes: ['Votes', tabVotes], subs: ['Subscribers', tabSubs], share: ['Share cards', tabShare], eos: ['End of season', eosAdminHTML], samples: ['Samples & settings', tabSamples] };
 
 /* ---------------- Edit drawer ---------------- */
 
@@ -319,6 +320,8 @@ export async function renderAdmin(root, params) {
     <nav class="a-tabs">${Object.entries(TABS).map(([k, [l]]) => `<a href="#/admin?tab=${k}" class="${k === tab ? 'on' : ''}">${l}${k === 'pending' && pending ? ` <em>${pending}</em>` : ''}</a>`).join('')}</nav>
     <div class="a-body">${TABS[tab][1]()}</div>
   </section>`;
+
+  if (tab === 'eos') mountEosAdmin($('[data-eos-admin]', root));
 
   const run = async (fn, msg) => { try { await fn(); if (msg) toast(msg); } catch (x) { fail(x); } draw(); };
 

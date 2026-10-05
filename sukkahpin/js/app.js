@@ -7,6 +7,7 @@ import { renderShare } from './views/share.js';
 import { renderSubmit, renderEdit } from './views/submit.js';
 import { renderExplore, renderSources, renderWinners, renderAbout } from './views/pages.js';
 import { renderAdmin } from './views/admin.js';
+import { renderEosAnswer, renderEosFeedback, renderEosUnsub } from './views/eos.js';
 import * as popup from './popup.js';
 import * as poster from './poster.js';
 import { pickForm } from './ui.js';
@@ -23,6 +24,9 @@ const ROUTES = [
   [/^\/winners$/, (root) => renderWinners(root), 'winners'],
   [/^\/about$/, (root) => renderAbout(root), 'about'],
   [/^\/admin$/, (root, p) => renderAdmin(root, p), 'admin'],
+  [/^\/r\/([a-f0-9]{32})\/(share|browse|both|maybe|sukkahs)$/, (root, p, m) => renderEosAnswer(root, m[1], m[2]), 'eos'],
+  [/^\/nu\/([a-f0-9]{32})$/, (root, p, m) => renderEosFeedback(root, m[1]), 'eos'],
+  [/^\/unsub\/([a-f0-9]{32})$/, (root, p, m) => renderEosUnsub(root, m[1]), 'eos'],
 ];
 
 function chrome() {
@@ -76,7 +80,7 @@ function route() {
   popup.onRoute(key);
   poster.onRoute(key);
   // Vercel Web Analytics: this site routes with #hash, so report each page ourselves.
-  window.va?.('pageview', { route: key === 'detail' ? '/sukkah/[slug]' : key === 'sources' && m?.[1] ? '/sources/[item]' : '/' + (path.replace(/^\//, '') || ''), path: '/' + path.replace(/^\//, '') });
+  window.va?.('pageview', { route: key === 'eos' ? '/' + path.split('/')[1] + '/[token]' : key === 'detail' ? '/sukkah/[slug]' : key === 'sources' && m?.[1] ? '/sources/[item]' : '/' + (path.replace(/^\//, '') || ''), path: key === 'eos' ? '/' + path.split('/')[1] : '/' + path.replace(/^\//, '') }); // never send private email tokens to analytics
   hydrate(root);
   reveal(root);
   if (!sessionStorage.getItem('sp:keepScroll')) window.scrollTo(0, 0);

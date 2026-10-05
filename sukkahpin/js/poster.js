@@ -4,7 +4,7 @@ import { modal } from './ui.js';
 
 const SEEN_KEY = 'sp:posterSeen';
 const SRC = 'img/drawing-250.jpg';
-const SKIP_ROUTES = new Set(['submit', 'admin', 'share']);
+const SKIP_ROUTES = new Set(['submit', 'admin', 'share', 'eos']);
 let route = 'home', timer;
 
 function seen() { try { return !!sessionStorage.getItem(SEEN_KEY); } catch { return false; } }

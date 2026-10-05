@@ -500,3 +500,33 @@ export async function removeVote(id, sukkahId) {
 export async function adminLoad() {
   await Promise.all([loadSukkahs(), loadContacts()]);
 }
+
+/* ---------------- End-of-season campaign ---------------- */
+// Emails are built and sent by the eos-campaign Edge Function (admins only). The public
+// answer / feedback / unsubscribe pages use the recipient's private token through RPCs.
+
+async function invokeFn(name, body) {
+  const { data, error } = await sb.functions.invoke(name, { body });
+  if (error) {
+    let msg = error.message;
+    try { msg = (await error.context.json()).error || msg; } catch {}
+    throw new Error(msg);
+  }
+  return data;
+}
+export const eosAdmin = (action, segment) => invokeFn('eos-campaign', { action, segment });
+
+export async function eosResults(campaign) {
+  const { data: recipients, error } = await sb.from('sp_eos_recipients').select('id, segment, sent_at').eq('campaign', campaign).eq('test', false);
+  if (error) throw error;
+  if (!recipients.length) return { recipients, responses: [] };
+  const { data: responses, error: e2 } = await sb.from('sp_eos_responses').select('*').in('recipient_id', recipients.map((r) => r.id));
+  if (e2) throw e2;
+  return { recipients, responses };
+}
+
+const rpc = async (fn, args) => { const { data, error } = await sb.rpc(fn, args); if (error) throw error; return data; };
+export const eosGet = (token) => rpc('sp_eos_get', { p_token: token });
+export const eosAnswer = (token, answer) => rpc('sp_eos_answer', { p_token: token, p_answer: answer });
+export const eosFeedback = (token, again, wants, note) => rpc('sp_eos_feedback', { p_token: token, p_again: again || null, p_wants: wants, p_note: note });
+export const eosUnsub = (token) => rpc('sp_eos_unsub', { p_token: token });
