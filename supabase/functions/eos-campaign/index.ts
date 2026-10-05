@@ -33,6 +33,8 @@ const BTN = (href: string, label: string, kind: 'dark' | 'lime' | 'line' = 'dark
   const [bg, fg, bd] = kind === 'dark' ? ['#0b0b0b', '#ffffff', '#0b0b0b'] : kind === 'lime' ? ['#d8f23a', '#0b0b0b', '#d8f23a'] : ['#ffffff', '#0b0b0b', '#0b0b0b'];
   return `<tr><td style="padding:${pad}"><a href="${esc(href)}" style="display:block;background:${bg};color:${fg};border:2px solid ${bd};text-decoration:none;font-weight:700;font-size:16px;padding:15px 20px;border-radius:999px;text-align:center">${label}</a></td></tr>`;
 };
+// Compact outline pill for the one-tap answers.
+const PILL = (href: string, label: string, pad: string) => `<tr><td style="padding:${pad}"><a href="${esc(href)}" style="display:block;background:#ffffff;color:#0b0b0b;border:1.5px solid #0b0b0b;text-decoration:none;font-weight:700;font-size:15px;padding:10px 16px;border-radius:999px;text-align:center">${label}</a></td></tr>`;
 const LIST = (items: string[]) => P(items.map((x) => `${x}<br>`).join(''), '14px 28px 0', 'font-weight:700;color:#0b0b0b');
 
 const ANSWERS: Record<Seg, [string, string][]> = {
@@ -61,16 +63,16 @@ function winnerBlock(w: Row, seg: Seg) {
     P(`<b style="color:#0b0b0b">${esc(w.title)}</b>${w.location ? ` · ${esc(w.location)}` : ''}`, '6px 28px 0', 'font-size:16px'),
     src ? `<tr><td style="padding:20px 28px 0"><a href="${esc(view)}"><img src="${esc(photo(src, 1600))}" alt="${esc(w.title)}" width="464" style="display:block;width:100%;height:auto;border-radius:6px"></a></td></tr>` : '',
     P(`<b style="color:#0b0b0b">Picked at random</b> from all approved submissions.`, '12px 28px 0', 'font-size:14px;color:#6f6f69'),
-    BTN(view, seg === 'submitter' ? 'View the sukkah →' : 'See the winning sukkah →'),
+    BTN(view, seg === 'submitter' ? 'View the sukkah →' : 'See the winning sukkah →', 'lime'),
     seg === 'submitter'
-      ? P(`Mazel Tov!<br><br>And a big thank you to everyone who sent theirs in. There may be one drawing winner, but SukkahPin wouldn’t have been much of anything without all the sukkahs people shared.`, '22px 28px 0')
+      ? P(`Mazel Tov!<br><br>And a big thank you to everyone who sent theirs in. There may be one drawing winner, but every sukkah that was shared is what made SukkahPin happen.`, '22px 28px 0')
       : P(`And an especially big thank you to everyone who opened up their sukkah and shared it with everyone.`, '22px 28px 0'),
   ].join('');
 }
 
 function answerButtons(seg: Seg, token: string) {
-  return ANSWERS[seg].map(([k, label], i) => BTN(`${SITE}/#/r/${token}/${k}`, label, 'line', i ? '10px 28px 0' : '20px 28px 0')).join('')
-    + P('One tap is enough.', '12px 28px 0', 'font-size:13px;color:#9a9993;text-align:center');
+  return ANSWERS[seg].map(([k, label], i) => PILL(`${SITE}/#/r/${token}/${k}`, label, i ? '7px 28px 0' : '16px 28px 0')).join('')
+    + P('One tap is enough.', '10px 28px 0', 'font-size:13px;color:#9a9993;text-align:center');
 }
 
 function buildEmail(seg: Seg, w: Row, others: Row[], token: string) {
@@ -88,8 +90,9 @@ function buildEmail(seg: Seg, w: Row, others: Row[], token: string) {
     RULE,
     H('So… should we do this again?', 34),
     P(`And maybe not wait until next Sukkos.`, '12px 28px 0', 'font-weight:700;color:#0b0b0b'),
-    P(`We keep thinking — there are so many good ideas out there that never get seen.`),
-    LIST(['Chanukah setups.', 'Parties.', 'Tables.', 'Purim ideas.', 'Home projects.', 'Things people make themselves.']),
+    H('Sukkos is over.<br>But maybe the idea isn’t.', 26, '22px 28px 0'),
+    P(`There are plenty of great ideas around us that never make it past a WhatsApp status.`),
+    LIST(['Chanukah setups.', 'Parties.', 'Tables.', 'Purim.', 'DIY projects.', 'Home ideas.']),
     P(`What if there was one place for all of it?`),
     P(`We’re not saying we’re doing it yet. We want to hear from you first.`),
     H('Would you use it?', 28, '28px 28px 0'),
@@ -100,7 +103,7 @@ function buildEmail(seg: Seg, w: Row, others: Row[], token: string) {
     P(`What did you like?<br>What was annoying?<br>What’s missing?<br>What would make you send yours in again?`),
     BTN(fb, 'Tell us what you think →', 'lime'),
     RULE,
-    H('A groisen dank.', 28),
+    H('<span dir="rtl" lang="he">יישר כח</span>', 30),
     P(`To everyone who sent in a sukkah, shared their page, got their friends voting, or helped spread the word — thank you for making the first one happen.`),
     P(`See you next year.<br>Maybe sooner.`, '14px 28px 0', 'font-weight:700;color:#0b0b0b'),
     P(`— SukkahPin`, '14px 28px 30px'),
@@ -120,7 +123,7 @@ function buildEmail(seg: Seg, w: Row, others: Row[], token: string) {
     P(`Have an idea for us?`, '26px 28px 0', 'text-align:center'),
     BTN(fb, 'Nu, tell us →', 'lime', '10px 28px 0'),
     RULE,
-    P(`A groisen dank to everyone who browsed, voted and shared. Thanks for being part of the first SukkahPin.`, '24px 28px 0'),
+    P(`<span dir="rtl" lang="he">יישר כח</span> to everyone who browsed, voted and shared. Thanks for being part of the first SukkahPin.`, '24px 28px 0'),
     P(`See you next year.<br>Maybe sooner.`, '14px 28px 0', 'font-weight:700;color:#0b0b0b'),
     P(`— SukkahPin`, '14px 28px 30px'),
   ];

@@ -29,7 +29,7 @@ export async function renderEosAnswer(root, token, answer) {
   if (!seg) { root.innerHTML = badLink(); return; }
   const draw = (current) => {
     root.innerHTML = shell(`${check}
-      <h1 class="display-sm eos-h">Got it.<br>A groisen dank.</h1>
+      <h1 class="display-sm eos-h">Got it.<br><span class="eos-he" dir="rtl" lang="he">יישר כח</span></h1>
       <p class="muted">This really helps us figure out what to do next.</p>
       <p class="eyebrow eos-label">Your answer — tap to change</p>
       <div class="eos-choices">${ANSWERS[seg].map(([k, l]) => `<button class="eos-choice ${k === current ? 'on' : ''}" data-a="${k}">${l}</button>`).join('')}</div>
@@ -79,7 +79,7 @@ export async function renderEosFeedback(root, token) {
     btn.disabled = true;
     try {
       await store.eosFeedback(token, d.get('again'), d.getAll('wants'), (d.get('note') || '').trim());
-      root.innerHTML = shell(`${check}<h1 class="display-sm eos-h">A groisen dank.</h1>
+      root.innerHTML = shell(`${check}<h1 class="display-sm eos-h"><span class="eos-he" dir="rtl" lang="he">יישר כח</span></h1>
         <p class="muted">We read these — and this is exactly the kind of feedback we need.</p>
         <a class="btn btn-ghost" href="#/">Back to SukkahPin</a>`);
       scrollTo(0, 0);
