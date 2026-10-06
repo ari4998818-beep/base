@@ -1,0 +1,129 @@
+.root {
+  position: relative;
+  background: var(--charcoal);
+}
+
+.stage {
+  position: relative;
+  height: 100svh;
+  overflow: hidden;
+}
+
+/* ---------------- BEFORE (temporary texture) ---------------- */
+.before {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(140px 90px at 70% 68%, rgba(94, 66, 34, 0.5), transparent 70%),
+    radial-gradient(220px 130px at 24% 40%, rgba(94, 66, 34, 0.35), transparent 70%),
+    var(--charcoal);
+}
+
+.stainA,
+.stainB,
+.stainC {
+  position: absolute;
+  border-radius: 45% 55% 52% 48% / 55% 45% 55% 45%;
+  background: rgba(122, 84, 40, 0.55);
+}
+
+.stainA {
+  width: 190px;
+  height: 120px;
+  top: 22%;
+  left: 14%;
+  transform: rotate(-14deg);
+}
+
+.stainB {
+  width: 120px;
+  height: 84px;
+  bottom: 24%;
+  right: 20%;
+  border: 6px solid rgba(122, 84, 40, 0.5);
+  background: transparent;
+}
+
+.stainC {
+  width: 90px;
+  height: 66px;
+  top: 58%;
+  left: 42%;
+  transform: rotate(20deg);
+}
+
+.crumbs {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(4px 4px at 18% 70%, rgba(200, 176, 130, 0.8), transparent 60%),
+    radial-gradient(3px 3px at 32% 26%, rgba(200, 176, 130, 0.7), transparent 60%),
+    radial-gradient(5px 5px at 58% 78%, rgba(200, 176, 130, 0.8), transparent 60%),
+    radial-gradient(3px 3px at 74% 34%, rgba(200, 176, 130, 0.7), transparent 60%),
+    radial-gradient(4px 4px at 86% 60%, rgba(200, 176, 130, 0.8), transparent 60%);
+}
+
+/* ---------------- AFTER (temporary clean panel) ---------------- */
+.clean {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, var(--cream) 0%, var(--white) 60%, var(--cream-warm) 100%);
+  clip-path: inset(0 100% 0 0);
+  will-change: clip-path;
+}
+
+.shine {
+  position: absolute;
+  top: 26%;
+  right: 22%;
+  font-size: clamp(2rem, 5vw, 4rem);
+  color: var(--green);
+}
+
+/* ---------------- wiper cloth ---------------- */
+.wiper {
+  position: absolute;
+  top: -4%;
+  left: -14%;
+  height: 108%;
+  width: clamp(90px, 11vw, 170px);
+  border-radius: 0 26px 30px 0 / 0 40% 42% 0;
+  box-shadow: 14px 0 40px rgba(0, 0, 0, 0.35);
+  will-change: left, transform;
+}
+
+/* ----------------------------------------------------------------
+   headline — rendered twice: a faint "dirty" version on the messy
+   layer and a navy version inside the clean layer, so the wipe edge
+   recolors the words as it passes.
+   ---------------------------------------------------------------- */
+.headline {
+  position: absolute;
+  inset-inline: var(--pad-x);
+  bottom: clamp(40px, 9vh, 90px);
+  font-size: var(--text-big);
+  display: grid;
+  gap: 2px;
+}
+
+.messyText {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.messyText .headline {
+  color: rgba(247, 241, 227, 0.4);
+}
+
+.messyText .hlAccent {
+  color: rgba(247, 241, 227, 0.55);
+}
+
+.clean .headline {
+  color: var(--navy);
+}
+
+.clean .hlAccent {
+  color: var(--pink);
+}

@@ -1,0 +1,145 @@
+.root {
+  position: relative;
+  min-height: 100svh;
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: calc(var(--nav-h) + 16px) 0 40px;
+}
+
+.inner {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: 12px;
+  padding: 0 var(--pad-x);
+}
+
+.headline {
+  font-size: var(--text-mega);
+  color: var(--navy);
+}
+
+.mask {
+  display: block;
+  overflow: hidden;
+  padding-block: 0.03em; /* keep descenders visible inside the mask */
+}
+
+.line {
+  display: block;
+}
+
+.pinkLine {
+  color: var(--pink);
+}
+
+.dot {
+  color: var(--green);
+}
+
+.sub {
+  max-width: 40ch;
+  font-size: var(--text-lead);
+  font-weight: 700;
+  color: var(--navy);
+  opacity: 0.85;
+  margin: 26px 0 30px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+/* ---------------- product art ---------------- */
+.art {
+  position: relative;
+  height: min(72vh, 640px);
+}
+
+.roll {
+  position: absolute;
+  right: 4%;
+  top: 0;
+  height: 100%;
+  width: auto;
+  transform: rotate(6deg);
+  filter: drop-shadow(0 30px 40px rgba(12, 19, 50, 0.22));
+  z-index: 1;
+}
+
+.pack {
+  position: absolute;
+  left: -4%;
+  bottom: -4%;
+  height: 62%;
+  width: auto;
+  transform: rotate(-7deg);
+  filter: drop-shadow(0 24px 34px rgba(12, 19, 50, 0.25));
+  z-index: 2;
+}
+
+.sparks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.spark {
+  position: absolute;
+  color: var(--pink);
+  font-size: clamp(1.4rem, 3vw, 2.6rem);
+}
+
+.sparkA {
+  top: 14%;
+  right: 8%;
+}
+
+.sparkB {
+  bottom: 18%;
+  left: 46%;
+  color: var(--green);
+}
+
+.tear {
+  position: absolute;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  bottom: 0;
+  border-top: 4px dashed rgba(19, 28, 69, 0.3);
+}
+
+@media (max-width: 860px) {
+  .root {
+    padding-top: calc(var(--nav-h) + 8px);
+  }
+
+  .inner {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+
+  .art {
+    height: min(52vh, 430px);
+    order: -1;
+  }
+
+  .roll {
+    right: -6%;
+  }
+
+  .pack {
+    left: 0;
+    height: 58%;
+  }
+
+  .sub {
+    margin: 18px 0 22px;
+  }
+}

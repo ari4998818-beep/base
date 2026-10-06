@@ -1,0 +1,257 @@
+/* ==========================================================================
+   SWIPE design system
+   Brand colors sampled from the locked source artwork:
+   logo pink, packaging navy, cap/stitch green, label cream.
+   Blue + red are reserved for the future product variants.
+   ========================================================================== */
+
+:root {
+  /* brand */
+  --pink: #e62565;
+  --pink-deep: #c31752;
+  --pink-soft: #ff5c93;
+  --navy: #131c45;
+  --ink: #0c1332;
+  --green: #8cbe3f;
+  --green-deep: #6c9b28;
+  --cream: #f7f1e3;
+  --cream-warm: #f2e9d4;
+  --white: #ffffff;
+  --charcoal: #22232b;
+
+  /* reserved for future variants */
+  --variant-blue: #2f6fc0;
+  --variant-blue-deep: #235697;
+  --variant-red: #d63a2c;
+  --variant-red-deep: #ab2c21;
+
+  /* type */
+  --font-display: 'Anton', 'Arial Narrow', sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+
+  /* fluid type scale */
+  --text-mega: clamp(3.4rem, 12.5vw, 11rem);
+  --text-huge: clamp(2.6rem, 8.5vw, 7rem);
+  --text-big: clamp(2rem, 5.5vw, 4.2rem);
+  --text-lead: clamp(1.05rem, 1.6vw, 1.3rem);
+  --text-base: 1rem;
+
+  --pad-x: clamp(20px, 5vw, 72px);
+  --nav-h: 76px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+html,
+body {
+  overscroll-behavior-y: none;
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--navy);
+  background: var(--cream);
+  line-height: 1.55;
+  overflow-x: clip; /* hard stop for any horizontal overflow */
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+a {
+  color: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   display typography
+   -------------------------------------------------------------------------- */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 0.92;
+  letter-spacing: 0.005em;
+}
+
+/* --------------------------------------------------------------------------
+   buttons
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+  letter-spacing: 0.04em;
+  padding: 16px 30px 14px;
+  border-radius: 999px;
+  text-decoration: none;
+  position: relative;
+  transition:
+    transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.18s ease;
+  will-change: transform;
+}
+
+.btn:hover {
+  transform: translateY(-3px) rotate(-1deg);
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn--pink {
+  background: var(--pink);
+  color: var(--white);
+  box-shadow: 0 10px 24px rgba(230, 37, 101, 0.35);
+}
+
+.btn--pink:hover {
+  box-shadow: 0 16px 30px rgba(230, 37, 101, 0.4);
+}
+
+.btn--line {
+  color: var(--navy);
+  box-shadow: inset 0 0 0 3px var(--navy);
+}
+
+.btn--line:hover {
+  background: var(--navy);
+  color: var(--cream);
+}
+
+.btn--cream {
+  background: var(--cream);
+  color: var(--navy);
+  box-shadow: 0 10px 24px rgba(12, 19, 50, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   shared decorative bits
+   -------------------------------------------------------------------------- */
+
+/* tear line — the perforation between cloths, used as a section divider */
+.tear-line {
+  height: 0;
+  border-top: 4px dashed currentColor;
+  opacity: 0.35;
+}
+
+/* spark — the ✦ from the logo */
+.spark {
+  display: inline-block;
+  color: var(--pink);
+}
+
+/* cloth grid texture built in CSS (mirrors the real cloth's woven grid) */
+.cloth-grid {
+  background-color: var(--white);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 26px,
+      var(--grid-line, rgba(140, 190, 63, 0.75)) 26px,
+      var(--grid-line, rgba(140, 190, 63, 0.75)) 29px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 26px,
+      var(--grid-line-soft, rgba(140, 190, 63, 0.35)) 26px,
+      var(--grid-line-soft, rgba(140, 190, 63, 0.35)) 28px
+    );
+}
+
+/* scalloped "cloth" top edge for section transitions */
+.cloth-edge {
+  --edge-bg: var(--cream);
+  height: 36px;
+  background-image: radial-gradient(circle at 50% 0, var(--edge-bg) 26px, transparent 27px);
+  background-size: 72px 36px;
+  background-position: 0 100%;
+  background-repeat: repeat-x;
+}
+
+/* the source photos have solid backgrounds — presenting them as rounded
+   "photo cards" makes that intentional until transparent cutouts exist */
+.photo-card {
+  border-radius: clamp(16px, 2vw, 28px);
+}
+
+/* screen-reader-only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* focus visibility */
+:focus-visible {
+  outline: 3px solid var(--pink);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   placeholder styling — TEMPORARY blocks standing in for images that will be
+   generated later. Every one carries a visible "coming soon" tag so they are
+   easy to find and replace.
+   -------------------------------------------------------------------------- */
+.ph-tag {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 10px;
+  margin: 0 auto;
+  width: fit-content;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: rgba(12, 19, 50, 0.55);
+  color: var(--white);
+  padding: 4px 10px;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   reduced motion — the GSAP layer also checks this, this is the CSS half
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

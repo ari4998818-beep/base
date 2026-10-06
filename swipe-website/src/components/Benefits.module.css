@@ -1,0 +1,82 @@
+.root {
+  position: relative;
+  background: var(--navy);
+  color: var(--cream);
+  padding-bottom: clamp(110px, 15vw, 200px);
+  overflow: hidden;
+}
+
+.edge {
+  height: 36px;
+  background-image: radial-gradient(circle at 50% 0, var(--cream) 26px, transparent 27px);
+  background-size: 72px 36px;
+  background-repeat: repeat-x;
+}
+
+.inner {
+  padding: clamp(70px, 9vw, 120px) var(--pad-x) 0;
+}
+
+.kicker {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.85rem;
+  color: var(--green);
+  margin-bottom: clamp(30px, 4vw, 56px);
+}
+
+.list {
+  list-style: none;
+  display: grid;
+  gap: clamp(18px, 3vw, 34px);
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(14px, 2.5vw, 30px);
+  flex-wrap: wrap;
+  border-bottom: 3px dashed rgba(247, 241, 227, 0.18);
+  padding-bottom: clamp(14px, 2vw, 24px);
+  will-change: transform;
+}
+
+.row:nth-child(even) {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.word {
+  font-size: clamp(2.4rem, 7.2vw, 6rem);
+  color: var(--cream);
+}
+
+.outline {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--green);
+}
+
+.note {
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+  font-weight: 700;
+  color: rgba(247, 241, 227, 0.7);
+  white-space: nowrap;
+}
+
+.noteSpark {
+  color: var(--pink-soft);
+  margin-right: 8px;
+}
+
+/* 3D helper peeking from the right edge */
+.peek {
+  position: absolute;
+  right: 0;
+  bottom: -4%;
+  width: clamp(170px, 22vw, 330px);
+  transform: translateX(105%);
+  filter: drop-shadow(-14px 14px 30px rgba(0, 0, 0, 0.4));
+  will-change: transform;
+  pointer-events: none;
+}
